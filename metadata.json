@@ -1,0 +1,5 @@
+{
+  "name": "KoreLang",
+  "description": "A professional Integrated Development Environment (IDE) for constructed languages. Features include grammar definition, lexicography management, phonological evolution simulation, and AI-assisted word generation.",
+  "requestFramePermissions": []
+}

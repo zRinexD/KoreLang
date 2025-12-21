@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="icon" href="data:,">
+  <title>KoreLang</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ARCHITECTURAL THEMING SYSTEM via CSS Variables */
+    :root {
+      /* --- DARK MODE (Professional Neutral IDE - Default) --- */
+
+      /* Backgrounds */
+      --bg-main: #1e1e1e;
+      /* VS Code Default Editor BG */
+      --bg-panel: #252526;
+      /* VS Code Sidebar/Panel BG */
+      --bg-deep: #181818;
+      /* Deep inputs/terminals */
+      --bg-sidebar: #252526;
+      /* Unified Sidebar */
+
+      /* Borders */
+      --border-dim: #333333;
+      /* Subtle neutral border */
+      --border-bright: #454545;
+      /* Active/Hover border */
+
+      /* Text - High Legibility on Neutral Dark */
+      --text-1: #ffffff;
+      /* Pure White */
+      --text-2: #cccccc;
+      /* Standard IDE Light Gray */
+      --text-3: #9da5b4;
+      /* Comment/Muted Gray */
+      --text-4: #858585;
+      /* Disabled/Deep Muted */
+      --text-5: #606060;
+      /* Borders/Structural */
+
+      /* Accents (Standard Blue) - RGB Channels for Tailwind Opacity Support */
+      --accent-400: 59 130 246;
+      /* blue-400 */
+      --accent-500: 37 99 235;
+      /* blue-500 */
+      --accent-600: 29 78 216;
+      /* blue-600 */
+      --accent-900: 30 58 138;
+      /* blue-900 */
+    }
+
+    /* --- TOKYO NIGHT THEME (OFFICIAL PALETTE FIXED) --- */
+    .tokyo-night-active {
+      /* Backgrounds - Deep Storm Blue */
+      --bg-main: #1a1b26;
+      /* Main Background */
+      --bg-panel: #24283b;
+      /* Panel/Sidebar */
+      --bg-deep: #16161e;
+      /* Input/Deep */
+      --bg-sidebar: #1a1b26;
+      /* Sidebar same as main for flow, or #24283b */
+
+      /* Borders */
+      --border-dim: #414868;
+      --border-bright: #565f89;
+
+      /* Text */
+      --text-1: #c0caf5;
+      /* Primary Light */
+      --text-2: #a9b1d6;
+      /* Secondary Blue-White */
+      --text-3: #9aa5ce;
+      /* Muted */
+      --text-4: #565f89;
+      /* Disabled */
+      --text-5: #414868;
+      /* Dark Borders */
+
+      /* Accents - Neon Blue/Cyan/Purple */
+      --accent-400: 122 162 247;
+      /* #7aa2f7 */
+      --accent-500: 122 162 247;
+      /* #7aa2f7 */
+      --accent-600: 187 154 247;
+      /* #bb9af7 (Purple Accent for hover) */
+      --accent-900: 36 40 59;
+    }
+
+    /* --- TOKYO LIGHT THEME (RECALIBRATED FOR ACCESSIBILITY - INK ON PAPER) --- */
+    .tokyo-light-active {
+      /* Backgrounds - Crisp Daylight */
+      --bg-main: #f8fafc;
+      /* Slate-50 */
+      --bg-panel: #e2e8f0;
+      /* Slate-200 */
+      --bg-deep: #ffffff;
+      /* Pure White */
+      --bg-sidebar: #e2e8f0;
+
+      /* Borders - High Contrast Definition */
+      --border-dim: #94a3b8;
+      /* Slate-400 (Much Darker for definition) */
+      --border-bright: #64748b;
+      /* Slate-500 */
+
+      /* Text - High Contrast Ink */
+      --text-1: #0f172a;
+      /* Slate-900 (Pure Black/Navy) */
+      --text-2: #334155;
+      /* Slate-700 (Dark Grey Body) */
+      --text-3: #475569;
+      /* Slate-600 (Darker Muted - WCAG AA) */
+      --text-4: #64748b;
+      /* Slate-500 (Disabled but visible) */
+      --text-5: #94a3b8;
+      /* Slate-400 (Borders) */
+
+      /* Accents - Deep Royal Violet */
+      --accent-400: 124 58 237;
+      /* Violet-600 */
+      --accent-500: 109 40 217;
+      /* Violet-700 */
+      --accent-600: 91 33 182;
+      /* Violet-800 */
+      --accent-900: 76 29 149;
+      /* Violet-900 */
+    }
+
+    /* --- LIGHT MODE (High Contrast Overrides) --- */
+    .light-mode-active {
+      /* Backgrounds */
+      --bg-main: #ffffff;
+      --bg-panel: #f8fafc;
+      --bg-deep: #f1f5f9;
+      --bg-sidebar: #e2e8f0;
+
+      /* Borders */
+      --border-dim: #cbd5e1;
+      --border-bright: #94a3b8;
+
+      /* Text */
+      --text-1: #020617;
+      --text-2: #0f172a;
+      --text-3: #1e293b;
+      --text-4: #334155;
+      --text-5: #475569;
+
+      /* Accents */
+      --accent-400: 59 130 246;
+      --accent-500: 37 99 235;
+      --accent-600: 29 78 216;
+      --accent-900: 30 58 138;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-2);
+      transition: background-color 0.2s ease, color 0.2s ease;
+      /* VIEWPORT FIX: Prevent ghost scrollbars */
+      max-width: 100vw;
+      overflow: hidden;
+    }
+
+    /* VISIBILITY PATCH: Increase font weight for light themes to improve legibility */
+    .tokyo-light-active body,
+    .light-mode-active body {
+      font-weight: 500;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-main);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-dim);
+      border-radius: 0px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-5);
+    }
+  </style>
+  <script type="module" src="/src/index.tsx"></script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+</html>
