@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import Sidebar from './components/Sidebar';
 import MenuBar from './components/MenuBar';
 import Lexicon from './components/Lexicon';
@@ -216,6 +217,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="flex flex-col h-screen w-screen bg-[var(--bg-main)] text-[var(--text-1)] font-sans overflow-hidden transition-colors duration-200">
       <MenuBar onNewProject={() => { setWizardMode('create'); setIsWizardOpen(true); }} onSaveProject={() => { if (typeof window !== 'undefined') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(getFullProjectData(), null, 2)], { type: 'application/json' })); a.download = `${projectName.toLowerCase().replace(/\s/g, '-')}.json`; a.click(); } }} onOpenProject={(file) => { const r = new FileReader(); r.onload = (e) => loadProjectData(JSON.parse(e.target?.result as string)); r.readAsText(file); }} onOpenSettings={() => setIsSettingsOpen(true)} onOpenConstraints={() => setIsConstraintsOpen(true)} onZoomIn={() => setZoomLevel(p => Math.min(p + 10, 150))} onZoomOut={() => setZoomLevel(p => Math.max(p - 10, 50))} onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} settings={settings} isScriptMode={isScriptMode} onToggleScriptMode={() => setIsScriptMode(!isScriptMode)} onOpenAbout={() => setIsAboutOpen(true)} />
+      <Analytics />
       <div className="flex flex-1 overflow-hidden relative">
         {isMobile && isSidebarOpen && <div className="absolute inset-0 bg-black/50 z-30 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />}
         {isSidebarOpen ? (
