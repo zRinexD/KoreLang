@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@vercel/analytics": "^1.6.1",
     "i18next": "^25.7.3",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
