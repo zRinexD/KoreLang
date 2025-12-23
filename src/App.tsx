@@ -245,6 +245,7 @@ const AppContent: React.FC = () => {
       <ConstraintsModal isOpen={isConstraintsOpen} onClose={() => setIsConstraintsOpen(false)} constraints={constraints} onUpdateConstraints={setConstraints} {...{ scriptConfig, isScriptMode }} />
       <ProjectWizard isOpen={isWizardOpen} mode={wizardMode} initialData={{ name: wizardMode === 'create' ? '' : projectName, author: wizardMode === 'create' ? '' : projectAuthor, description: wizardMode === 'create' ? '' : projectDescription }} onClose={() => setIsWizardOpen(false)} onSubmit={handleWizardSubmit} />
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+      <Analytics />
     </div>
   );
 };
