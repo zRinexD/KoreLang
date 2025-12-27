@@ -15,6 +15,7 @@ import ConstraintsModal from "./components/ConstraintsModal";
 import AboutModal from "./components/AboutModal";
 import SettingsModal from "./components/SettingsModal";
 import WhatsNewModal from "./components/WhatsNewModal";
+import { useShortcuts } from "./hooks/useShorcuts";
 import {
   ViewState,
   LexiconEntry,
@@ -191,60 +192,57 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Shortcuts handling:
-  // - Alt+C: open console (ignore when focus is in input/textarea or contentEditable)
-  // - Alt+C+ArrowUp: maximize console (only when console already open)
-  // - Alt+C+ArrowDown: minimize console (only when console already open)
-  useEffect(() => {
-    const pressed = new Set<string>();
+  useShortcuts({
+    isConsoleOpen,
+    setIsConsoleOpen,
+    setIsSidebarOpen,
 
-    const onKeyDown = (e: KeyboardEvent) => {
+    onNewProject: () => {
+      setWizardMode("create");
+      setIsWizardOpen(true);
+    },
+
+    onOpenProject: () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+
+      input.onchange = () => {
+        const file = input.files?.[0];
+        if (!file) return;
+
+        const r = new FileReader();
+        r.onload = (e) =>
+          loadProjectData(JSON.parse(e.target?.result as string));
+        r.readAsText(file);
+      };
+
+      input.click();
+    },
+
+    onExportProject: () => {
+      const data = getFullProjectData();
+      const text = JSON.stringify(data, null, 2);
+      const a = document.createElement("a");
+
+      a.href = URL.createObjectURL(
+        new Blob([text], { type: "application/json" })
+      );
+      a.download = `${projectName.toLowerCase().replace(/\s/g, "-")}.json`;
+      a.click();
+
       try {
-        pressed.add(e.key.toLowerCase());
-
-        const active = document.activeElement as HTMLElement | null;
-        const inInput =
-          active &&
-          (active.tagName === "INPUT" ||
-            active.tagName === "TEXTAREA" ||
-            active.isContentEditable);
-
-        if (e.altKey && !e.ctrlKey && !e.metaKey) {
-          if (e.key.toLowerCase() === "c" && !inInput) {
-            e.preventDefault();
-            setIsConsoleOpen(true);
-            return;
-          }
-
-          if (
-            (e.key === "ArrowUp" || e.key === "ArrowDown") &&
-            pressed.has("c") &&
-            isConsoleOpen
-          ) {
-            e.preventDefault();
-            const action = e.key === "ArrowUp" ? "maximize" : "minimize";
-            window.dispatchEvent(
-              new CustomEvent("console-shortcut", { detail: { action } })
-            );
-            return;
-          }
-        }
-      } catch (err) {}
-    };
-
-    const onKeyUp = (e: KeyboardEvent) => {
-      try {
-        pressed.delete(e.key.toLowerCase());
+        const normalize = (s: string) => {
+          const obj = JSON.parse(s);
+          if (obj && typeof obj === "object") delete obj.lastModified;
+          return JSON.stringify(obj);
+        };
+        localStorage.setItem(EXPORT_SNAPSHOT_KEY, normalize(text));
       } catch {}
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("keyup", onKeyUp);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("keyup", onKeyUp);
-    };
-  }, [isConsoleOpen]);
+    },
+    onZoomIn: () => setZoomLevel((p) => Math.min(p + 10, 150)),
+    onZoomOut: () => setZoomLevel((p) => Math.max(p - 10, 50)),
+  });
 
   useEffect(() => {
     const themeData =
