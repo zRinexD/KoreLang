@@ -36,20 +36,20 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-lg overflow-hidden duration-200 border shadow-2xl bg-slate-900 border-slate-700 rounded-xl animate-in fade-in zoom-in">
+      <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-950">
+        <div className="flex justify-between items-center p-5 border-b border-slate-800 bg-slate-950">
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <Box className="text-blue-500" size={20} />
               {mode === 'create' ? t('wizard.create_title') : t('wizard.edit_title')}
             </h2>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="text-slate-400 text-sm mt-1">
               {mode === 'create' ? t('wizard.create_desc') : t('wizard.edit_desc')}
             </p>
           </div>
-          <button onClick={onClose} className="p-1 transition-colors rounded text-slate-500 hover:text-white hover:bg-slate-800">
+          <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors p-1 hover:bg-slate-800 rounded">
             <X size={20} />
           </button>
         </div>
@@ -58,9 +58,9 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold tracking-wider uppercase text-slate-500">{t('wizard.name')}</label>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{t('wizard.name')}</label>
             <div className="relative">
-              <Box className="absolute -translate-y-1/2 left-3 top-1/2 text-slate-600" size={16} />
+              <Box className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
               <input 
                 type="text"
                 required
@@ -73,9 +73,9 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold tracking-wider uppercase text-slate-500">{t('wizard.author')}</label>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{t('wizard.author')}</label>
             <div className="relative">
-              <User className="absolute -translate-y-1/2 left-3 top-1/2 text-slate-600" size={16} />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
               <input 
                 type="text"
                 value={formData.author}
@@ -89,7 +89,7 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
           {/* New Constraint Input for Start */}
           {mode === 'create' && (
               <div className="space-y-1.5">
-                <label className="items-center gap-2 text-xs font-bold tracking-wider uppercase text-slate-500 block-flex">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-2">
                     <ShieldCheck size={14} className="text-emerald-500" /> {t('wizard.constraints')}
                 </label>
                 <div className="relative">
@@ -106,7 +106,7 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
           )}
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold tracking-wider uppercase text-slate-500">{t('wizard.desc')}</label>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{t('wizard.desc')}</label>
             <div className="relative">
               <FileText className="absolute left-3 top-3 text-slate-600" size={16} />
               <textarea 
@@ -118,17 +118,17 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="pt-4 flex justify-end gap-3">
             <button 
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium transition-colors text-slate-400 hover:text-white"
+              className="px-4 py-2 text-slate-400 hover:text-white text-sm font-medium transition-colors"
             >
               {t('common.cancel')}
             </button>
             <button 
               type="submit"
-              className="flex items-center gap-2 px-6 py-2 text-sm font-bold text-white transition-all bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 shadow-blue-900/20 active:scale-95"
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow-lg shadow-blue-900/20 flex items-center gap-2 transition-all active:scale-95"
             >
               <Check size={16} />
               {mode === 'create' ? t('wizard.create_btn') : t('wizard.save_btn')}

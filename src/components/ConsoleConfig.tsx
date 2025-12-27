@@ -1,4 +1,4 @@
-import { Info, ArrowRight, Zap, ShieldAlert, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Terminal, ArrowRight, Zap, ShieldAlert, CheckCircle2, AlertTriangle } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import { ProjectConstraints, AppSettings, LexiconEntry, LogEntry, ViewState, POS_SUGGESTIONS, ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
@@ -58,7 +58,7 @@ const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntrie
 
     if (isApplied) {
         return (
-            <div className="flex items-center gap-2 px-4 py-2 text-xs font-bold border rounded bg-emerald-950/20 border-emerald-900/50 text-emerald-400">
+            <div className="py-2 px-4 bg-emerald-950/20 border border-emerald-900/50 rounded flex items-center gap-2 text-emerald-400 text-xs font-bold">
                 <CheckCircle2 size={14} /> {t('console.refactor_complete') || 'Refactoring complete and integrated.'}
             </div>
         );
@@ -66,23 +66,23 @@ const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntrie
 
     return (
         <div
-            className="max-w-3xl my-4 overflow-hidden duration-200 border rounded-lg shadow-2xl bg-zinc-900 border-zinc-700 animate-in zoom-in-95"
+            className="my-4 bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden max-w-3xl shadow-2xl animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
         >
-            <div className="flex items-center justify-between px-4 py-2 border-b bg-zinc-800 border-zinc-700">
-                <span className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-zinc-300">
+            <div className="bg-zinc-800 px-4 py-2 border-b border-zinc-700 flex justify-between items-center">
+                <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
                     <ShieldAlert size={12} className="text-amber-500" /> STAGING v4.6: {t('console.review_proposals') || 'REVIEW PROPOSALS'}
                 </span>
                 <span className="text-[10px] text-zinc-500">{selectedIds.size} {t('lexicon.results_count') || 'selected'}</span>
             </div>
-            <div className="overflow-y-auto max-h-80 custom-scrollbar">
+            <div className="max-h-80 overflow-y-auto custom-scrollbar">
                 <table className="w-full text-[11px]">
-                    <thead className="sticky top-0 z-10 bg-black/20 text-zinc-500">
+                    <thead className="bg-black/20 text-zinc-500 sticky top-0 z-10">
                         <tr>
-                            <th className="w-8 p-2 text-center"></th>
-                            <th className="p-2 text-left">Original</th>
-                            <th className="p-2 text-center">Fidelidad</th>
-                            <th className="p-2 text-left text-amber-400">Propuesta IA (Editable)</th>
+                            <th className="p-2 text-center w-8"></th>
+                            <th className="p-2 text-left">{t('console.table_original')}</th>
+                            <th className="p-2 text-center">{t('console.table_fidelity')}</th>
+                            <th className="p-2 text-left text-amber-400">{t('console.table_ai_proposal')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800">
@@ -94,7 +94,7 @@ const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntrie
                             return (
                                 <tr key={repair.id} className={`hover: bg - zinc - 800 / 50 transition - colors ${!isSelected ? 'opacity-30' : ''} `}>
                                     <td className="p-2 text-center">
-                                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelection(repair.id)} className="text-purple-600 bg-black rounded border-zinc-700" />
+                                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelection(repair.id)} className="rounded bg-black border-zinc-700 text-purple-600" />
                                     </td>
                                     <td className="p-2">
                                         <div className="font-bold text-zinc-400">{original?.word}</div>
@@ -125,7 +125,7 @@ const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntrie
                     </tbody>
                 </table>
             </div>
-            <div className="flex justify-end gap-2 p-3 border-t bg-black/40 border-zinc-700">
+            <div className="p-3 bg-black/40 border-t border-zinc-700 flex justify-end gap-2">
                 <button onClick={onCancel} className="px-3 py-1.5 text-[10px] font-bold text-zinc-500 hover:text-zinc-300">{t('common.cancel')}</button>
                 <button
                     onClick={() => {
@@ -218,7 +218,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
             switch (cmd) {
                 case 'CLEAR': case 'CLS': clearTerminal(); break;
                 case 'FIX-NON-CANON':
-                    if (!settings.enableAI) throw new Error('Servicio de IA desactivado.');
+                    if (!settings.enableAI) throw new Error(t('console.ai_service_disabled'));
                     const invalid = entries.filter(e => {
                         // Validación simplificada para el comando
                         const w = e.word.toLowerCase();
@@ -234,7 +234,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                     // Falsa carga para feedback visual
                     setTimeout(() => setLoadingAI(false), 500);
                     if (result.success && result.repairs) {
-                        addLog('info', 'Propuestas generadas. Revise la tabla de staging:', (
+                        addLog('info', t('console.proposals_review'), (
                             <RepairReviewTable repairs={result.repairs} originalEntries={entries} t={t}
                                 onCommit={(repairedList) => {
                                     setEntries(prev => prev.map(entry => {
@@ -242,10 +242,10 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                                         return rep ? { ...entry, word: rep.word, ipa: rep.ipa } : entry;
                                     }));
                                 }}
-                                onCancel={() => addLog('info', 'Sesión de reparación abortada.')}
+                                onCancel={() => addLog('info', t('console.repair_aborted'))}
                             />
                         ));
-                    } else throw new Error(result.message || 'Fallo en la pipeline de IA.');
+                    } else throw new Error(result.message || t('console.ai_pipeline_failed'));
                     break;
                 case 'HELP':
                     addLog('output', t('console.available_commands') || 'AVAILABLE COMMANDS:');
@@ -265,7 +265,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                         if (!isApiKeySet()) {
                             addLog('error', 'AI Command Failed: No API Key configured.');
                             addLog('info', 'Configure your API Key in the Preferences menu (Settings icon) to enable AI features.', (
-                                <div className="flex items-start gap-3 p-3 mt-2 text-xs border rounded-lg bg-amber-950/20 border-amber-900/50 text-amber-200">
+                                <div className="mt-2 p-3 bg-amber-950/20 border border-amber-900/50 rounded-lg text-xs text-amber-200 flex items-start gap-3">
                                     <ShieldAlert size={16} className="shrink-0 text-amber-500" />
                                     <div>
                                         Go to <b>Preferences (Settings) {' > '} General</b> and enter your Gemini API Key.
@@ -280,9 +280,9 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                         setLoadingAI(false);
                         if (result.success && result.newLexicon) {
                             setEntries(result.newLexicon);
-                            addLog('success', `IA aplicada: ${result.modifiedCount} palabras modificadas.`);
+                            addLog('success', t('console.ai_applied_count').replace('{{count}}', result.modifiedCount.toString()));
                         } else {
-                            addLog('error', (result as any).message || 'Error procesando comando de IA.');
+                            addLog('error', (result as any).message || t('console.processing_error'));
                         }
                         return;
                     }
@@ -293,19 +293,19 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
 
     return (
         <div className="h-full flex flex-col bg-[var(--bg-main)] font-mono text-sm relative">
-            <div className="p-2  border-b border-white/5 flex justify-between items-center text-xs text-[var(--text-2)]">
-                <span className="flex items-center gap-2" style={{ fontSize: 'var(--text-info)' }}><Info size={10} /> KoreLang kernel_v1.1_stable</span>
-                <span className="flex items-center gap-2 text-emerald-500" style={{ fontSize: 'var(--text-info)' }}>
-                    {loadingAI && <Zap size={12} className="text-purple-500 animate-pulse" />}
+            <div className="p-2 bg-[var(--bg-panel)] border-b border-white/5 flex justify-between items-center text-xs text-[var(--text-2)]">
+                <span className="flex items-center gap-2"><Terminal size={14} /> {t('console.kernel_version')}</span>
+                <span className="flex items-center gap-2">
+                    {loadingAI && <Zap size={12} className="animate-pulse text-purple-500" />}
                     SYSTEM_READY
                 </span>
             </div>
             <div
-                className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar"
+                className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar"
                 onClick={() => inputRef.current?.focus()}
             >
                 {history.map((log, i) => (
-                    <div key={i} className={`flex flex-col ${log.type === 'error' ? 'text-red-500' : log.type === 'success' ? 'text-emerald-400' : log.type === 'command' ? 'text-[var(--text-1)] font-bold' : 'text-[var(--text-2)]'} `}>
+                    <div key={i} className={`flex flex - col ${log.type === 'error' ? 'text-red-500' : log.type === 'success' ? 'text-emerald-400' : log.type === 'command' ? 'text-[var(--text-1)] font-bold' : 'text-[var(--text-2)]'} `}>
                         <div className="flex gap-3 leading-relaxed">
                             {log.type === 'command' && <span className="text-emerald-500">KoreLang-@{author}:~$</span>}
                             <span className={log.content === TERMINAL_HEADER ? "whitespace-pre text-blue-400 font-bold leading-none" : ""}>{log.content}</span>
@@ -315,8 +315,8 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                 ))}
                 <div ref={bottomRef} />
             </div>
-            <div className="p-2 bg-[var(--bg-main)] border-t border-white/5 flex items-center">
-                <span className="font-bold text-emerald-500">KoreLang-@{author}:~$</span>
+            <div className="p-4 bg-[var(--bg-main)] border-t border-white/5 flex items-center gap-3">
+                <span className="text-emerald-500 font-bold">KoreLang-@{author}:~$</span>
                 <input
                     ref={inputRef}
                     value={input}
