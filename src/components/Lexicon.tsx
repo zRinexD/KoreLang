@@ -622,7 +622,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                                     <h3 className="text-xl font-bold text-neutral-50 mb-2">{t('integrity.title')}</h3>
                                     <p className="text-neutral-300 mb-4">{t('integrity.warning')}</p>
                                     <div className="bg-neutral-950 rounded border border-red-900/30 p-3 mb-4 max-h-40 overflow-y-auto">
-                                        <div className="text-xs font-bold text-red-400 uppercase mb-2">Dependents:</div>
+                                        <div className="text-xs font-bold text-red-400 uppercase mb-2">{t('lexicon.dependents_label')}</div>
                                         <ul className="space-y-1">{dependentsWarning.map(d => <li key={d.id} className="text-sm text-neutral-400 flex items-center gap-2"><ArrowRight className={direction === 'rtl' ? 'rotate-180' : ''} size={12} /> {d.word}</li>)}</ul>
                                     </div>
                                     <p className="text-xs text-neutral-500 italic mb-6">{t('integrity.desc')}</p>
@@ -664,13 +664,13 @@ const Lexicon: React.FC<LexiconProps> = ({
                         <div className={`absolute z-[120] bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 ${pinIPAKeyboard ? 'right-4 top-20 bottom-20 w-64' : 'bottom-10 left-1/2 -tranneutral-x-1/2 w-[600px] h-[300px]'}`}>
                             <div className="flex items-center justify-between p-2 bg-neutral-800 border-b border-neutral-700 cursor-move">
                                 <span className="text-xs font-bold text-neutral-300 uppercase tracking-wider flex items-center gap-2">
-                                    <Mic size={12} /> IPA Keyboard
+                                    <Mic size={12} /> {t('lexicon.ipa_keyboard')}
                                 </span>
                                 <div className="flex gap-1">
                                     <button
                                         onClick={() => setPinIPAKeyboard(!pinIPAKeyboard)}
                                         className={`p-1 rounded hover:bg-neutral-700 ${pinIPAKeyboard ? 'text-blue-400' : 'text-neutral-500'}`}
-                                        title="Pin Panel"
+                                        title={t('lexicon.pin_panel')}
                                     >
                                         {pinIPAKeyboard ? <PinOff size={12} /> : <Pin size={12} />}
                                     </button>
@@ -721,7 +721,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-neutral-400 uppercase">{t('lexicon.word')}</label>
-                                    <input autoFocus value={newWord} onChange={(e) => setNewWord(e.target.value)} className={`w-full bg-neutral-950 border rounded p-2 text-neutral-100 focus:outline-none focus:ring-1 ${validationErrors.length > 0 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-neutral-700 focus:border-blue-500 focus:ring-blue-500'}`} placeholder="e.g. kamra" />
+                                    <input autoFocus value={newWord} onChange={(e) => setNewWord(e.target.value)} className={`w-full bg-neutral-950 border rounded p-2 text-neutral-100 focus:outline-none focus:ring-1 ${validationErrors.length > 0 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-neutral-700 focus:border-blue-500 focus:ring-blue-500'}`} placeholder={t('lexicon.word_placeholder')} />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-neutral-400 uppercase">{t('lexicon.ipa')}</label>
@@ -733,7 +733,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                                             // On blur we might want to hide, but if pinned, keep it. 
                                             // Also need to check if focus moved TO the keyboard.
                                             className="w-full bg-neutral-950 border border-neutral-700 rounded p-2 text-neutral-100 font-mono focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                            placeholder="e.g. ˈkam.ra"
+                                            placeholder={t('lexicon.ipa_placeholder')}
                                         />
                                         <button onClick={() => setShowIPAKeyboard(!showIPAKeyboard)} className="absolute right-2 top-1/2 -tranneutral-y-1/2 text-neutral-500 hover:text-blue-400">
                                             <Mic size={14} />
@@ -761,7 +761,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                                     </div>
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-semibold text-neutral-500 uppercase">{t('lexicon.etymology')}</label>
-                                        <input value={newEtymology} onChange={(e) => setNewEtymology(e.target.value)} className="w-full bg-neutral-950 border border-neutral-700 rounded p-2 text-neutral-100 focus:border-blue-500 focus:outline-none" placeholder="e.g. Borrowed from High Valyrian..." />
+                                        <input value={newEtymology} onChange={(e) => setNewEtymology(e.target.value)} className="w-full bg-neutral-950 border border-neutral-700 rounded p-2 text-neutral-100 focus:border-blue-500 focus:outline-none" placeholder={t('lexicon.etymology_placeholder')} />
                                     </div>
                                 </div>
                             </div>

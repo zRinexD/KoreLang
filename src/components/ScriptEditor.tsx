@@ -333,10 +333,10 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                     </div>
 
                     <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
-                        <button onClick={() => setDrawMode('free')} className={`p-1.5 rounded ${drawMode === 'free' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title="Freehand"><Spline size={16} /></button>
-                        <button onClick={() => setDrawMode('line')} className={`p-1.5 rounded ${drawMode === 'line' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title="Line"><Minus size={16} /></button>
-                        <button onClick={() => setDrawMode('rect')} className={`p-1.5 rounded ${drawMode === 'rect' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title="Rectangle"><Square size={16} /></button>
-                        <button onClick={() => setDrawMode('circle')} className={`p-1.5 rounded ${drawMode === 'circle' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title="Circle"><Circle size={16} /></button>
+                        <button onClick={() => setDrawMode('free')} className={`p-1.5 rounded ${drawMode === 'free' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title={t('script.tool_freehand_title')}><Spline size={16} /></button>
+                        <button onClick={() => setDrawMode('line')} className={`p-1.5 rounded ${drawMode === 'line' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title={t('script.tool_line_title')}><Minus size={16} /></button>
+                        <button onClick={() => setDrawMode('rect')} className={`p-1.5 rounded ${drawMode === 'rect' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title={t('script.tool_rect_title')}><Square size={16} /></button>
+                        <button onClick={() => setDrawMode('circle')} className={`p-1.5 rounded ${drawMode === 'circle' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title={t('script.tool_circle_title')}><Circle size={16} /></button>
                     </div>
                     <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-800 rounded px-2 py-1">
                         <button onClick={performUndo} disabled={undoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title="Undo (Ctrl+Z)"><RotateCcw size={16} /></button>
@@ -362,7 +362,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                 value={sidebarSearch}
                                 onChange={(e) => setSidebarSearch(e.target.value)}
                                 className="w-full bg-neutral-950 border border-neutral-800 rounded pl-8 pr-2 py-1.5 text-xs text-neutral-300 focus:border-purple-500 outline-none transition-all"
-                                placeholder="Find character..."
+                                placeholder={t('script.find_placeholder')}
                             />
                         </div>
                     )}
@@ -458,7 +458,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                             <Layers size={14} className="text-purple-400" />
                             <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Neural Layer Stack</span>
                         </div>
-                        <button onClick={addNewLayer} className="p-1.5 bg-purple-600 hover:bg-purple-500 rounded text-white shadow-lg transition-all" title="Add Layer"><Plus size={14} /></button>
+                        <button onClick={addNewLayer} className="p-1.5 bg-purple-600 hover:bg-purple-500 rounded text-white shadow-lg transition-all" title={t('script.add_layer_title')}><Plus size={14} /></button>
                     </div>
                     <div className="flex-1 overflow-y-auto p-2 space-y-2 custom-scrollbar">
                         {[...strokes].reverse().map((s, revIdx) => {

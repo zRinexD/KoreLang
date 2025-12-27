@@ -74,13 +74,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
     <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
         <div className="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-950">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">Preferences Studio</h2>
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">{t('settings.preferences_title')}</h2>
           <button onClick={onClose} className="text-slate-500 hover:text-white"><X size={20} /></button>
         </div>
 
         <div className="flex border-b border-slate-800 bg-slate-900 text-sm">
-          <button onClick={() => setActiveTab('GENERAL')} className={`px-6 py-2 font-bold ${activeTab === 'GENERAL' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>General</button>
-          <button onClick={() => setActiveTab('THEME')} className={`px-6 py-2 font-bold ${activeTab === 'THEME' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>Visual Identity</button>
+          <button onClick={() => setActiveTab('GENERAL')} className={`px-6 py-2 font-bold ${activeTab === 'GENERAL' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>{t('settings.tab_general')}</button>
+          <button onClick={() => setActiveTab('THEME')} className={`px-6 py-2 font-bold ${activeTab === 'THEME' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>{t('settings.tab_visual')}</button>
         </div>
 
         <div className="p-6 space-y-6 overflow-y-auto">
@@ -88,8 +88,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
             <>
               <div className="bg-blue-900/10 border border-blue-900/30 rounded-lg p-4 flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-2 text-slate-200 font-bold text-sm"><Cpu size={16} className="text-purple-400" /> Cognitive AI Service</div>
-                  <p className="text-[10px] text-slate-400">Enable Neural-Engine for linguistics.</p>
+                  <div className="flex items-center gap-2 text-slate-200 font-bold text-sm"><Cpu size={16} className="text-purple-400" /> {t('settings.cognitive_ai')}</div>
+                  <p className="text-[10px] text-slate-400">{t('settings.cognitive_ai_desc')}</p>
                 </div>
                 <input type="checkbox" checked={settings.enableAI} onChange={(e) => onUpdateSettings({ ...settings, enableAI: e.target.checked })} className="w-5 h-5 rounded" />
               </div>
@@ -127,7 +127,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-500 uppercase mb-3 block">Language</label>
+                <label className="text-xs font-bold text-slate-500 uppercase mb-3 block">{t('settings.language_label')}</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-950 p-2 rounded max-h-[200px] overflow-y-auto custom-scrollbar">
                   {languages.map(lang => (
                     <button key={lang.code} onClick={() => setLanguage(lang.code)} className={`py-1.5 px-2 text-[10px] font-medium rounded truncate transition-all ${language === lang.code ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40 translate-y-[-1px]' : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800'}`} title={lang.label}>{lang.label}</button>
@@ -138,7 +138,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
           ) : (
             <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
               <div>
-                <label className="text-xs font-bold text-slate-500 uppercase mb-3 block">Global Presets</label>
+                <label className="text-xs font-bold text-slate-500 uppercase mb-3 block">{t('settings.global_presets')}</label>
                 <div className="grid grid-cols-3 gap-2">
                   {['dark', 'light', 'tokyo-night'].map(tName => (
                     <button key={tName} onClick={() => onUpdateSettings({ ...settings, theme: tName as any })} className={`p-2 text-[10px] font-bold uppercase rounded border ${settings.theme === tName ? 'bg-blue-600 text-white border-blue-400' : 'bg-slate-950 border-slate-800 text-slate-500'}`}>{tName.replace('-', ' ')}</button>
@@ -148,19 +148,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
 
               <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg">
                 <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-2 text-blue-400 font-bold text-sm"><Palette size={16} /> Custom Branding</div>
+                  <div className="flex items-center gap-2 text-blue-400 font-bold text-sm"><Palette size={16} /> {t('settings.custom_branding')}</div>
                   <div className="flex gap-2">
-                    <button onClick={exportTheme} className="p-1 hover:bg-slate-800 rounded text-slate-400" title="Export JSON"><Download size={14} /></button>
-                    <label className="p-1 hover:bg-slate-800 rounded text-slate-400 cursor-pointer" title="Import JSON"><Upload size={14} /><input type="file" onChange={importTheme} className="hidden" accept=".json" /></label>
+                    <button onClick={exportTheme} className="p-1 hover:bg-slate-800 rounded text-slate-400" title={t('settings.export_json')}><Download size={14} /></button>
+                    <label className="p-1 hover:bg-slate-800 rounded text-slate-400 cursor-pointer" title={t('settings.import_json')}><Upload size={14} /><input type="file" onChange={importTheme} className="hidden" accept=".json" /></label>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   {[
-                    { k: 'bgMain', l: 'Canvas Background' },
-                    { k: 'bgPanel', l: 'Secondary Panels' },
-                    { k: 'text1', l: 'Primary Text' },
-                    { k: 'accent', l: 'Active Accent' }
+                    { k: 'bgMain', l: t('settings.canvas_bg') },
+                    { k: 'bgPanel', l: t('settings.sec_panels') },
+                    { k: 'text1', l: t('settings.prim_text') },
+                    { k: 'accent', l: t('settings.active_accent') }
                   ].map(item => (
                     <div key={item.k} className="flex justify-between items-center text-xs">
                       <span className="text-slate-400">{item.l}</span>
@@ -171,7 +171,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
                     </div>
                   ))}
                 </div>
-                {settings.theme === 'custom' && <div className="mt-4 text-center text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center justify-center gap-1"><Check size={10} /> Active Theme</div>}
+                {settings.theme === 'custom' && <div className="mt-4 text-center text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center justify-center gap-1"><Check size={10} /> {t('settings.active_theme')}</div>}
               </div>
             </div>
           )}

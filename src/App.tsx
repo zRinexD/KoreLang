@@ -269,12 +269,12 @@ const AppContent: React.FC = () => {
         <main className="flex-1 overflow-auto bg-[var(--bg-main)] relative w-full" style={{ zoom: zoomLevel / 100 }}>{renderView()}</main>
       </div>
       <footer className="h-6 bg-[var(--bg-panel)] border-t border-neutral-700 flex items-center px-4 text-xs text-[var(--text-2)] gap-4 shrink-0 z-50 relative">
-        <span className="flex items-center gap-1 text-emerald-500 font-bold"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>Auto-Saved</span>
+        <span className="flex items-center gap-1 text-emerald-500 font-bold"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>{t('footer.auto_saved')}</span>
         <span className="text-neutral-400">{projectName}</span>
         <span className="text-neutral-500/80 font-mono text-[11px]">v1.1</span>
         <span className="ml-auto">Ln 1, Col 1</span>
-        <span>{lexicon.length} Words</span>
-        <span>AI: {settings.enableAI ? 'READY' : 'OFF'}</span>
+        <span>{lexicon.length} {t('footer.words')}</span>
+        <span>{settings.enableAI ? t('footer.ai_ready') : t('footer.ai_off')}</span>
       </footer>
       <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} settings={settings} onUpdateSettings={setSettings} />
       <ConstraintsModal isOpen={isConstraintsOpen} onClose={() => setIsConstraintsOpen(false)} constraints={constraints} onUpdateConstraints={setConstraints} {...{ scriptConfig, isScriptMode }} onUpdateScriptConfig={setScriptConfig} />

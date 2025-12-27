@@ -84,13 +84,13 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
                                 <input 
                                     value={rule.rule}
                                     onChange={(e) => updateRule(rule.id, 'rule', e.target.value)}
-                                    placeholder="Rule (e.g. k > ʃ / _i)"
+                                    placeholder={t('genevolve.rule_placeholder')}
                                     className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-amber-200 font-mono text-sm"
                                 />
                                 <input 
                                     value={rule.description}
                                     onChange={(e) => updateRule(rule.id, 'description', e.target.value)}
-                                    placeholder="Description"
+                                    placeholder={t('genevolve.desc_placeholder')}
                                     className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-400 text-xs"
                                 />
                             </div>

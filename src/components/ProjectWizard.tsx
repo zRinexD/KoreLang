@@ -67,7 +67,7 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder-slate-700"
-                placeholder="e.g. High Valyrian"
+                placeholder={t('wizard.name_placeholder')}
               />
             </div>
           </div>
@@ -81,7 +81,7 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
                 value={formData.author}
                 onChange={(e) => setFormData({...formData, author: e.target.value})}
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder-slate-700"
-                placeholder="e.g. J.R.R. Tolkien"
+                placeholder={t('wizard.author_placeholder')}
               />
             </div>
           </div>
@@ -98,7 +98,7 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
                     value={allowedGraphemes}
                     onChange={(e) => setAllowedGraphemes(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 px-4 text-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all placeholder-slate-700"
-                    placeholder="e.g. a-zàá..."
+                    placeholder={t('wizard.constraints_placeholder')}
                   />
                   <p className="text-[10px] text-slate-500 mt-1 ml-1">{t('wizard.optional')}</p>
                 </div>
@@ -113,7 +113,7 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ isOpen, mode, initialData
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder-slate-700 h-24 resize-none"
-                placeholder="..."
+                placeholder={t('wizard.desc_placeholder')}
               />
             </div>
           </div>

@@ -174,21 +174,21 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                             <div className="space-y-4 pb-4 border-b border-slate-800">
                                 <div className="flex items-center gap-2">
                                     <Globe size={18} className="text-blue-400" />
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">Writing System</h3>
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">{t('constraints.writing_system')}</h3>
                                 </div>
 
                                 {scriptConfig ? (
                                     <div className="space-y-3">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Writing Direction</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase">{t('constraints.writing_direction')}</label>
                                         <div className="grid grid-cols-3 gap-3">
-                                            {renderDirectionButton('ltr', <ArrowRightToLine size={24} className="rotate-0" />, 'LTR')}
-                                            {renderDirectionButton('rtl', <ArrowRightToLine size={24} className="rotate-180" />, 'RTL')}
-                                            {renderDirectionButton('ttb', <ArrowRightToLine size={24} className="rotate-90" />, 'Vertical')}
+                                            {renderDirectionButton('ltr', <ArrowRightToLine size={24} className="rotate-0" />, t('constraints.dir_ltr'))}
+                                            {renderDirectionButton('rtl', <ArrowRightToLine size={24} className="rotate-180" />, t('constraints.dir_rtl'))}
+                                            {renderDirectionButton('ttb', <ArrowRightToLine size={24} className="rotate-90" />, t('constraints.dir_vertical'))}
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="p-3 bg-red-900/20 text-red-400 text-xs border border-red-900/50 rounded">
-                                        Script Config not loaded.
+                                        {t('constraints.script_config_missing')}
                                     </div>
                                 )}
                             </div>
@@ -234,7 +234,7 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                                     value={constraints.allowedGraphemes}
                                     onChange={(e) => onUpdateConstraints({ ...constraints, allowedGraphemes: e.target.value })}
                                     className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-sm font-mono text-emerald-400 focus:border-emerald-500 focus:outline-none h-24 resize-none"
-                                    placeholder="e.g. a-zàáeèéìíòóùúmnñ"
+                                    placeholder={t('val.allowed_chars_placeholder')}
                                 />
                                 <p className="text-[10px] text-slate-500">
                                     {t('lbl.allowed_chars_desc')}
@@ -290,7 +290,7 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                                     value={constraints.phonotacticStructure}
                                     onChange={(e) => onUpdateConstraints({ ...constraints, phonotacticStructure: e.target.value })}
                                     className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-sm font-mono text-amber-400 focus:border-amber-500 focus:outline-none"
-                                    placeholder="e.g. ^(C)(V)(C)$"
+                                    placeholder={t('val.structure_placeholder')}
                                 />
                                 <p className="text-[10px] text-slate-500">
                                     {t('lbl.structure_desc')}
@@ -405,7 +405,7 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                                     value={constraints.customSortingOrder || ''}
                                     onChange={(e) => onUpdateConstraints({ ...constraints, customSortingOrder: e.target.value })}
                                     className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-sm font-mono text-blue-400 focus:border-blue-500 focus:outline-none h-24 resize-none placeholder-slate-600"
-                                    placeholder="a b c d e f g..."
+                                    placeholder={t('val.custom_sort_placeholder')}
                                 />
                                 <p className="text-[10px] text-slate-500">{t('sort.custom_order_desc')}</p>
                             </div>

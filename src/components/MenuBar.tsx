@@ -211,10 +211,10 @@ const MenuBar: React.FC<MenuBarProps> = ({
               ? 'bg-purple-900/40 text-purple-300 border-purple-500/50 shadow-[0_0_10px_rgba(168,85,247,0.2)]'
               : 'bg-neutral-900 text-neutral-500 border-neutral-700 hover:text-neutral-300'
               }`}
-            title="Toggle Native Neural-Glyph Rendering"
+            title={t('menu.toggle_script')}
           >
             <Feather size={14} className={isScriptMode ? "animate-pulse" : ""} />
-            <span className="hidden sm:inline">Script Mode</span>
+            <span className="hidden sm:inline">{t('menu.script_mode')}</span>
           </button>
         )}
 

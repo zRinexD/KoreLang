@@ -57,7 +57,7 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
   const addRule = () => {
       if (!activeParadigm) return;
       const newRule: InflectionRule = {
-          coordinates: { name: "New Rule" }, 
+          coordinates: { name: t('morph.new_rule') }, 
           affix: "-",
           isPrefix: false,
           logic: {} // Empty logic by default
@@ -170,7 +170,7 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                                 <input 
                                     value={testRoot}
                                     onChange={(e) => setTestRoot(e.target.value)}
-                                    placeholder="Root"
+                                    placeholder={t('morph.root_placeholder')}
                                     className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-sm text-amber-400 font-mono w-24 focus:outline-none focus:border-amber-500"
                                 />
                                 <span className="text-slate-600">+</span>
@@ -229,7 +229,7 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                                                 <input 
                                                     value={rule.coordinates.name || ''}
                                                     onChange={(e) => updateRule(idx, 'name', e.target.value)}
-                                                    placeholder="e.g. Plural"
+                                                    placeholder={t('morph.plural_placeholder')}
                                                     className="w-full bg-transparent border-none focus:ring-0 text-slate-200 text-sm font-medium placeholder-slate-600"
                                                 />
                                             </td>
@@ -237,7 +237,7 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                                                 <input 
                                                     value={rule.affix}
                                                     onChange={(e) => updateRule(idx, 'affix', e.target.value)}
-                                                    placeholder="-s or un-"
+                                                    placeholder={t('morph.affix_placeholder')}
                                                     className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-amber-400 font-mono text-sm focus:border-amber-500 focus:outline-none"
                                                 />
                                             </td>
@@ -259,7 +259,7 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                                                         <input 
                                                             value={rule.logic?.regex || ''}
                                                             onChange={(e) => updateRule(idx, 'logicRegex', e.target.value)}
-                                                            placeholder="Regex (e.g. [aeiou]$)"
+                                                            placeholder={t('morph.regex_placeholder')}
                                                             className="bg-slate-900 border border-slate-700 rounded px-1 py-0.5 text-xs text-blue-300 w-full outline-none font-mono placeholder-slate-600"
                                                         />
                                                     </div>

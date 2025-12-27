@@ -74,14 +74,14 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenProjectSe
 
       <div className="flex-1 overflow-y-auto py-4 flex flex-col gap-6">
         <nav>
-          <div className="px-4 mb-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">Authoring</div>
+          <div className="px-4 mb-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">{t('sidebar.authoring')}</div>
           <ul className="space-y-0.5 px-2">
             {authoringItems.map(renderItem)}
           </ul>
         </nav>
 
         <nav>
-          <div className="px-4 mb-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">System</div>
+          <div className="px-4 mb-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">{t('sidebar.system')}</div>
           <ul className="space-y-0.5 px-2">
             {systemItems.map(renderItem)}
           </ul>

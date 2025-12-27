@@ -80,9 +80,9 @@ const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntrie
                     <thead className="bg-black/20 text-zinc-500 sticky top-0 z-10">
                         <tr>
                             <th className="p-2 text-center w-8"></th>
-                            <th className="p-2 text-left">Original</th>
-                            <th className="p-2 text-center">Fidelidad</th>
-                            <th className="p-2 text-left text-amber-400">Propuesta IA (Editable)</th>
+                            <th className="p-2 text-left">{t('console.table_original')}</th>
+                            <th className="p-2 text-center">{t('console.table_fidelity')}</th>
+                            <th className="p-2 text-left text-amber-400">{t('console.table_ai_proposal')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800">
@@ -218,7 +218,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
             switch (cmd) {
                 case 'CLEAR': case 'CLS': clearTerminal(); break;
                 case 'FIX-NON-CANON':
-                    if (!settings.enableAI) throw new Error('Servicio de IA desactivado.');
+                    if (!settings.enableAI) throw new Error(t('console.ai_service_disabled'));
                     const invalid = entries.filter(e => {
                         // Validación simplificada para el comando
                         const w = e.word.toLowerCase();
@@ -234,7 +234,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                     // Falsa carga para feedback visual
                     setTimeout(() => setLoadingAI(false), 500);
                     if (result.success && result.repairs) {
-                        addLog('info', 'Propuestas generadas. Revise la tabla de staging:', (
+                        addLog('info', t('console.proposals_review'), (
                             <RepairReviewTable repairs={result.repairs} originalEntries={entries} t={t}
                                 onCommit={(repairedList) => {
                                     setEntries(prev => prev.map(entry => {
@@ -242,10 +242,10 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                                         return rep ? { ...entry, word: rep.word, ipa: rep.ipa } : entry;
                                     }));
                                 }}
-                                onCancel={() => addLog('info', 'Sesión de reparación abortada.')}
+                                onCancel={() => addLog('info', t('console.repair_aborted'))}
                             />
                         ));
-                    } else throw new Error(result.message || 'Fallo en la pipeline de IA.');
+                    } else throw new Error(result.message || t('console.ai_pipeline_failed'));
                     break;
                 case 'HELP':
                     addLog('output', t('console.available_commands') || 'AVAILABLE COMMANDS:');
@@ -280,9 +280,9 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                         setLoadingAI(false);
                         if (result.success && result.newLexicon) {
                             setEntries(result.newLexicon);
-                            addLog('success', `IA aplicada: ${result.modifiedCount} palabras modificadas.`);
+                            addLog('success', t('console.ai_applied_count').replace('{{count}}', result.modifiedCount.toString()));
                         } else {
-                            addLog('error', (result as any).message || 'Error procesando comando de IA.');
+                            addLog('error', (result as any).message || t('console.processing_error'));
                         }
                         return;
                     }

@@ -44,7 +44,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
             setShowPreview(true);
             setIsPreviewMinimized(false);
         } catch (e) {
-            alert("AI Generation failed. Check API Key or try again.");
+            alert(t('phonology.generation_failed'));
         }
         setLoading(false);
     };
@@ -54,7 +54,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
         // Check if there was previous phonology to warn user
         const hasPrevious = data.consonants.length > 0 || data.vowels.length > 0;
         if (hasPrevious) {
-            if (!confirm("This will REPLACE your current phonology. Are you sure?")) return;
+            if (!confirm(t('phonology.replace_confirm'))) return;
         }
         setData(pendingPhonology);
         setPendingPhonology(null);
@@ -98,7 +98,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
     };
 
     const clearAll = () => {
-        if (confirm("Are you sure you want to clear all phonemes?")) {
+        if (confirm(t('phonology.clear_confirm'))) {
             setData({ ...data, consonants: [], vowels: [] });
         }
     };
@@ -144,7 +144,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                     <div className="mt-3 p-3 bg-amber-950/20 border border-amber-900/50 rounded-lg text-[11px] text-amber-200 flex items-start gap-3">
                                         <ShieldAlert size={14} className="shrink-0 text-amber-500" />
                                         <div>
-                                            AI services require an API Key. Follow instructions in <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="underline font-bold">Documentation</a>.
+                                            {t('console.ai_failed_no_key')} <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="underline font-bold">{t('menu.docs')}</a>.
                                         </div>
                                     </div>
                                 )}
@@ -163,7 +163,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                     className="w-full mt-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all border border-neutral-700"
                                 >
                                     <Eye size={16} />
-                                    {showPreview ? "Hide Preview" : "Show AI Preview"}
+                                    {showPreview ? t('phonology.hide_preview') : t('phonology.show_preview')}
                                 </button>
                             )}
                         </div>
@@ -199,7 +199,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             <input
                                 value={data.syllableStructure || ''}
                                 onChange={(e) => setData({ ...data, syllableStructure: e.target.value })}
-                                placeholder="e.g. C(V)C"
+                                placeholder={t('phonology.syllable_placeholder')}
                                 className="w-full bg-neutral-900 px-2 py-1 rounded text-emerald-400 font-mono text-xs border border-neutral-800 outline-none focus:ring-1 focus:ring-emerald-500"
                             />
                         </div>
@@ -207,7 +207,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             onClick={clearAll}
                             className="w-full mt-4 flex items-center justify-center gap-2 text-xs text-red-500 hover:text-red-400 border border-red-900/30 py-2 rounded transition-colors"
                         >
-                            <Trash2 size={12} /> Clear Inventory
+                            <Trash2 size={12} /> {t('phonology.clear_inventory')}
                         </button>
                     </div>
                 </div>
@@ -224,7 +224,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
 
                     {unclassifiedConsonants.length > 0 && (
                         <div className="mb-4 p-3 bg-neutral-900 border border-neutral-800 rounded text-sm text-neutral-200">
-                            <div className="text-xs text-neutral-400 mb-2">{t('phonology.unclassified_consonants') || 'Unclassified consonants (from AI)'}</div>
+                            <div className="text-xs text-neutral-400 mb-2">{t('phonology.unclassified_consonants')}</div>
                             <div className="flex flex-wrap gap-2">
                                 {unclassifiedConsonants.map((p, i) => (
                                     <span key={`uncons-${i}`} className="px-2 py-1 bg-neutral-800 rounded font-serif text-lg">{p.symbol}</span>
@@ -238,14 +238,14 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             <tr>
                                 <th className="p-2"></th>
                                 {PLACES.map(place => (
-                                    <th key={place} className="p-2 text-xs font-bold text-neutral-500 uppercase rotate-0">{place}</th>
+                                    <th key={place} className="p-2 text-xs font-bold text-neutral-500 uppercase rotate-0">{t(`phonology.place.${place}`)}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
                             {MANNERS.map(manner => (
                                 <tr key={manner} className="border-t border-neutral-800">
-                                    <th className="p-2 text-xs font-bold text-neutral-500 uppercase text-right whitespace-nowrap pr-4">{manner}</th>
+                                    <th className="p-2 text-xs font-bold text-neutral-500 uppercase text-right whitespace-nowrap pr-4">{t(`phonology.manner.${manner}`)}</th>
                                     {PLACES.map(place => {
                                         const phonemes = getConsonants(manner, place).filter(p => p.symbol);
                                         return (
@@ -301,9 +301,9 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
 
                         <div className="grid grid-cols-3 grid-rows-7 h-full w-full gap-2">
                             {/* Header Row */}
-                            <div className="text-center text-xs text-neutral-500">Front</div>
-                            <div className="text-center text-xs text-neutral-500">Central</div>
-                            <div className="text-center text-xs text-neutral-500">Back</div>
+                            <div className="text-center text-xs text-neutral-500">{t('phonology.vowel_front')}</div>
+                            <div className="text-center text-xs text-neutral-500">{t('phonology.vowel_central')}</div>
+                            <div className="text-center text-xs text-neutral-500">{t('phonology.vowel_back')}</div>
 
                             {/* Rows */}
                             {HEIGHTS.map((height, rIdx) => (
@@ -321,7 +321,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                                 }}
                                             >
                                                 {/* Label only on left column */}
-                                                {cIdx === 0 && <span className="absolute -left-16 text-[10px] text-neutral-600 uppercase w-12 text-right pointer-events-none">{height}</span>}
+                                                {cIdx === 0 && <span className="absolute -left-16 text-[10px] text-neutral-600 uppercase w-12 text-right pointer-events-none">{t(`phonology.height.${height}`)}</span>}
 
                                                 {vowels.length > 0 ? (
                                                     vowels.map((v, i) => (
@@ -348,13 +348,13 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                         </div>
                     </div>
                     <div className="text-center mt-4 text-xs text-neutral-500 flex justify-center gap-4">
-                        <span className="flex items-center gap-1"><span className="w-2 h-2 bg-blue-300 rounded-full"></span> Unrounded</span>
-                        <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-400 rounded-full"></span> Rounded</span>
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 bg-blue-300 rounded-full"></span> {t('phonology.unrounded')}</span>
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-400 rounded-full"></span> {t('phonology.rounded')}</span>
                     </div>
 
                     {unclassifiedVowels.length > 0 && (
                         <div className="mt-4 p-3 bg-neutral-900 border border-neutral-800 rounded text-sm text-neutral-200">
-                            <div className="text-xs text-neutral-400 mb-2">{t('phonology.unclassified_vowels') || 'Unclassified vowels (from AI)'}</div>
+                            <div className="text-xs text-neutral-400 mb-2">{t('phonology.unclassified_vowels')}</div>
                             <div className="flex flex-wrap gap-2 justify-center">
                                 {unclassifiedVowels.map((v, i) => (
                                     <span key={`unvow-${i}`} className="px-2 py-1 bg-neutral-800 rounded font-serif text-xl">{v.symbol}</span>
@@ -373,7 +373,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                         <div className="px-6 py-4 border-b border-neutral-800 flex justify-between items-center bg-neutral-950">
                             <h3 className="text-md font-bold text-neutral-100 flex items-center gap-2 capitalize">
                                 <Plus size={16} className="text-blue-500" />
-                                Add {editingPhoneme.type}
+                                {editingPhoneme.type === 'consonant' ? t('phonology.add_consonant') : t('phonology.add_vowel')}
                             </h3>
                             <button onClick={() => setEditingPhoneme(null)} className="text-neutral-500 hover:text-white">
                                 <X size={18} />
@@ -382,19 +382,19 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                         <div className="p-6 space-y-4">
                             <div className="text-xs text-neutral-500 uppercase font-bold text-center">
                                 {editingPhoneme.type === 'consonant'
-                                    ? `${editingPhoneme.place} ${editingPhoneme.manner}`
-                                    : `${editingPhoneme.height} ${editingPhoneme.backness}`
+                                    ? `${t(`phonology.place.${editingPhoneme.place}`)} ${t(`phonology.manner.${editingPhoneme.manner}`)}`
+                                    : `${t(`phonology.height.${editingPhoneme.height}`)} ${t(`phonology.backness.${editingPhoneme.backness}`)}`
                                 }
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase">Symbol</label>
+                                <label className="text-xs font-semibold text-neutral-400 uppercase">{t('phonology.symbol_label')}</label>
                                 <input
                                     autoFocus
                                     value={symbol}
                                     onChange={(e) => setSymbol(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSavePhoneme()}
                                     className="w-full bg-neutral-950 border border-neutral-700 rounded p-3 text-neutral-100 font-serif text-2xl text-center focus:border-blue-500 outline-none"
-                                    placeholder="?"
+                                    placeholder={t('phonology.symbol_placeholder')}
                                 />
                             </div>
                             {editingPhoneme.type === 'consonant' ? (
@@ -408,7 +408,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                     <div className={`w-10 h-6 rounded-full transition-colors relative ${voiced ? 'bg-blue-600' : 'bg-neutral-700'}`}>
                                         <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${voiced ? 'translate-x-4' : ''}`} />
                                     </div>
-                                    <span className="text-sm text-neutral-300">Voiced</span>
+                                    <span className="text-sm text-neutral-300">{t('phonology.voiced')}</span>
                                 </label>
                             ) : (
                                 <label className="flex items-center gap-3 cursor-pointer group">
@@ -421,18 +421,18 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                     <div className={`w-10 h-6 rounded-full transition-colors relative ${rounded ? 'bg-amber-600' : 'bg-neutral-700'}`}>
                                         <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${rounded ? 'translate-x-4' : ''}`} />
                                     </div>
-                                    <span className="text-sm text-neutral-300">Rounded</span>
+                                    <span className="text-sm text-neutral-300">{t('phonology.rounded')}</span>
                                 </label>
                             )}
                         </div>
                         <div className="px-6 py-4 bg-neutral-950 border-t border-neutral-800 flex justify-end gap-3">
-                            <button onClick={() => setEditingPhoneme(null)} className="px-4 py-2 text-neutral-400 hover:text-white text-sm">Cancel</button>
+                            <button onClick={() => setEditingPhoneme(null)} className="px-4 py-2 text-neutral-400 hover:text-white text-sm">{t('common.cancel')}</button>
                             <button
                                 onClick={handleSavePhoneme}
                                 disabled={!symbol}
                                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-bold rounded flex items-center gap-2"
                             >
-                                <Check size={16} /> Save
+                                <Check size={16} /> {t('common.save')}
                             </button>
                         </div>
                     </div>
@@ -445,7 +445,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     <div className="bg-neutral-950 px-4 py-3 border-b border-neutral-800 flex justify-between items-center cursor-pointer" onClick={() => setIsPreviewMinimized(!isPreviewMinimized)}>
                         <h3 className="text-sm font-bold text-neutral-200 flex items-center gap-2">
                             <Wand2 size={14} className="text-purple-400" />
-                            AI Generation Review
+                            {t('phonology.ai_review')}
                         </h3>
                         <div className="flex items-center gap-2">
                             <button onClick={(e) => { e.stopPropagation(); setIsPreviewMinimized(!isPreviewMinimized); }} className="text-neutral-500 hover:text-white">
@@ -461,14 +461,14 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                         <>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 <div className="space-y-1">
-                                    <div className="text-xs font-bold text-neutral-500 uppercase">Syllable Structure</div>
+                                    <div className="text-xs font-bold text-neutral-500 uppercase">{t('phonology.syllable_struct')}</div>
                                     <div className="text-emerald-400 font-mono text-sm bg-neutral-950 p-2 rounded border border-neutral-800">
                                         {pendingPhonology.syllableStructure || 'None'}
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <div className="text-xs font-bold text-neutral-500 uppercase">Consonants ({pendingPhonology.consonants.length})</div>
+                                    <div className="text-xs font-bold text-neutral-500 uppercase">{t('phonology.consonants')} ({pendingPhonology.consonants.length})</div>
                                     <div className="flex flex-wrap gap-1.5 p-2 bg-neutral-950 rounded border border-neutral-800 min-h-[50px]">
                                         {pendingPhonology.consonants.map((p, i) => (
                                             <span key={i} className="text-lg font-serif text-neutral-200 w-8 h-8 flex items-center justify-center bg-neutral-900 rounded" title={`${p.place} ${p.manner}`}>
@@ -479,7 +479,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 </div>
 
                                 <div className="space-y-1">
-                                    <div className="text-xs font-bold text-neutral-500 uppercase">Vowels ({pendingPhonology.vowels.length})</div>
+                                    <div className="text-xs font-bold text-neutral-500 uppercase">{t('phonology.vowels')} ({pendingPhonology.vowels.length})</div>
                                     <div className="flex flex-wrap gap-1.5 p-2 bg-neutral-950 rounded border border-neutral-800 min-h-[50px]">
                                         {pendingPhonology.vowels.map((v, i) => (
                                             <span key={i} className={`text-xl font-serif w-8 h-8 flex items-center justify-center bg-neutral-900 rounded ${v.rounded ? 'text-amber-400' : 'text-blue-300'}`} title={`${v.height} ${v.backness}`}>
@@ -491,7 +491,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
 
                                 {pendingPhonology.bannedCombinations.length > 0 && (
                                     <div className="space-y-1">
-                                        <div className="text-xs font-bold text-neutral-500 uppercase">Banned Combinations</div>
+                                        <div className="text-xs font-bold text-neutral-500 uppercase">{t('phonology.banned_combinations')}</div>
                                         <div className="text-xs text-red-400 p-2 bg-neutral-950 rounded border border-neutral-800">
                                             {pendingPhonology.bannedCombinations.join(', ')}
                                         </div>
@@ -501,7 +501,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 <div className="p-3 bg-blue-900/10 border border-blue-900/30 rounded-lg flex items-start gap-3">
                                     <AlertCircle size={16} className="text-blue-400 shrink-0 mt-0.5" />
                                     <p className="text-[11px] text-blue-200 leading-relaxed">
-                                        Review the sounds above. If you apply this generation, your current phonology will be <strong>replaced</strong>.
+                                        {t('phonology.replace_warning')}
                                     </p>
                                 </div>
                             </div>
@@ -511,13 +511,13 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                     onClick={discardPending}
                                     className="flex-1 py-2 text-xs font-bold text-neutral-400 hover:text-white transition-colors"
                                 >
-                                    Discard
+                                    {t('phonology.discard')}
                                 </button>
                                 <button
                                     onClick={confirmReplace}
                                     className="flex-[2] py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded flex items-center justify-center gap-2 transition-all"
                                 >
-                                    <Check size={14} /> Apply & Replace
+                                    <Check size={14} /> {t('phonology.apply_replace')}
                                 </button>
                             </div>
                         </>
