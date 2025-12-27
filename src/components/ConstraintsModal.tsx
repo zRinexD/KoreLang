@@ -98,7 +98,7 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
     const renderGlyphPreview = (char: string) => {
         if (!isScriptMode || !scriptConfig) return null;
         return (
-            <span className="text-purple-400 ml-2 font-normal">
+            <span className="ml-2 font-normal text-purple-400">
                 (<ConScriptText text={char} scriptConfig={scriptConfig} />)
             </span>
         )
@@ -121,7 +121,7 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                     }`}
             >
                 {icon}
-                <span className="text-xs font-bold uppercase tracking-wider">{label}</span>
+                <span className="text-xs font-bold tracking-wider uppercase">{label}</span>
             </button>
         );
     };
@@ -131,15 +131,15 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
             <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[85vh]">
 
                 {/* Header */}
-                <div className="flex justify-between items-center p-5 border-b border-slate-800 bg-slate-950">
+                <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-950">
                     <div>
-                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        <h2 className="flex items-center gap-2 text-xl font-bold text-white">
                             <ShieldCheck className="text-emerald-500" size={24} />
                             {t('menu.validation')}
                         </h2>
-                        <p className="text-slate-400 text-sm mt-1">{t('val.desc')}</p>
+                        <p className="mt-1 text-sm text-slate-400">{t('val.desc')}</p>
                     </div>
-                    <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors p-1 hover:bg-slate-800 rounded">
+                    <button onClick={onClose} className="p-1 transition-colors rounded text-slate-500 hover:text-white hover:bg-slate-800">
                         <X size={20} />
                     </button>
                 </div>
@@ -166,35 +166,35 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                 </div>
 
                 {/* Content Area */}
-                <div className="p-6 space-y-6 overflow-y-auto flex-1 bg-slate-900">
+                <div className="flex-1 p-6 space-y-6 overflow-y-auto bg-slate-900">
 
                     {activeTab === 'GENERAL' && (
                         <div className="space-y-6">
                             {/* Writing System Settings */}
-                            <div className="space-y-4 pb-4 border-b border-slate-800">
+                            <div className="pb-4 space-y-4 border-b border-slate-800">
                                 <div className="flex items-center gap-2">
                                     <Globe size={18} className="text-blue-400" />
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">{t('constraints.writing_system')}</h3>
+                                    <h3 className="text-sm font-bold tracking-widest uppercase text-slate-400">Writing System</h3>
                                 </div>
 
                                 {scriptConfig ? (
                                     <div className="space-y-3">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">{t('constraints.writing_direction')}</label>
+                                        <label className="text-xs font-bold uppercase text-slate-500">Writing Direction</label>
                                         <div className="grid grid-cols-3 gap-3">
-                                            {renderDirectionButton('ltr', <ArrowRightToLine size={24} className="rotate-0" />, t('constraints.dir_ltr'))}
-                                            {renderDirectionButton('rtl', <ArrowRightToLine size={24} className="rotate-180" />, t('constraints.dir_rtl'))}
-                                            {renderDirectionButton('ttb', <ArrowRightToLine size={24} className="rotate-90" />, t('constraints.dir_vertical'))}
+                                            {renderDirectionButton('ltr', <ArrowRightToLine size={24} className="rotate-0" />, 'LTR')}
+                                            {renderDirectionButton('rtl', <ArrowRightToLine size={24} className="rotate-180" />, 'RTL')}
+                                            {renderDirectionButton('ttb', <ArrowRightToLine size={24} className="rotate-90" />, 'Vertical')}
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="p-3 bg-red-900/20 text-red-400 text-xs border border-red-900/50 rounded">
-                                        {t('constraints.script_config_missing')}
+                                    <div className="p-3 text-xs text-red-400 border rounded bg-red-900/20 border-red-900/50">
+                                        Script Config not loaded.
                                     </div>
                                 )}
                             </div>
 
                             {/* Duplicate Check */}
-                            <div className="flex items-center justify-between p-4 bg-slate-950 rounded border border-slate-800">
+                            <div className="flex items-center justify-between p-4 border rounded bg-slate-950 border-slate-800">
                                 <div>
                                     <div className="text-sm font-bold text-slate-200">{t('lbl.allow_duplicates')}</div>
                                     <div className="text-xs text-slate-500">{t('lbl.allow_duplicates_desc')}</div>
@@ -211,7 +211,7 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                             </div>
 
                             {/* Case Sensitivity */}
-                            <div className="flex items-center justify-between p-4 bg-slate-950 rounded border border-slate-800">
+                            <div className="flex items-center justify-between p-4 border rounded bg-slate-950 border-slate-800">
                                 <div>
                                     <div className="text-sm font-bold text-slate-200">{t('lbl.case_sensitive')}</div>
                                     <div className="text-xs text-slate-500">{t('lbl.case_sensitive_desc')}</div>
@@ -229,12 +229,12 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
 
                             {/* Allowed Graphemes */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{t('lbl.allowed_chars')}</label>
+                                <label className="block text-xs font-bold tracking-wider uppercase text-slate-500">{t('lbl.allowed_chars')}</label>
                                 <textarea
                                     value={constraints.allowedGraphemes}
                                     onChange={(e) => onUpdateConstraints({ ...constraints, allowedGraphemes: e.target.value })}
-                                    className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-sm font-mono text-emerald-400 focus:border-emerald-500 focus:outline-none h-24 resize-none"
-                                    placeholder={t('val.allowed_chars_placeholder')}
+                                    className="w-full h-24 p-3 font-mono text-sm border rounded resize-none bg-slate-950 border-slate-700 text-emerald-400 focus:border-emerald-500 focus:outline-none"
+                                    placeholder="e.g. a-zàáeèéìíòóùúmnñ"
                                 />
                                 <p className="text-[10px] text-slate-500">
                                     {t('lbl.allowed_chars_desc')}
@@ -244,13 +244,13 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                                 <div className="pt-2">
                                     <div className="text-[10px] text-slate-500 uppercase font-bold mb-2">{t('sort.presets')}</div>
                                     <div className="flex flex-wrap gap-2">
-                                        <button onClick={() => applyPreset('a-zA-Z')} className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded border border-slate-700">{t('sort.preset_latin')}</button>
-                                        <button onClick={() => applyPreset('a-zA-Zà-žÀ-Ž')} className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded border border-slate-700">{t('sort.preset_latin_ext')}</button>
-                                        <button onClick={() => applyPreset('\\u0400-\\u04FF')} className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded border border-slate-700">{t('sort.preset_cyrillic')}</button>
-                                        <button onClick={() => applyPreset('\\u0370-\\u03FF')} className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded border border-slate-700">{t('sort.preset_greek')}</button>
-                                        <button onClick={() => applyPreset('\\u3040-\\u309F')} className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded border border-slate-700">{t('sort.preset_hiragana')}</button>
-                                        <button onClick={() => applyPreset('\\u30A0-\\u30FF')} className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded border border-slate-700">{t('sort.preset_katakana')}</button>
-                                        <button onClick={() => applyPreset('\\u0600-\\u06FF')} className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded border border-slate-700">{t('sort.preset_arabic')}</button>
+                                        <button onClick={() => applyPreset('a-zA-Z')} className="px-2 py-1 text-xs border rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700">{t('sort.preset_latin')}</button>
+                                        <button onClick={() => applyPreset('a-zA-Zà-žÀ-Ž')} className="px-2 py-1 text-xs border rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700">{t('sort.preset_latin_ext')}</button>
+                                        <button onClick={() => applyPreset('\\u0400-\\u04FF')} className="px-2 py-1 text-xs border rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700">{t('sort.preset_cyrillic')}</button>
+                                        <button onClick={() => applyPreset('\\u0370-\\u03FF')} className="px-2 py-1 text-xs border rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700">{t('sort.preset_greek')}</button>
+                                        <button onClick={() => applyPreset('\\u3040-\\u309F')} className="px-2 py-1 text-xs border rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700">{t('sort.preset_hiragana')}</button>
+                                        <button onClick={() => applyPreset('\\u30A0-\\u30FF')} className="px-2 py-1 text-xs border rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700">{t('sort.preset_katakana')}</button>
+                                        <button onClick={() => applyPreset('\\u0600-\\u06FF')} className="px-2 py-1 text-xs border rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700">{t('sort.preset_arabic')}</button>
                                     </div>
                                 </div>
                             </div>
@@ -261,40 +261,40 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                         <div className="space-y-6">
                             {/* Banned Sequences */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{t('val.banned_seq')}</label>
-                                <div className="bg-slate-950 border border-slate-800 rounded p-4">
+                                <label className="block text-xs font-bold tracking-wider uppercase text-slate-500">{t('val.banned_seq')}</label>
+                                <div className="p-4 border rounded bg-slate-950 border-slate-800">
                                     <input
                                         type="text"
                                         placeholder={t('val.banned_placeholder')}
                                         onKeyDown={handleAddBanned}
-                                        className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-red-500 focus:outline-none mb-3"
+                                        className="w-full p-2 mb-3 text-sm text-white border rounded bg-slate-900 border-slate-700 focus:border-red-500 focus:outline-none"
                                     />
                                     <div className="flex flex-wrap gap-2">
                                         {constraints.bannedSequences.map(seq => (
-                                            <div key={seq} className="flex items-center gap-1 bg-red-900/30 text-red-200 border border-red-800/50 px-2 py-1 rounded text-xs">
+                                            <div key={seq} className="flex items-center gap-1 px-2 py-1 text-xs text-red-200 border rounded bg-red-900/30 border-red-800/50">
                                                 <span>{seq}</span>
                                                 {renderGlyphPreview(seq)}
                                                 <button onClick={() => removeBanned(seq)} className="hover:text-white"><X size={12} /></button>
                                             </div>
                                         ))}
-                                        {constraints.bannedSequences.length === 0 && <span className="text-xs text-slate-600 italic">{t('val.no_bans')}</span>}
+                                        {constraints.bannedSequences.length === 0 && <span className="text-xs italic text-slate-600">{t('val.no_bans')}</span>}
                                     </div>
                                 </div>
                             </div>
 
                             {/* Phonotactic Structure */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{t('lbl.structure')}</label>
+                                <label className="block text-xs font-bold tracking-wider uppercase text-slate-500">{t('lbl.structure')}</label>
                                 <input
                                     type="text"
                                     value={constraints.phonotacticStructure}
                                     onChange={(e) => onUpdateConstraints({ ...constraints, phonotacticStructure: e.target.value })}
-                                    className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-sm font-mono text-amber-400 focus:border-amber-500 focus:outline-none"
-                                    placeholder={t('val.structure_placeholder')}
+                                    className="w-full p-3 font-mono text-sm border rounded bg-slate-950 border-slate-700 text-amber-400 focus:border-amber-500 focus:outline-none"
+                                    placeholder="e.g. ^(C)(V)(C)$"
                                 />
                                 <p className="text-[10px] text-slate-500">
                                     {t('lbl.structure_desc')}
-                                    <br />Example: <code className="bg-slate-800 px-1 text-slate-300">^C?VC?$</code> allows "am", "pam", "pa".
+                                    <br />Example: <code className="px-1 bg-slate-800 text-slate-300">^C?VC?$</code> allows "am", "pam", "pa".
                                 </p>
                             </div>
                         </div>
@@ -305,15 +305,15 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
 
                             {/* Must Start With */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{t('lbl.starts_with')}</label>
-                                <div className="bg-slate-950 border border-slate-800 rounded p-4">
+                                <label className="block text-xs font-bold tracking-wider uppercase text-slate-500">{t('lbl.starts_with')}</label>
+                                <div className="p-4 border rounded bg-slate-950 border-slate-800">
                                     <div className="flex gap-2 mb-3">
                                         <input
                                             type="text"
                                             value={startRuleValue}
                                             onChange={(e) => setStartRuleValue(e.target.value)}
                                             placeholder={t('val.target_placeholder')}
-                                            className="flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-blue-500 focus:outline-none"
+                                            className="flex-1 p-2 text-sm text-white border rounded bg-slate-900 border-slate-700 focus:border-blue-500 focus:outline-none"
                                         />
                                         {/* LIVE PREVIEW IN INPUT */}
                                         {startRuleValue && renderGlyphPreview(startRuleValue)}
@@ -329,7 +329,7 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                                         </select>
                                         <button
                                             onClick={() => handleAddConditionalRule('mustStartWith')}
-                                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 rounded font-bold"
+                                            className="px-3 font-bold text-white bg-blue-600 rounded hover:bg-blue-700"
                                         >
                                             +
                                         </button>
@@ -337,29 +337,29 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
 
                                     <div className="flex flex-wrap gap-2">
                                         {constraints.mustStartWith.map((rule, idx) => (
-                                            <div key={idx} className="flex items-center gap-1 bg-blue-900/30 text-blue-200 border border-blue-800/50 px-2 py-1 rounded text-xs">
+                                            <div key={idx} className="flex items-center gap-1 px-2 py-1 text-xs text-blue-200 border rounded bg-blue-900/30 border-blue-800/50">
                                                 <span className="font-mono font-bold">{rule.target}</span>
                                                 {renderGlyphPreview(rule.target)}
                                                 {rule.conditionPos && <span className="text-[10px] bg-slate-800 px-1 rounded ml-1 text-slate-400">{getPosLabel(rule.conditionPos)}</span>}
-                                                <button onClick={() => removeConditionalRule('mustStartWith', idx)} className="hover:text-white ml-1"><X size={12} /></button>
+                                                <button onClick={() => removeConditionalRule('mustStartWith', idx)} className="ml-1 hover:text-white"><X size={12} /></button>
                                             </div>
                                         ))}
-                                        {constraints.mustStartWith.length === 0 && <span className="text-xs text-slate-600 italic">{t('val.no_restrictions')}</span>}
+                                        {constraints.mustStartWith.length === 0 && <span className="text-xs italic text-slate-600">{t('val.no_restrictions')}</span>}
                                     </div>
                                 </div>
                             </div>
 
                             {/* Must End With */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{t('lbl.ends_with')}</label>
-                                <div className="bg-slate-950 border border-slate-800 rounded p-4">
+                                <label className="block text-xs font-bold tracking-wider uppercase text-slate-500">{t('lbl.ends_with')}</label>
+                                <div className="p-4 border rounded bg-slate-950 border-slate-800">
                                     <div className="flex gap-2 mb-3">
                                         <input
                                             type="text"
                                             value={endRuleValue}
                                             onChange={(e) => setEndRuleValue(e.target.value)}
                                             placeholder={t('val.target_placeholder')}
-                                            className="flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-blue-500 focus:outline-none"
+                                            className="flex-1 p-2 text-sm text-white border rounded bg-slate-900 border-slate-700 focus:border-blue-500 focus:outline-none"
                                         />
                                         {endRuleValue && renderGlyphPreview(endRuleValue)}
                                         <select
@@ -373,7 +373,7 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                                         </select>
                                         <button
                                             onClick={() => handleAddConditionalRule('mustEndWith')}
-                                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 rounded font-bold"
+                                            className="px-3 font-bold text-white bg-blue-600 rounded hover:bg-blue-700"
                                         >
                                             +
                                         </button>
@@ -381,14 +381,14 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
 
                                     <div className="flex flex-wrap gap-2">
                                         {constraints.mustEndWith.map((rule, idx) => (
-                                            <div key={idx} className="flex items-center gap-1 bg-blue-900/30 text-blue-200 border border-blue-800/50 px-2 py-1 rounded text-xs">
+                                            <div key={idx} className="flex items-center gap-1 px-2 py-1 text-xs text-blue-200 border rounded bg-blue-900/30 border-blue-800/50">
                                                 <span className="font-mono font-bold">{rule.target}</span>
                                                 {renderGlyphPreview(rule.target)}
                                                 {rule.conditionPos && <span className="text-[10px] bg-slate-800 px-1 rounded ml-1 text-slate-400">{getPosLabel(rule.conditionPos)}</span>}
-                                                <button onClick={() => removeConditionalRule('mustEndWith', idx)} className="hover:text-white ml-1"><X size={12} /></button>
+                                                <button onClick={() => removeConditionalRule('mustEndWith', idx)} className="ml-1 hover:text-white"><X size={12} /></button>
                                             </div>
                                         ))}
-                                        {constraints.mustEndWith.length === 0 && <span className="text-xs text-slate-600 italic">{t('val.no_restrictions')}</span>}
+                                        {constraints.mustEndWith.length === 0 && <span className="text-xs italic text-slate-600">{t('val.no_restrictions')}</span>}
                                     </div>
                                 </div>
                             </div>
@@ -400,25 +400,25 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
                         <div className="space-y-6">
                             {/* Custom Order */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{t('sort.custom_order')}</label>
+                                <label className="block text-xs font-bold tracking-wider uppercase text-slate-500">{t('sort.custom_order')}</label>
                                 <textarea
                                     value={constraints.customSortingOrder || ''}
                                     onChange={(e) => onUpdateConstraints({ ...constraints, customSortingOrder: e.target.value })}
-                                    className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-sm font-mono text-blue-400 focus:border-blue-500 focus:outline-none h-24 resize-none placeholder-slate-600"
-                                    placeholder={t('val.custom_sort_placeholder')}
+                                    className="w-full h-24 p-3 font-mono text-sm text-blue-400 border rounded resize-none bg-slate-950 border-slate-700 focus:border-blue-500 focus:outline-none placeholder-slate-600"
+                                    placeholder="a b c d e f g..."
                                 />
                                 <p className="text-[10px] text-slate-500">{t('sort.custom_order_desc')}</p>
                             </div>
 
                             {/* Locale Selector */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-2">
+                                <label className="items-center gap-2 text-xs font-bold tracking-wider uppercase text-slate-500 block-flex">
                                     <Globe size={14} /> {t('sort.locale')}
                                 </label>
                                 <select
                                     value={constraints.sortingLocale || 'en'}
                                     onChange={(e) => onUpdateConstraints({ ...constraints, sortingLocale: e.target.value })}
-                                    className="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
+                                    className="w-full p-2 text-sm border rounded outline-none bg-slate-950 border-slate-700 text-slate-200 focus:border-blue-500"
                                 >
                                     <option value="en">English (Default)</option>
                                     <option value="zh-CN">Chinese (Pinyin)</option>
@@ -435,10 +435,10 @@ const ConstraintsModal: React.FC<ConstraintsModalProps> = ({ isOpen, onClose, co
 
                 </div>
 
-                <div className="p-4 bg-slate-950 border-t border-slate-800 flex justify-end">
+                <div className="flex justify-end p-4 border-t bg-slate-950 border-slate-800">
                     <button
                         onClick={onClose}
-                        className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg shadow-lg shadow-emerald-900/20 flex items-center gap-2 transition-all active:scale-95"
+                        className="flex items-center gap-2 px-6 py-2 text-sm font-bold text-white transition-all rounded-lg shadow-lg bg-emerald-600 hover:bg-emerald-700 shadow-emerald-900/20 active:scale-95"
                     >
                         <CheckCircle size={16} />
                         {t('settings.done')}
