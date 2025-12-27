@@ -27,13 +27,6 @@ const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ isOpen, onClose }) => {
             title: t('whats_new.f1_title'),
             desc: t('whats_new.f1_desc')
         },
-        {
-            icon: MoveHorizontal,
-            color: 'text-blue-400',
-            bg: 'bg-blue-500/10',
-            title: t('whats_new.f2_title'),
-            desc: t('whats_new.f2_desc')
-        },
     ];
 
     return (
@@ -63,18 +56,6 @@ const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ isOpen, onClose }) => {
                                     <p className="text-xs text-[var(--text-2)] leading-relaxed">
                                         {feature.desc}
                                     </p>
-                                    {i === 0 && (
-                                        <div className="mt-3 p-3 bg-white/5 rounded-xl border border-white/5 max-h-32 overflow-y-auto custom-scrollbar">
-                                            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                                                {languages.map(lang => (
-                                                    <div key={lang.code} className="flex items-center gap-2 text-[10px] text-[var(--text-2)] hover:text-[var(--text-1)] transition-colors">
-                                                        <span className="w-1 h-1 rounded-full bg-[var(--accent)]/50"></span>
-                                                        <span className="truncate">{lang.label}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         ))}

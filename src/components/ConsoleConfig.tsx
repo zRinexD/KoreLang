@@ -294,7 +294,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
     return (
         <div className="h-full flex flex-col bg-[var(--bg-main)] font-mono text-sm relative">
             <div className="p-2 bg-[var(--bg-panel)] border-b border-white/5 flex justify-between items-center text-xs text-[var(--text-2)]">
-                <span className="flex items-center gap-2"><Terminal size={14} /> KoreLang kernel_v1.1_stable</span>
+                <span className="flex items-center gap-2"><Terminal size={14} /> {t('console.kernel_version')}</span>
                 <span className="flex items-center gap-2">
                     {loadingAI && <Zap size={12} className="animate-pulse text-purple-500" />}
                     SYSTEM_READY

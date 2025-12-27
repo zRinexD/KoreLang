@@ -57,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenProjectSe
           </h1>
           <p className="text-[10px] text-neutral-500 mt-1 uppercase tracking-wider font-semibold ms-7 flex items-center gap-2">
             {t('app.subtitle')}
-            <span className="text-[11px] bg-neutral-800 text-neutral-400 px-1.5 py-0.5 rounded border border-neutral-700 lowercase font-mono">v1.1</span>
+            <span className="text-[11px] bg-neutral-800 text-neutral-400 px-1.5 py-0.5 rounded border border-neutral-700 lowercase font-mono">v1.1.1</span>
           </p>
         </div>
         {onToggleSidebar && (

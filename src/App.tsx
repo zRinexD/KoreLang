@@ -193,8 +193,8 @@ const AppContent: React.FC = () => {
     }
     setIsLoaded(true);
 
-    // Logic for What's New Panel (v1.1)
-    const WHATS_NEW_KEY = 'whats_new_v1.1_seen';
+    // Logic for What's New Panel (v1.1.1)
+    const WHATS_NEW_KEY = 'whats_new_v1.1.1_seen';
     const hasSeen = sessionStorage.getItem(WHATS_NEW_KEY);
     if (!hasSeen) {
       setIsWhatsNewOpen(true);
@@ -203,12 +203,12 @@ const AppContent: React.FC = () => {
 
   const closeWhatsNew = () => {
     setIsWhatsNewOpen(false);
-    sessionStorage.setItem('whats_new_v1.1_seen', 'true');
+    sessionStorage.setItem('whats_new_v1.1.1_seen', 'true');
   };
 
   useEffect(() => {
     if (!isLoaded) return;
-    const projectData: ProjectData = { version: "1.1", name: projectName, author: projectAuthor, description: projectDescription, lexicon, grammar, morphology, phonology, evolutionRules: rules, constraints, scriptConfig, notebook, lastModified: Date.now() };
+    const projectData: ProjectData = { version: "1.1.1", name: projectName, author: projectAuthor, description: projectDescription, lexicon, grammar, morphology, phonology, evolutionRules: rules, constraints, scriptConfig, notebook, lastModified: Date.now() };
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData)); } catch (e) { console.error("Auto-save failed", e); }
   }, [projectName, projectAuthor, projectDescription, lexicon, grammar, morphology, phonology, rules, constraints, scriptConfig, notebook, isLoaded]);
 
@@ -228,7 +228,7 @@ const AppContent: React.FC = () => {
     setIsWizardOpen(false);
   };
 
-  const getFullProjectData = (): ProjectData => ({ version: "1.1", name: projectName, author: projectAuthor, description: projectDescription, lexicon, grammar, morphology, phonology, evolutionRules: rules, constraints, scriptConfig, notebook, lastModified: Date.now() });
+  const getFullProjectData = (): ProjectData => ({ version: "1.1.1", name: projectName, author: projectAuthor, description: projectDescription, lexicon, grammar, morphology, phonology, evolutionRules: rules, constraints, scriptConfig, notebook, lastModified: Date.now() });
 
   const renderView = () => {
     const commonProps = { scriptConfig, isScriptMode };
@@ -271,7 +271,7 @@ const AppContent: React.FC = () => {
       <footer className="h-6 bg-[var(--bg-panel)] border-t border-neutral-700 flex items-center px-4 text-xs text-[var(--text-2)] gap-4 shrink-0 z-50 relative">
         <span className="flex items-center gap-1 text-emerald-500 font-bold"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>{t('footer.auto_saved')}</span>
         <span className="text-neutral-400">{projectName}</span>
-        <span className="text-neutral-500/80 font-mono text-[11px]">v1.1</span>
+        <span className="text-neutral-500/80 font-mono text-[11px]">v1.1.1</span>
         <span className="ml-auto">Ln 1, Col 1</span>
         <span>{lexicon.length} {t('footer.words')}</span>
         <span>{settings.enableAI ? t('footer.ai_ready') : t('footer.ai_off')}</span>
