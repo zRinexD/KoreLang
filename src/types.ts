@@ -151,7 +151,7 @@ export interface ProjectConstraints {
   sortingLocale?: string;
 }
 
-export type ViewState = 'DASHBOARD' | 'LEXICON' | 'GRAMMAR' | 'PHONOLOGY' | 'GENEVOLVE' | 'CONSOLE' | 'SOURCE' | 'SCRIPT' | 'NOTEBOOK';
+export type ViewState = 'DASHBOARD' | 'LEXICON' | 'GRAMMAR' | 'PHONOLOGY' | 'GENEVOLVE' | 'CONSOLE' | 'SCRIPT' | 'NOTEBOOK';
 
 export interface CustomTheme {
   bgMain: string;
