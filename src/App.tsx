@@ -37,28 +37,6 @@ const AppContent: React.FC = () => {
   const ui = useUI();
   useWhatsNewOnBoot(ui);
 
-  const onWizardSubmit = (
-    data: {
-      name: string;
-      author: string;
-      description: string;
-      constraints?: Partial<ProjectConstraints>;
-    },
-    mode: "create" | "edit"
-  ) => {
-    setProjectName(data.name);
-    setProjectAuthor(data.author);
-    setProjectDescription(data.description);
-    if (data.constraints)
-      setConstraints((c) => ({ ...c, ...data.constraints }));
-
-    if (mode === "create") {
-      setCurrentView("DASHBOARD");
-    }
-
-    ui.close("wizard"); 
-  };
-
   const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [wizardMode, setWizardMode] = useState<"create" | "edit">("create");
@@ -344,47 +322,11 @@ const AppContent: React.FC = () => {
         <span>AI: {settings.enableAI ? "READY" : "OFF"}</span>
       </footer>
 
-      <SettingsModal
-        isOpen={ui.isOpen("settings")}
-        onClose={() => ui.close("settings")}
-        settings={settings}
-        onUpdateSettings={setSettings}
-      />
-
-      <ConstraintsModal
-        isOpen={ui.isOpen("constraints")}
-        onClose={() => ui.close("constraints")}
-        constraints={constraints}
-        onUpdateConstraints={setConstraints}
-        scriptConfig={scriptConfig}
-        isScriptMode={isScriptMode}
-        onUpdateScriptConfig={setScriptConfig}
-      />
-
-      <ProjectWizard
-        isOpen={ui.isOpen("wizard")}
-        mode={wizardMode} 
-        initialData={{
-          name: wizardMode === "create" ? "" : projectName,
-          author: wizardMode === "create" ? "" : projectAuthor,
-          description: wizardMode === "create" ? "" : projectDescription,
-        }}
-        onClose={() => ui.close("wizard")}
-        onSubmit={(data) => onWizardSubmit(data, wizardMode)}
-      />
-
-      <AboutModal
-        isOpen={ui.isOpen("about")}
-        onClose={() => ui.close("about")}
-      />
-
-      <WhatsNewModal
-        isOpen={ui.isOpen("whatsNew")}
-        onClose={() => {
-          ui.close("whatsNew");
-          sessionStorage.setItem("whats_new_v1.1_seen", "true");
-        }}
-      />
+      <SettingsModal />
+      <ConstraintsModal />
+      <ProjectWizard />
+      <AboutModal />
+      <WhatsNewModal />
     </div>
   );
 };

@@ -11,7 +11,7 @@ import {
 
 const STORAGE_KEY = "conlang_studio_autosave";
 
-const INITIAL_CONSTRAINTS_TEMPLATE: ProjectConstraints = {
+const INITIAL_CONSTRAINTS: ProjectConstraints = {
   allowDuplicates: true,
   caseSensitive: false,
   bannedSequences: [],
@@ -21,7 +21,7 @@ const INITIAL_CONSTRAINTS_TEMPLATE: ProjectConstraints = {
   mustEndWith: [],
 };
 
-const INITIAL_SCRIPT_CONFIG: ScriptConfig = {
+const INITIAL_SCRIPT: ScriptConfig = {
   name: "Standard Script",
   direction: "ltr",
   glyphs: [],
@@ -34,10 +34,7 @@ export const useProject = () => {
   const [projectDescription, setProjectDescription] = useState("");
   const [lexicon, setLexicon] = useState<LexiconEntry[]>([]);
   const [grammar, setGrammar] = useState("");
-  const [morphology, setMorphology] = useState<MorphologyState>({
-    dimensions: [],
-    paradigms: [],
-  });
+  const [morphology, setMorphology] = useState<MorphologyState>({ dimensions: [], paradigms: [] });
   const [phonology, setPhonology] = useState<PhonologyConfig>({
     name: "Default Phonology",
     description: "",
@@ -47,29 +44,32 @@ export const useProject = () => {
     bannedCombinations: [],
   });
   const [rules, setRules] = useState<SoundChangeRule[]>([]);
-  const [constraints, setConstraints] = useState<ProjectConstraints>(
-    INITIAL_CONSTRAINTS_TEMPLATE
-  );
-  const [scriptConfig, setScriptConfig] = useState<ScriptConfig>(
-    INITIAL_SCRIPT_CONFIG
-  );
+  const [constraints, setConstraints] = useState<ProjectConstraints>(INITIAL_CONSTRAINTS);
+  const [scriptConfig, setScriptConfig] = useState<ScriptConfig>(INITIAL_SCRIPT);
   const [notebook, setNotebook] = useState("");
 
   const loadProjectData = (data: ProjectData) => {
-    if (data.name) setProjectName(data.name);
+    setProjectName(data.name || "Untitled");
     setProjectAuthor(data.author || "Unknown");
     setProjectDescription(data.description || "");
-    if (data.lexicon) setLexicon(data.lexicon);
-    if (data.grammar) setGrammar(data.grammar);
-    if (data.morphology) setMorphology(data.morphology);
-    if (data.phonology) setPhonology(data.phonology);
-    if (data.evolutionRules) setRules(data.evolutionRules);
-    if (data.scriptConfig) setScriptConfig(data.scriptConfig || INITIAL_SCRIPT_CONFIG);
+    setLexicon(data.lexicon || []);
+    setGrammar(data.grammar || "");
+    setMorphology(data.morphology || { dimensions: [], paradigms: [] });
+    setPhonology(data.phonology || {
+      name: "Default Phonology",
+      description: "",
+      consonants: [],
+      vowels: [],
+      syllableStructure: "",
+      bannedCombinations: [],
+    });
+    setRules(data.evolutionRules || []);
+    setScriptConfig(data.scriptConfig || INITIAL_SCRIPT);
     setNotebook(data.notebook || "");
-    if (data.constraints)
-      setConstraints({ ...INITIAL_CONSTRAINTS_TEMPLATE, ...data.constraints });
+    setConstraints({ ...INITIAL_CONSTRAINTS, ...(data.constraints || {}) });
   };
 
+  // Load project from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -81,6 +81,7 @@ export const useProject = () => {
     }
   }, []);
 
+  // Auto-save project to localStorage
   useEffect(() => {
     const projectData: ProjectData = {
       version: "1.1",
@@ -97,7 +98,6 @@ export const useProject = () => {
       notebook,
       lastModified: Date.now(),
     };
-
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData));
     } catch (e) {
