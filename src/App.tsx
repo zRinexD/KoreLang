@@ -99,8 +99,8 @@ const AppContent: React.FC = () => {
       />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar ref={sidebarRef} {...project.sidebarProps} />
-        <main className="flex flex-col flex-1 overflow-hidden" style={{ zoom: zoomLevel / 100 }}>
-          <div className="flex-1 min-h-0 overflow-hidden">
+        <main className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex-1 min-h-0 overflow-hidden" style={{ zoom: zoomLevel / 100 }}>
             <ProjectView 
               currentView={project.currentView as ViewState} 
               {...project.states}

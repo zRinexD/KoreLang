@@ -53,6 +53,9 @@ export function useShortcuts({
           executeCommand(
             e.key === "ArrowUp" ? "maximizeConsole" : "minimizeConsole"
           );
+        } else if (e.key.toLowerCase() === "q") {
+          e.preventDefault();
+          executeCommand("closeConsole");
         }
       }
     };
