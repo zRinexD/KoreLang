@@ -3,7 +3,7 @@ import { UIModal, UIOverlay } from "./types";
 
 type UIState = Partial<Record<UIModal, boolean>>;
 
-interface UIContextValue {
+export interface UIContextValue {
   state: UIState;
   open: (modal: UIModal) => void;
   close: (modal: UIModal) => void;

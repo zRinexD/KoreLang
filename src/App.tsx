@@ -29,17 +29,17 @@ import {
 
 import { LanguageProvider, i18n } from "./i18n";
 import { UIProvider, useUI } from "./ui/UIContext";
+import { useWhatsNewOnBoot } from "./hooks/useWhatsNewOnBoot";
 
 const SETTINGS_STORAGE_KEY = "conlang_studio_settings";
 
-const ui = useUI();
-
 const AppContent: React.FC = () => {
   /* ---------------- UI STATE ---------------- */
+  const ui = useUI();
+  useWhatsNewOnBoot(ui);
 
   const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
-  const [isWhatsNewOpen, setIsWhatsNewOpen] = useState(false);
   const [wizardMode, setWizardMode] = useState<"create" | "edit">("create");
   const [isScriptMode, setIsScriptMode] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(100);
@@ -82,7 +82,7 @@ const AppContent: React.FC = () => {
       a.click();
     },
     openProject: promptOpenProject,
-    openSettings: () =>ui.open("settings"),
+    openSettings: () => ui.open("settings"),
     openProjectSettings: () => {
       setWizardMode("edit");
       ui.open("wizard");
@@ -190,18 +190,6 @@ const AppContent: React.FC = () => {
     onZoomIn: () => setZoomLevel((z) => Math.min(z + 10, 150)),
     onZoomOut: () => setZoomLevel((z) => Math.max(z - 10, 50)),
   });
-
-  /* ---------------- WHATS NEW ---------------- */
-
-  useEffect(() => {
-    const key = "whats_new_v1.1_seen";
-    if (!sessionStorage.getItem(key)) setIsWhatsNewOpen(true);
-  }, []);
-
-  const closeWhatsNew = () => {
-    setIsWhatsNewOpen(false);
-    sessionStorage.setItem("whats_new_v1.1_seen", "true");
-  };
 
   /* ---------------- WIZARD ---------------- */
 
@@ -364,7 +352,7 @@ const AppContent: React.FC = () => {
 
       <SettingsModal
         isOpen={ui.isOpen("settings")}
-        onClose={() =>ui.close("settings")}
+        onClose={() => ui.close("settings")}
         settings={settings}
         onUpdateSettings={setSettings}
       />
@@ -396,7 +384,13 @@ const AppContent: React.FC = () => {
         onClose={() => ui.close("about")}
       />
 
-      <WhatsNewModal isOpen={isWhatsNewOpen} onClose={closeWhatsNew} />
+      <WhatsNewModal
+        isOpen={ui.isOpen("whatsNew")}
+        onClose={() => {
+          ui.close("whatsNew");
+          sessionStorage.setItem("whats_new_v1.1_seen", "true");
+        }}
+      />
     </div>
   );
 };
