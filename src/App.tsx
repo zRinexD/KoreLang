@@ -99,13 +99,15 @@ const AppContent: React.FC = () => {
       />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar ref={sidebarRef} {...project.sidebarProps} />
-        <main className="flex-1 overflow-hidden" style={{ zoom: zoomLevel / 100 }}>
-          <ProjectView 
-            currentView={project.currentView as ViewState} 
-            {...project.states}
-            isScriptMode={isScriptMode}
-            setCurrentView={project.setCurrentView}
-          />
+        <main className="flex flex-col flex-1 overflow-hidden" style={{ zoom: zoomLevel / 100 }}>
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <ProjectView 
+              currentView={project.currentView as ViewState} 
+              {...project.states}
+              isScriptMode={isScriptMode}
+              setCurrentView={project.setCurrentView}
+            />
+          </div>
           {isConsoleOpen && (
             <ConsoleView
               isOpen={isConsoleOpen}
