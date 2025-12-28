@@ -49,7 +49,7 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
     <div className="h-full flex flex-col overflow-hidden">
         <div className="p-6 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
              <div>
-                <h2 className="text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                <h2 className="text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                     <GitBranch style={{ color: 'var(--accent)' }} />
                     {t('genevolve.title')}
                 </h2>
@@ -70,7 +70,7 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
             {/* Rules Editor */}
             <div className="w-1/3 bg-slate-900 border-r border-slate-800 p-6 overflow-y-auto">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{t('genevolve.sound_changes')}</h3>
+                    <h3 className="text-lg font-semibold" style={{ color: 'var(--text-secondary)' }}>{t('genevolve.sound_changes')}</h3>
                     <button onClick={addRule} className="text-sm" style={{ color: 'var(--accent)' }}>+ {t('genevolve.add_rule')}</button>
                 </div>
                 
@@ -105,7 +105,7 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
             {/* Results Preview */}
             <div className="flex-1 bg-slate-950 p-6 overflow-y-auto">
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                    <h3 className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                         {t('genevolve.preview')}
                         {isScriptMode && <Feather size={14} style={{ color: 'var(--accent)' }} />}
                     </h3>

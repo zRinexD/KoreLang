@@ -51,15 +51,17 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
         <li key={item.id}>
           <button
             onClick={() => setView(item.id as ViewState)}
-            className={`flex items-center rounded-sm text-sm font-medium transition-all border-l-2 w-full
+            className={`flex items-center rounded-sm text-sm font-medium transition-all w-full
               ${
                 isActive
-                  ? "text-white border-transparent"
-                  : "text-neutral-400 hover:text-neutral-100 border-transparent"
+                  ? "text-white"
+                  : "text-neutral-400 hover:text-neutral-100"
               }`}
             style={{
-              backgroundColor: isActive ? 'var(--accent)' : undefined,
+              backgroundColor: isActive ? 'var(--elevated)' : undefined,
+              borderLeft: isActive ? '2px solid var(--accent)' : '2px solid transparent',
               padding: isOpen ? "8px 12px" : "8px 0",
+              paddingLeft: isOpen ? (isActive ? '12px' : '14px') : '8px',
               justifyContent: isOpen ? "flex-start" : "center",
             }}
             onMouseEnter={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'var(--surface)')}
@@ -68,7 +70,7 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
           >
             <Icon
               size={16}
-              className={isActive ? "text-white" : "text-neutral-500"}
+              style={{ color: isActive ? 'var(--accent)' : 'var(--text-secondary)' }}
             />
             {isOpen && <span className="ml-3">{item.label}</span>}
           </button>

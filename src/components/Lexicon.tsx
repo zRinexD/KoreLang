@@ -609,7 +609,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                             return (
                                 <div key={letter} className="space-y-4">
                                     <div className="flex items-center gap-4 sticky top-0 backdrop-blur-sm z-10 py-2 border-b" style={isConflictGroup ? { backgroundColor: 'var(--surface)', borderColor: 'var(--error)' } : { backgroundColor: 'var(--surface)', borderColor: 'var(--divider)' }}>
-                                        <h2 className="text-4xl font-bold select-none flex items-center gap-3" style={isConflictGroup ? { color: 'var(--error)' } : { color: 'var(--text-primary)' }}>
+                                        <h2 className="text-4xl font-bold select-none flex items-center gap-3" style={isConflictGroup ? { color: 'var(--error)' } : { color: 'var(--text-secondary)' }}>
                                             {isConflictGroup && <AlertTriangle size={24} strokeWidth={2} />}
                                             {letter}
                                         </h2>

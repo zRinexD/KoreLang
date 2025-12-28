@@ -10,23 +10,23 @@ import { useCommandExecutor } from '../state/commandStore';
 // Presets de thèmes pour copie dans custom
 const THEME_PRESETS = {
   dark: {
-    primary: "#6B8AFF",
+    primary: "#2563EB",
     secondary: "#0A0A0A",
-    accent: "#3B82F6",
+    accent: "#1D4ED8",
     background: "#121212",
     surface: "#1E1E1E",
-    elevated: "#2A2A2A",
-    textPrimary: "#F1F5F9",
-    textSecondary: "#94A3B8",
-    textTertiary: "#64748B",
-    border: "#2A2A2A",
-    divider: "#1E1E1E",
+    elevated: "#262626",
+    textPrimary: "#FFFFFF",
+    textSecondary: "#A3A3A3",
+    textTertiary: "#525252",
+    border: "#404040",
+    divider: "#262626",
     success: "#10B981",
     warning: "#F59E0B",
     error: "#EF4444",
     info: "#3B82F6",
-    hover: "#5B7BFF",
-    active: "#4B6BEF",
+    hover: "#2563EB",
+    active: "#1D4ED8",
     disabled: "#404040",
   },
   cappuccino: {
@@ -206,13 +206,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
     <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-800" style={{ backgroundColor: 'var(--elevated)' }}>
+        <div className="flex items-center justify-between p-4 border-b" style={{ backgroundColor: 'var(--secondary)', borderColor: 'var(--border)' }}>
           <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{t('settings.preferences_title')}</h2>
           <button onClick={() => ui.close('settings')} className="text-slate-500 hover:text-white"><X size={20} /></button>
         </div>
 
         {/* Tabs */}
-        <div className="flex text-sm border-b border-slate-800 bg-slate-900">
+        <div className="flex text-sm border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--secondary)' }}>
           <button onClick={() => setActiveTab('GENERAL')} className={`px-6 py-2 font-bold ${activeTab === 'GENERAL' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>{t('settings.tab_general')}</button>
           <button onClick={() => setActiveTab('THEME')} className={`px-6 py-2 font-bold ${activeTab === 'THEME' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>{t('settings.tab_visual')}</button>
         </div>
@@ -434,7 +434,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end p-4 border-t border-slate-800" style={{ backgroundColor: 'var(--elevated)' }}>
+        <div className="flex justify-end p-4 border-t" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
           <button onClick={() => ui.close('settings')} className="px-4 py-2 text-sm font-bold rounded shadow-lg" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}>OK</button>
         </div>
       </div>

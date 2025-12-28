@@ -39,7 +39,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
         <div className="h-full flex flex-col p-6 max-w-7xl mx-auto w-full gap-6">
             <div className="flex justify-between items-end">
                 <div>
-                    <h2 className="text-3xl font-bold mb-2 flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
+                    <h2 className="text-3xl font-bold mb-2 flex items-center gap-3" style={{ color: 'var(--text-secondary)' }}>
                         <Languages style={{ color: 'var(--accent)' }} />
                         {t('grammar.title')}
                     </h2>

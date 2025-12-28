@@ -190,7 +190,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
   };
 
   return (
-    <header className="z-50 flex items-center h-10 px-2 border-b select-none border-neutral-800" style={{ backgroundColor: 'var(--elevated)' }}>
+    <header className="z-50 flex items-center h-10 px-2 border-b select-none" style={{ backgroundColor: 'var(--secondary)', borderColor: 'var(--border)' }}>
       <input
         type="file"
         ref={fileInputRef}
@@ -213,7 +213,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
               className={`h-full px-3 text-sm flex items-center gap-1 transition-colors`}
               style={{
                 backgroundColor: activeMenu === menu.id ? 'var(--accent)' : undefined,
-                color: activeMenu === menu.id ? 'var(--text-primary)' : 'var(--text-secondary)'
+                color: 'var(--text-primary)'
               }}
               onMouseEnter={(e) => activeMenu !== menu.id && (e.currentTarget.style.backgroundColor = 'var(--surface)')}
               onMouseLeave={(e) => activeMenu !== menu.id && (e.currentTarget.style.backgroundColor = 'transparent')}
@@ -229,13 +229,14 @@ const MenuBar: React.FC<MenuBarProps> = ({
                   className="fixed inset-0 z-40"
                   onClick={() => setActiveMenu(null)}
                 />
-                <div className="absolute z-50 w-56 py-1 border shadow-xl start-0 top-full bg-neutral-900 border-neutral-700 rounded-b-md">
+                <div className="absolute z-50 w-56 py-1 border shadow-xl start-0 top-full rounded-b-md" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
                   {menu.items.map((item, idx) => {
                     if (item.type === "separator")
                       return (
                         <div
                           key={idx}
-                          className="h-px mx-2 my-1 bg-neutral-700"
+                          className="h-px mx-2 my-1"
+                          style={{ backgroundColor: 'var(--divider)' }}
                         />
                       );
                     const Icon = item.icon;

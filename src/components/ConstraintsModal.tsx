@@ -132,7 +132,7 @@ const ConstraintsModal: React.FC = () => {
     <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[85vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-950">
+        <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--secondary)' }}>
           <div>
             <h2 className="flex items-center gap-2 text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
               <ShieldCheck style={{ color: 'var(--accent)' }} size={24} />
@@ -149,7 +149,7 @@ const ConstraintsModal: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-slate-800 bg-slate-900">
+        <div className="flex border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--secondary)' }}>
           {[
             { id: "GENERAL", label: t("tab.general"), icon: Type },
             { id: "PHONOTACTICS", label: t("tab.phonotactics"), icon: Regex },

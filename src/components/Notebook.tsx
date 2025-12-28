@@ -33,7 +33,7 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
                         <BookOpen style={{ color: 'var(--accent)' }} size={20} />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{t('notebook.title')}</h2>
+                        <h2 className="text-xl font-bold" style={{ color: 'var(--text-secondary)' }}>{t('notebook.title')}</h2>
                         <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{t('notebook.subtitle')}</p>
                     </div>
                 </div>

@@ -57,13 +57,13 @@ const Dashboard: React.FC<DashboardProps> = ({
     <div className="p-8 max-w-7xl mx-auto space-y-8 h-full overflow-y-auto">
       <div className="flex justify-between items-start border-b border-slate-700 pb-6">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>{displayProjectName}</h2>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.by')} <span className="font-medium" style={{ color: 'var(--accent)' }}>{displayAuthor}</span></p>
-          {description && <p className="text-sm mt-2 max-w-2xl" style={{ color: 'var(--text-secondary)' }}>{description}</p>}
+          <h2 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-secondary)' }}>{displayProjectName}</h2>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>{t('dashboard.by')} <span className="font-medium" style={{ color: 'var(--accent)' }}>{displayAuthor}</span></p>
+          {description && <p className="text-sm mt-2 max-w-2xl" style={{ color: 'var(--text-tertiary)' }}>{description}</p>}
         </div>
         <div className="text-right bg-slate-800 p-4 rounded-lg border border-slate-700 min-w-[150px]">
-          <div className="text-3xl font-bold text-center" style={{ color: 'var(--text-primary)' }}>{totalWords}</div>
-          <div className="text-[10px] uppercase tracking-wider font-bold text-center mt-1" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.lexiconsize')}</div>
+          <div className="text-3xl font-bold text-center" style={{ color: 'var(--text-secondary)' }}>{totalWords}</div>
+          <div className="text-[10px] uppercase tracking-wider font-bold text-center mt-1" style={{ color: 'var(--text-tertiary)' }}>{t('dashboard.lexiconsize')}</div>
         </div>
       </div>
 
@@ -79,10 +79,10 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="p-2 rounded-md" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.2)' }}>
               <BookA style={{ color: 'var(--accent)' }} className="group-hover:scale-110 transition-transform" />
             </div>
-            <ArrowRight size={18} style={{ color: 'var(--text-secondary)' }} />
+            <ArrowRight size={18} style={{ color: 'var(--text-tertiary)' }} />
           </div>
-          <div className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{t('dashboard.manage_lexicon')}</div>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.manage_lexicon_desc')}</p>
+          <div className="font-bold text-lg" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.manage_lexicon')}</div>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>{t('dashboard.manage_lexicon_desc')}</p>
         </button>
 
         <button
@@ -95,10 +95,10 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="p-2 rounded-md" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.2)' }}>
               <Languages style={{ color: 'var(--accent)' }} className="group-hover:scale-110 transition-transform" />
             </div>
-            <ArrowRight size={18} style={{ color: 'var(--text-secondary)' }} />
+            <ArrowRight size={18} style={{ color: 'var(--text-tertiary)' }} />
           </div>
-          <div className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{t('dashboard.define_grammar')}</div>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.define_grammar_desc')}</p>
+          <div className="font-bold text-lg" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.define_grammar')}</div>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>{t('dashboard.define_grammar_desc')}</p>
         </button>
       </div>
 
@@ -131,7 +131,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     ) : (
                       <span className="font-mono font-bold text-lg" style={{ color: 'var(--accent)' }}>{entry.word}</span>
                     )}
-                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/{entry.ipa}/</span>
+                    <span className="text-sm" style={{ color: 'var(--text-tertiary)' }}>/{entry.ipa}/</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] uppercase font-bold bg-slate-900 px-2 py-1 rounded border border-slate-700" style={{ color: 'var(--text-secondary)' }}>
@@ -141,8 +141,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </div>
               ))
             ) : (
-              <div className="text-center py-12 text-slate-500 border border-dashed border-slate-700 rounded-lg">
-                <BookA size={32} className="mx-auto mb-2 opacity-50" />
+              <div className="text-center py-12 border border-dashed border-slate-700 rounded-lg" style={{ color: 'var(--text-tertiary)' }}>
+                <BookA size={32} className="mx-auto mb-2 opacity-50" style={{ color: 'var(--text-tertiary)' }} />
                 <p>{t('dashboard.empty_dict')}</p>
                 <button onClick={() => setView?.('LEXICON')} className="text-blue-500 hover:text-blue-400 text-sm mt-2 font-medium">{t('dashboard.create_first')}</button>
               </div>
@@ -178,7 +178,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-slate-600 text-sm">
+              <div className="flex flex-col items-center justify-center h-full text-sm" style={{ color: 'var(--text-tertiary)' }}>
                 {t('dashboard.no_data')}
               </div>
             )}

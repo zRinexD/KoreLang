@@ -310,7 +310,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-purple-900/20 rounded"><Feather className="text-purple-500" size={20} /></div>
                     <div>
-                        <h2 className="text-xl font-bold">Neural-Glyph Studio v4.6</h2>
+                        <h2 className="text-xl font-bold" style={{ color: 'var(--text-secondary)' }}>Neural-Glyph Studio v4.6</h2>
                         <p className="text-xs text-slate-500 tracking-wide uppercase font-bold">Professional Layer Engine</p>
                     </div>
                 </div>

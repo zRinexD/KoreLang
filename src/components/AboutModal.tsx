@@ -14,9 +14,9 @@ const AboutModal: React.FC = () => {
                 onClick={() => ui.close('about')}
             />
 
-            <div className="relative bg-[#1e1e1e] border border-white/10 rounded-xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="relative rounded-xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)' }}>
                 
-                <div className="flex items-center justify-between p-4 border-b border-white/5 bg-white/5">
+                <div className="flex items-center justify-between p-4" style={{ backgroundColor: 'var(--secondary)', borderBottom: '1px solid var(--border)' }}>
                     <h2 className="flex items-center gap-2 text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
                         <span>🚀</span> About KoreLang
                     </h2>
@@ -42,7 +42,7 @@ const AboutModal: React.FC = () => {
                         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Professional Linguistic Development Environment</p>
                     </div>
 
-                    <div className="p-4 space-y-3 border rounded-lg bg-white/5 border-white/5">
+                    <div className="p-4 space-y-3 border rounded-lg" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
                         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                             KoreLang is a modern tool for creating and managing conlangs, offering advanced linguistic features for phonology, morphology, orthography, and more.
                         </p>
