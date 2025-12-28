@@ -34,9 +34,30 @@ import { useWhatsNewOnBoot } from "./hooks/useWhatsNewOnBoot";
 const SETTINGS_STORAGE_KEY = "conlang_studio_settings";
 
 const AppContent: React.FC = () => {
-
   const ui = useUI();
   useWhatsNewOnBoot(ui);
+
+  const onWizardSubmit = (
+    data: {
+      name: string;
+      author: string;
+      description: string;
+      constraints?: Partial<ProjectConstraints>;
+    },
+    mode: "create" | "edit"
+  ) => {
+    setProjectName(data.name);
+    setProjectAuthor(data.author);
+    setProjectDescription(data.description);
+    if (data.constraints)
+      setConstraints((c) => ({ ...c, ...data.constraints }));
+
+    if (mode === "create") {
+      setCurrentView("DASHBOARD");
+    }
+
+    ui.close("wizard"); 
+  };
 
   const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
@@ -178,8 +199,6 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener("wheel", onWheel);
   }, []);
 
-  /* ---------------- SHORTCUTS ---------------- */
-
   useShortcuts({
     isConsoleOpen,
     setIsConsoleOpen,
@@ -187,34 +206,9 @@ const AppContent: React.FC = () => {
     onNewProject: menuBarActions.newProject,
     onOpenProject: menuBarActions.openProject,
     onExportProject: menuBarActions.exportProject,
-    onZoomIn: () => setZoomLevel((z) => Math.min(z + 10, 150)),
-    onZoomOut: () => setZoomLevel((z) => Math.max(z - 10, 50)),
+    onZoomIn: menuBarActions.zoomIn,
+    onZoomOut: menuBarActions.zoomOut,
   });
-
-  /* ---------------- WIZARD ---------------- */
-
-  const handleWizardSubmit = (data: {
-    name: string;
-    author: string;
-    description: string;
-    constraints?: Partial<ProjectConstraints>;
-  }) => {
-    if (wizardMode === "create") {
-      setProjectName(data.name);
-      setProjectAuthor(data.author);
-      setProjectDescription(data.description);
-      if (data.constraints)
-        setConstraints((c) => ({ ...c, ...data.constraints }));
-      setCurrentView("DASHBOARD");
-    } else {
-      setProjectName(data.name);
-      setProjectAuthor(data.author);
-      setProjectDescription(data.description);
-      if (data.constraints)
-        setConstraints((c) => ({ ...c, ...data.constraints }));
-    }
-    ui.close("wizard");
-  };
 
   /* ---------------- VIEW RENDER ---------------- */
 
@@ -369,14 +363,14 @@ const AppContent: React.FC = () => {
 
       <ProjectWizard
         isOpen={ui.isOpen("wizard")}
-        mode={wizardMode}
+        mode={wizardMode} 
         initialData={{
           name: wizardMode === "create" ? "" : projectName,
           author: wizardMode === "create" ? "" : projectAuthor,
           description: wizardMode === "create" ? "" : projectDescription,
         }}
         onClose={() => ui.close("wizard")}
-        onSubmit={handleWizardSubmit}
+        onSubmit={(data) => onWizardSubmit(data, wizardMode)}
       />
 
       <AboutModal
