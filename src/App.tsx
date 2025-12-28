@@ -22,7 +22,6 @@ import { useProject } from "./hooks/useProject";
 import {
   ViewState,
   LexiconEntry,
-  ProjectConstraints,
   LogEntry,
   AppSettings,
 } from "./types";
@@ -161,20 +160,6 @@ const AppContent: React.FC = () => {
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  /* ---------------- ZOOM ---------------- */
-
-  useEffect(() => {
-    const onWheel = (e: WheelEvent) => {
-      if (e.altKey) {
-        e.preventDefault();
-        const delta = e.deltaY < 0 ? 5 : -5;
-        setZoomLevel((z) => Math.min(Math.max(z + delta, 50), 150));
-      }
-    };
-    window.addEventListener("wheel", onWheel, { passive: false });
-    return () => window.removeEventListener("wheel", onWheel);
   }, []);
 
   useShortcuts({
