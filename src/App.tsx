@@ -39,10 +39,7 @@ const AppContent: React.FC = () => {
 
   const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isConstraintsOpen, setIsConstraintsOpen] = useState(false);
   const [isWhatsNewOpen, setIsWhatsNewOpen] = useState(false);
-  const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [wizardMode, setWizardMode] = useState<"create" | "edit">("create");
   const [isScriptMode, setIsScriptMode] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(100);
@@ -73,7 +70,7 @@ const AppContent: React.FC = () => {
   const menuBarActions = {
     newProject: () => {
       setWizardMode("create");
-      setIsWizardOpen(true);
+      ui.open("wizard");
     },
     exportProject: () => {
       const data = getFullProjectData();
@@ -85,12 +82,12 @@ const AppContent: React.FC = () => {
       a.click();
     },
     openProject: promptOpenProject,
-    openSettings: () => setIsSettingsOpen(true),
+    openSettings: () =>ui.open("settings"),
     openProjectSettings: () => {
       setWizardMode("edit");
-      setIsWizardOpen(true);
+      ui.open("wizard");
     },
-    openConstraints: () => setIsConstraintsOpen(true),
+    openConstraints: () => ui.open("constraints"),
     openConsole: () => setIsConsoleOpen(true),
     zoomIn: () => setZoomLevel((z) => Math.min(z + 10, 150)),
     zoomOut: () => setZoomLevel((z) => Math.max(z - 10, 50)),
@@ -228,7 +225,7 @@ const AppContent: React.FC = () => {
       if (data.constraints)
         setConstraints((c) => ({ ...c, ...data.constraints }));
     }
-    setIsWizardOpen(false);
+    ui.close("wizard");
   };
 
   /* ---------------- VIEW RENDER ---------------- */
@@ -366,15 +363,15 @@ const AppContent: React.FC = () => {
       </footer>
 
       <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
+        isOpen={ui.isOpen("settings")}
+        onClose={() =>ui.close("settings")}
         settings={settings}
         onUpdateSettings={setSettings}
       />
 
       <ConstraintsModal
-        isOpen={isConstraintsOpen}
-        onClose={() => setIsConstraintsOpen(false)}
+        isOpen={ui.isOpen("constraints")}
+        onClose={() => ui.close("constraints")}
         constraints={constraints}
         onUpdateConstraints={setConstraints}
         scriptConfig={scriptConfig}
@@ -383,14 +380,14 @@ const AppContent: React.FC = () => {
       />
 
       <ProjectWizard
-        isOpen={isWizardOpen}
+        isOpen={ui.isOpen("wizard")}
         mode={wizardMode}
         initialData={{
           name: wizardMode === "create" ? "" : projectName,
           author: wizardMode === "create" ? "" : projectAuthor,
           description: wizardMode === "create" ? "" : projectDescription,
         }}
-        onClose={() => setIsWizardOpen(false)}
+        onClose={() => ui.close("wizard")}
         onSubmit={handleWizardSubmit}
       />
 
