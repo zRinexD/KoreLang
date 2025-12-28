@@ -1,28 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Moon, Sun, Cpu, Palette, Download, Upload, Check, Eye, EyeOff, HelpCircle, ExternalLink, ChevronLeft } from 'lucide-react';
 import { useTranslation, languages } from '../i18n';
 import { useUI } from '../ui/UIContext';
-import { useSettings } from '../hooks/useSettings';
+import { AppSettings } from '../types';
 import { DEFAULT_CUSTOM } from '../constants';
-import { isApiKeySet, getApiKey, setApiKey } from '../services/geminiService';
+import { isApiKeySet, getApiKey } from '../services/geminiService';
+import { useCommandExecutor } from '../state/commandStore';
 
-const SettingsModal: React.FC = () => {
+// Presets de thèmes pour copie dans custom
+const THEME_PRESETS = {
+  dark: {
+    bgMain: "#121212",
+    bgPanel: "#1e1e1e",
+    text1: "#f1f5f9",
+    text2: "#94a3b8",
+    accent: "#3b82f6",
+  },
+  cappuccino: {
+    bgMain: "#f5f1ee",
+    bgPanel: "#ede8e3",
+    text1: "#3d3935",
+    text2: "#8b7d75",
+    accent: "#c17a4a",
+  },
+  "tokyo-night": {
+    bgMain: "#1a1b26",
+    bgPanel: "#24283b",
+    text1: "#a9b1d6",
+    text2: "#565f89",
+    accent: "#7aa2f7",
+  },
+};
+
+interface SettingsModalProps {
+  settings: AppSettings;
+  updateSettings: (settings: AppSettings) => void;
+}
+
+const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings }) => {
   const ui = useUI();
+  
+  if (!ui.isOpen('settings')) return null;
+
   const { t, i18n } = useTranslation();
-  const { settings, updateSettings } = useSettings();
+  const executeCommand = useCommandExecutor();
   const [activeTab, setActiveTab] = useState<'GENERAL' | 'THEME'>('GENERAL');
   const [apiKey, setApiKeyLocal] = useState(getApiKey());
   const [showApiKey, setShowApiKey] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState(settings.theme);
   const hasApiKey = isApiKeySet();
 
-  if (!ui.isOpen('settings')) return null;
+  useEffect(() => {
+    setCurrentTheme(settings.theme);
+  }, [settings.theme]);
 
-  const setLanguage = (lang: string) => updateSettings({ ...settings, language: lang });
+  const setLanguage = (lang: string) => executeCommand('setLanguage', { language: lang });
 
   const handleCustomUpdate = (key: keyof typeof DEFAULT_CUSTOM, val: string) => {
-    const current = settings.customTheme || DEFAULT_CUSTOM;
-    updateSettings({ ...settings, theme: 'custom', customTheme: { ...current, [key]: val } });
+    executeCommand('updateCustomTheme', { colorKey: key, colorValue: val });
+  };
+
+  const setTheme = (theme: 'dark' | 'cappuccino' | 'tokyo-night' | 'custom') => {
+    setCurrentTheme(theme);
+    // Copier les couleurs du preset dans customTheme pour permettre la dérivation
+    const presetColors = THEME_PRESETS[theme as keyof typeof THEME_PRESETS];
+    if (presetColors) {
+      executeCommand('setTheme', { theme, customTheme: presetColors as any });
+    } else {
+      executeCommand('setTheme', { theme, customTheme: settings.customTheme as any });
+    }
   };
 
   const exportTheme = () => {
@@ -41,7 +88,7 @@ const SettingsModal: React.FC = () => {
     reader.onload = (ev) => {
       try {
         const imported = JSON.parse(ev.target?.result as string);
-        updateSettings({ ...settings, theme: 'custom', customTheme: imported });
+        executeCommand('setTheme', { theme: 'custom', customTheme: imported as any });
       } catch {
         alert('Invalid theme file');
       }
@@ -51,7 +98,7 @@ const SettingsModal: React.FC = () => {
 
   const handleApiKeyChange = (val: string) => {
     setApiKeyLocal(val);
-    setApiKey(val);
+    executeCommand('setApiKey', { apiKey: val });
   };
 
   return (
@@ -79,7 +126,7 @@ const SettingsModal: React.FC = () => {
                   <div className="flex items-center gap-2 text-sm font-bold text-slate-200"><Cpu size={16} className="text-purple-400" /> {t('settings.cognitive_ai')}</div>
                   <p className="text-[10px] text-slate-400">{t('settings.cognitive_ai_desc')}</p>
                 </div>
-                <input type="checkbox" checked={settings.enableAI} onChange={(e) => updateSettings({ ...settings, enableAI: e.target.checked })} className="w-5 h-5 rounded" />
+                <input type="checkbox" checked={settings.enableAI} onChange={(e) => executeCommand('setAIEnabled', { aiEnabled: e.target.checked })} className="w-5 h-5 rounded" />
               </div>
 
               {/* API key */}
@@ -105,8 +152,92 @@ const SettingsModal: React.FC = () => {
             </>
           ) : (
             <>
-              {/* Theme tab content */}
-              {/* ...identique au précédent, avec handleCustomUpdate, export/import ... */}
+              {/* Theme presets */}
+              <div>
+                <label className="block mb-3 text-xs font-bold uppercase text-slate-500">{t('settings.theme_presets') || 'Préréglages globaux'}</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['dark', 'cappuccino', 'tokyo-night'].map((preset) => (
+                    <button
+                      key={preset}
+                      onClick={() => setTheme(preset as any)}
+                      className={`py-2.5 px-3 text-xs font-bold rounded-lg transition-all uppercase ${
+                        currentTheme === preset
+                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
+                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
+                      }`}
+                    >
+                      {preset.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom theme section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-bold text-blue-400">
+                    <Palette size={16} /> {t('settings.custom_theme') || 'Branding personnalisé'}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={exportTheme}
+                      className="p-1.5 rounded hover:bg-slate-800 text-slate-500 hover:text-slate-300 transition-colors"
+                      title={t('settings.export_json') || 'Exporter le thème'}
+                    >
+                      <Download size={14} />
+                    </button>
+                    <label className="p-1.5 rounded hover:bg-slate-800 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer" title={t('settings.import_json') || 'Importer un thème'}>
+                      <Upload size={14} />
+                      <input
+                        type="file"
+                        accept=".json"
+                        onChange={importTheme}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                </div>
+                
+                <div className="space-y-3 bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+                  {[
+                    { key: 'bgMain', label: t('settings.canvas_bg') || 'Arrière-plan du canvas' },
+                    { key: 'bgPanel', label: t('settings.sec_panels') || 'Panneaux secondaires' },
+                    { key: 'text1', label: t('settings.prim_text') || 'Texte principal' },
+                    { key: 'text2', label: t('settings.sec_text') || 'Texte secondaire' },
+                    { key: 'accent', label: t('settings.active_accent') || 'Accent actif' }
+                  ].map(({ key, label }) => (
+                    <div key={key} className="flex items-center justify-between gap-4">
+                      <label className="text-sm text-slate-300 flex-1">{label}</label>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-slate-500 font-mono min-w-[60px] text-right">
+                          {settings.customTheme?.[key as keyof typeof DEFAULT_CUSTOM] || DEFAULT_CUSTOM[key as keyof typeof DEFAULT_CUSTOM]}
+                        </span>
+                        <div className="relative w-10 h-10 rounded overflow-hidden border-2 border-slate-700 hover:border-blue-500 transition-colors">
+                          <input
+                            type="color"
+                            value={settings.customTheme?.[key as keyof typeof DEFAULT_CUSTOM] || DEFAULT_CUSTOM[key as keyof typeof DEFAULT_CUSTOM]}
+                            onChange={(e) => handleCustomUpdate(key as keyof typeof DEFAULT_CUSTOM, e.target.value)}
+                            className="absolute cursor-pointer border-0 outline-none"
+                            style={{ 
+                              width: '200%', 
+                              height: '200%', 
+                              top: '-50%', 
+                              left: '-50%',
+                              padding: 0,
+                              margin: 0
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {currentTheme === 'custom' && (
+                  <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
+                    <Check size={10} /> {t('settings.active_theme') || 'Thème actif'}
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>

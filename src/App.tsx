@@ -20,6 +20,7 @@ import {
   useCommandRegister,
   resolveModal,
 } from "./state/commandStore";
+import { setApiKey as persistApiKey } from "./services/geminiService";
 
 
 
@@ -61,6 +62,42 @@ const AppContent: React.FC = () => {
         const modal = resolveModal(payload?.modal);
         if (modal) open(modal);
       },
+      setLanguage: (payload) => {
+        if (!payload?.language) return;
+        i18n.changeLanguage(payload.language);
+        project.updateSettings({
+          ...project.settings,
+          language: payload.language,
+        });
+      },
+      setAIEnabled: (payload) => {
+        if (payload?.aiEnabled === undefined) return;
+        project.updateSettings({
+          ...project.settings,
+          enableAI: payload.aiEnabled,
+        });
+      },
+      setApiKey: (payload) => {
+        persistApiKey(payload?.apiKey || "");
+      },
+      setTheme: (payload) => {
+        if (!payload?.theme) return;
+        const customTheme = (payload.customTheme || project.settings.customTheme) as any;
+        project.updateSettings({
+          ...project.settings,
+          theme: payload.theme,
+          customTheme,
+        });
+      },
+      updateCustomTheme: (payload) => {
+        if (!payload?.colorKey || !payload?.colorValue) return;
+        const current = project.settings.customTheme || { bgMain: "", bgPanel: "", text1: "", text2: "", accent: "" };
+        project.updateSettings({
+          ...project.settings,
+          theme: "custom",
+          customTheme: { ...current, [payload.colorKey]: payload.colorValue },
+        });
+      },
       toggleScriptMode: () => setIsScriptMode((s) => !s),
       zoomIn: () => setZoomLevel((z) => Math.min(z + 10, 150)),
       zoomOut: () => setZoomLevel((z) => Math.max(z - 10, 50)),
@@ -71,6 +108,8 @@ const AppContent: React.FC = () => {
     project.handlers.openProject,
     project.handlers.exportProject,
     isConsoleOpen,
+    project.settings,
+    project.updateSettings,
   ]);
 
   // Setup keyboard shortcuts
@@ -119,7 +158,7 @@ const AppContent: React.FC = () => {
           )}
         </main>
       </div>
-      <Modals modals={modals} />
+      <Modals modals={modals} settings={project.settings} updateSettings={project.updateSettings} />
       <Footer project={project} />
     </div>
   );

@@ -9,3 +9,320 @@
     --text-2: #94a3b8;
     --accent: #3b82f6;
 }
+
+/* Override Tailwind utility classes to use theme CSS variables */
+@layer components {
+  /* Background colors */
+  .bg-slate-800 {
+    background-color: var(--bg-panel) !important;
+  }
+  
+  .bg-slate-900 {
+    background-color: var(--bg-main) !important;
+  }
+  
+  .bg-slate-700 {
+    background-color: var(--bg-panel) !important;
+  }
+  
+  .bg-slate-600 {
+    background-color: var(--bg-panel) !important;
+  }
+  
+  .bg-slate-950 {
+    background-color: var(--bg-main) !important;
+  }
+  
+  .bg-neutral-800 {
+    background-color: var(--bg-panel) !important;
+  }
+  
+  .bg-neutral-900 {
+    background-color: var(--bg-main) !important;
+  }
+  
+  .bg-neutral-950 {
+    background-color: var(--bg-main) !important;
+  }
+  
+  .bg-neutral-700 {
+    background-color: rgb(from var(--bg-panel) r g b / 0.8) !important;
+  }
+  
+  /* Hover backgrounds */
+  .hover\:bg-slate-700:hover {
+    background-color: rgb(from var(--bg-panel) r g b / 0.8) !important;
+  }
+  
+  .hover\:bg-slate-600:hover {
+    background-color: rgb(from var(--bg-panel) r g b / 0.9) !important;
+  }
+  
+  .hover\:bg-slate-800:hover {
+    background-color: var(--bg-panel) !important;
+  }
+  
+  .hover\:bg-neutral-800:hover {
+    background-color: rgb(from var(--bg-panel) r g b / 0.8) !important;
+  }
+  
+  .hover\:bg-white\/10:hover {
+    background-color: rgb(from var(--text-1) r g b / 0.1) !important;
+  }
+  
+  /* Border colors */
+  .border-slate-700 {
+    border-color: rgb(from var(--text-2) r g b / 0.3) !important;
+  }
+  
+  .border-slate-800 {
+    border-color: rgb(from var(--text-2) r g b / 0.2) !important;
+  }
+  
+  .border-neutral-700 {
+    border-color: rgb(from var(--text-2) r g b / 0.3) !important;
+  }
+  
+  .border-neutral-800 {
+    border-color: rgb(from var(--text-2) r g b / 0.2) !important;
+  }
+  
+  .border-white\/5 {
+    border-color: rgb(from var(--text-1) r g b / 0.05) !important;
+  }
+  
+  /* Text colors */
+  .text-slate-400 {
+    color: var(--text-2) !important;
+  }
+  
+  .text-slate-500 {
+    color: var(--text-2) !important;
+  }
+  
+  .text-slate-300 {
+    color: var(--text-1) !important;
+  }
+  
+  .text-slate-200 {
+    color: var(--text-1) !important;
+  }
+  
+  .text-slate-600 {
+    color: var(--text-2) !important;
+  }
+  
+  .text-slate-700 {
+    color: var(--text-2) !important;
+  }
+  
+  .hover\:text-slate-200:hover {
+    color: var(--text-1) !important;
+  }
+  
+  .hover\:text-slate-300:hover {
+    color: var(--text-1) !important;
+  }
+  
+  .placeholder-slate-700::placeholder {
+    color: rgb(from var(--text-2) r g b / 0.5) !important;
+  }
+  
+  .text-neutral-400 {
+    color: var(--text-2) !important;
+  }
+  
+  .text-neutral-500 {
+    color: var(--text-2) !important;
+  }
+  
+  .text-neutral-100 {
+    color: var(--text-1) !important;
+  }
+  
+  .text-white {
+    color: var(--text-1) !important;
+  }
+  
+  .hover\:text-neutral-100:hover {
+    color: var(--text-1) !important;
+  }
+  
+  .hover\:text-white:hover {
+    color: var(--text-1) !important;
+  }
+  
+  .text-blue-400 {
+    color: var(--accent) !important;
+  }
+  
+  .text-blue-500 {
+    color: var(--accent) !important;
+  }
+  
+  .text-blue-600 {
+    color: var(--accent) !important;
+  }
+  
+  .text-blue-300 {
+    color: var(--accent) !important;
+  }
+  
+  .bg-blue-300 {
+    background-color: var(--accent) !important;
+  }
+  
+  /* Purple colors (using accent as base) */
+  .text-purple-400 {
+    color: var(--accent) !important;
+  }
+  
+  .text-purple-500 {
+    color: var(--accent) !important;
+  }
+  
+  .bg-purple-600 {
+    background-color: var(--accent) !important;
+  }
+  
+  .hover\:bg-purple-700:hover {
+    background-color: rgb(from var(--accent) r g b / 0.9) !important;
+  }
+  
+  .bg-purple-900\/20 {
+    background-color: rgb(from var(--accent) r g b / 0.1) !important;
+  }
+  
+  /* Emerald/green colors (success states, using accent) */
+  .text-emerald-400 {
+    color: var(--accent) !important;
+  }
+  
+  .text-emerald-500 {
+    color: var(--accent) !important;
+  }
+  
+  .bg-emerald-500\/10 {
+    background-color: rgb(from var(--accent) r g b / 0.1) !important;
+  }
+  
+  .bg-emerald-400 {
+    background-color: var(--accent) !important;
+  }
+  
+  .bg-emerald-600 {
+    background-color: var(--accent) !important;
+  }
+  
+  .hover\:bg-emerald-700:hover {
+    background-color: rgb(from var(--accent) r g b / 0.9) !important;
+  }
+  
+  /* Red colors (error states, keep semantic but muted) */
+  .bg-red-900\/20 {
+    background-color: rgb(from var(--text-2) r g b / 0.1) !important;
+  }
+  
+  .border-red-500\/30 {
+    border-color: rgb(from var(--text-2) r g b / 0.2) !important;
+  }
+  
+  .text-red-200 {
+    color: var(--text-2) !important;
+  }
+  
+  .text-red-500 {
+    color: var(--text-2) !important;
+  }
+  
+  .hover\:text-red-500:hover {
+    color: var(--text-2) !important;
+  }
+  
+  .hover\:bg-red-900\/20:hover {
+    background-color: rgb(from var(--text-2) r g b / 0.15) !important;
+  }
+  
+  /* Amber/orange colors (warning/info states) */
+  .text-amber-500 {
+    color: var(--accent) !important;
+  }
+  
+  .text-amber-500\/70 {
+    color: rgb(from var(--accent) r g b / 0.7) !important;
+  }
+  
+  .text-amber-400 {
+    color: var(--accent) !important;
+  }
+  
+  .text-amber-200 {
+    color: var(--text-2) !important;
+  }
+  
+  .bg-amber-600 {
+    background-color: var(--accent) !important;
+  }
+  
+  .bg-amber-400 {
+    background-color: var(--accent) !important;
+  }
+  
+  .bg-amber-900\/20 {
+    background-color: rgb(from var(--accent) r g b / 0.1) !important;
+  }
+  
+  .bg-amber-950\/20 {
+    background-color: rgb(from var(--accent) r g b / 0.08) !important;
+  }
+  
+  .border-amber-900\/50 {
+    border-color: rgb(from var(--accent) r g b / 0.3) !important;
+  }
+  
+  /* Blue accent overrides */
+  .bg-blue-600 {
+    background-color: var(--accent) !important;
+  }
+  
+  .bg-blue-500 {
+    background-color: var(--accent) !important;
+  }
+  
+  .border-blue-500 {
+    border-color: var(--accent) !important;
+  }
+  
+  .hover\:border-blue-500:hover {
+    border-color: var(--accent) !important;
+  }
+  
+  .hover\:bg-blue-600:hover {
+    background-color: rgb(from var(--accent) r g b / 0.9) !important;
+  }
+  
+  .hover\:bg-blue-700:hover {
+    background-color: rgb(from var(--accent) r g b / 0.85) !important;
+  }
+  
+  /* Shadow colors */
+  .shadow-blue-900\/20 {
+    --tw-shadow-color: rgb(from var(--accent) r g b / 0.2);
+    --tw-shadow: var(--tw-shadow-colored);
+  }
+  
+  .shadow-blue-900\/40 {
+    --tw-shadow-color: rgb(from var(--accent) r g b / 0.4);
+    --tw-shadow: var(--tw-shadow-colored);
+  }
+  
+  .shadow-blue-900\/50 {
+    --tw-shadow-color: rgb(from var(--accent) r g b / 0.5);
+    --tw-shadow: var(--tw-shadow-colored);
+  }
+  
+  .shadow-emerald-900\/20 {
+    --tw-shadow-color: rgb(from var(--accent) r g b / 0.2);
+    --tw-shadow: var(--tw-shadow-colored);
+  }
+}

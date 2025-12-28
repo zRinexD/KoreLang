@@ -13,10 +13,22 @@ export type CommandId =
   | "openModal"
   | "toggleScriptMode"
   | "zoomIn"
-  | "zoomOut";
+  | "zoomOut"
+  | "setLanguage"
+  | "setAIEnabled"
+  | "setApiKey"
+  | "setTheme"
+  | "updateCustomTheme";
 
 export type CommandPayload = {
   modal?: UIModal | string;
+  language?: string;
+  aiEnabled?: boolean;
+  apiKey?: string;
+  theme?: "dark" | "cappuccino" | "tokyo-night" | "custom";
+  customTheme?: Record<string, string>;
+  colorKey?: string;
+  colorValue?: string;
 };
 
 export type CommandHandlers = Partial<

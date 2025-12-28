@@ -162,7 +162,7 @@ export interface CustomTheme {
 }
 
 export interface AppSettings {
-  theme: 'dark' | 'light' | 'tokyo-night' | 'tokyo-light' | 'custom';
+  theme: 'dark' | 'cappuccino' | 'tokyo-night' | 'custom';
   customTheme?: CustomTheme;
   autoSave: boolean;
   showLineNumbers: boolean;

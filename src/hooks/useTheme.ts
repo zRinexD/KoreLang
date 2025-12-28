@@ -8,13 +8,13 @@ const THEMES = {
     textInfo: "10px",
     accent: "#3b82f6",
   },
-  light: {
-    bgMain: "#f8fafc",
-    bgPanel: "#ffffff",
-    text1: "#0f172a",
-    text2: "#475569",
+  cappuccino: {
+    bgMain: "#f5f1ee",
+    bgPanel: "#ede8e3",
+    text1: "#3d3935",
+    text2: "#8b7d75",
     textInfo: "10px",
-    accent: "#2563eb",
+    accent: "#c17a4a",
   },
   "tokyo-night": {
     bgMain: "#1a1b26",
@@ -23,14 +23,6 @@ const THEMES = {
     text2: "#565f89",
     textInfo: "10px",
     accent: "#7aa2f7",
-  },
-  "tokyo-light": {
-    bgMain: "#d5d6db",
-    bgPanel: "#cbccd1",
-    text1: "#343b58",
-    text2: "#565a6e",
-    textInfo: "10px",
-    accent: "#34548a",
   },
 };
 
@@ -47,5 +39,19 @@ export const useTheme = (themeName: string, customTheme?: any) => {
     root.style.setProperty("--text-2", theme.text2);
     root.style.setProperty("--text-info", theme.textInfo || "10px");
     root.style.setProperty("--accent", theme.accent);
+    
+    // Compute interactive state colors based on theme
+    // For dark themes: use bgPanel for hover/focus
+    // For light themes: use bgPanel as well (slightly darker/lighter than bgMain)
+    root.style.setProperty("--bg-hover", theme.bgPanel);
+    
+    // Selected/active state uses accent color
+    root.style.setProperty("--bg-active", theme.accent);
+    
+    // Border color: use text2 with opacity for a subtle border
+    root.style.setProperty("--border-color", theme.text2);
+    
+    // Header background (similar to bgPanel for consistency)
+    root.style.setProperty("--bg-header", theme.bgPanel);
   }, [themeName, customTheme]);
 };

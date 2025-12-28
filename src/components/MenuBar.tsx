@@ -180,12 +180,10 @@ const MenuBar: React.FC<MenuBarProps> = ({
     switch (settings.theme) {
       case "dark":
         return t("settings.dark");
-      case "light":
-        return t("settings.light");
+      case "cappuccino":
+        return t("settings.cappuccino");
       case "tokyo-night":
         return t("settings.tokyo");
-      case "tokyo-light":
-        return t("settings.tokyo_light");
       default:
         return t("settings.dark");
     }
