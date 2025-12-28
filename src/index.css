@@ -21,6 +21,8 @@
     --hover: #5B7BFF;
     --active: #4B6BEF;
     --disabled: #404040;
+    --shadow-light: rgba(255, 255, 255, 0.08);
+    --shadow-dark: rgba(0, 0, 0, 0.35);
 }
 
 /* Scrollbars personnalisées avec couleurs du thème */

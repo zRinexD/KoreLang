@@ -59,12 +59,12 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
               }`}
             style={{
               backgroundColor: isActive ? 'var(--elevated)' : undefined,
-              borderLeft: isActive ? '2px solid var(--accent)' : '2px solid transparent',
-              padding: isOpen ? "8px 12px" : "8px 0",
-              paddingLeft: isOpen ? (isActive ? '12px' : '14px') : '8px',
+              borderLeft: isActive ? '3px solid var(--accent)' : '2px solid transparent',
+              padding: isOpen ? "8px 12px" : "8px",
+              paddingLeft: isOpen ? (isActive ? '10px' : '12px') : (isActive ? '4px' : '8px'),
               justifyContent: isOpen ? "flex-start" : "center",
             }}
-            onMouseEnter={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'var(--surface)')}
+            onMouseEnter={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'rgba(91, 123, 255, 0.1)')}
             onMouseLeave={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'transparent')}
             title={!isOpen ? item.label : undefined}
           >
@@ -121,7 +121,7 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
                 Authoring
               </div>
             )}
-            <ul className="space-y-0.5 px-2">{authoringItems.map(renderItem)}</ul>
+            <ul className={`space-y-0.5 ${isOpen ? 'px-2' : 'px-0'}`}>{authoringItems.map(renderItem)}</ul>
           </nav>
         </div>
       </aside>
