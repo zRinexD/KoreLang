@@ -190,7 +190,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
   };
 
   return (
-    <header className="z-50 flex items-center h-10 px-2 border-b select-none bg-neutral-950 border-neutral-800">
+    <header className="z-50 flex items-center h-10 px-2 border-b select-none border-neutral-800" style={{ backgroundColor: 'var(--bg-header)' }}>
       <input
         type="file"
         ref={fileInputRef}

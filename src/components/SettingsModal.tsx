@@ -15,6 +15,7 @@ const THEME_PRESETS = {
     text1: "#f1f5f9",
     text2: "#94a3b8",
     accent: "#3b82f6",
+    bgHeader: "#0a0a0a",
   },
   cappuccino: {
     bgMain: "#f5f1ee",
@@ -22,6 +23,7 @@ const THEME_PRESETS = {
     text1: "#3d3935",
     text2: "#8b7d75",
     accent: "#c17a4a",
+    bgHeader: "#e8e3df",
   },
   "tokyo-night": {
     bgMain: "#1a1b26",
@@ -29,6 +31,7 @@ const THEME_PRESETS = {
     text1: "#a9b1d6",
     text2: "#565f89",
     accent: "#7aa2f7",
+    bgHeader: "#16161e",
   },
 };
 
@@ -105,7 +108,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
     <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950">
+        <div className="flex items-center justify-between p-4 border-b border-slate-800" style={{ backgroundColor: 'var(--bg-header)' }}>
           <h2 className="text-lg font-bold text-white">{t('settings.preferences_title')}</h2>
           <button onClick={() => ui.close('settings')} className="text-slate-500 hover:text-white"><X size={20} /></button>
         </div>
@@ -202,6 +205,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
                   {[
                     { key: 'bgMain', label: t('settings.canvas_bg') || 'Arrière-plan du canvas' },
                     { key: 'bgPanel', label: t('settings.sec_panels') || 'Panneaux secondaires' },
+                    { key: 'bgHeader', label: t('settings.header_bg') || 'En-têtes et barre de menu' },
                     { key: 'text1', label: t('settings.prim_text') || 'Texte principal' },
                     { key: 'text2', label: t('settings.sec_text') || 'Texte secondaire' },
                     { key: 'accent', label: t('settings.active_accent') || 'Accent actif' }
@@ -243,7 +247,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end p-4 border-t bg-slate-950 border-slate-800">
+        <div className="flex justify-end p-4 border-t border-slate-800" style={{ backgroundColor: 'var(--bg-header)' }}>
           <button onClick={() => ui.close('settings')} className="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded shadow-lg hover:bg-blue-700">OK</button>
         </div>
       </div>

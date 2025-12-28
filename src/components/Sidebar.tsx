@@ -54,18 +54,21 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
             className={`flex items-center rounded-sm text-sm font-medium transition-all border-l-2 w-full
               ${
                 isActive
-                  ? "bg-neutral-800 text-white border-blue-500"
-                  : "text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100 border-transparent"
+                  ? "text-white border-transparent"
+                  : "text-neutral-400 hover:text-neutral-100 border-transparent"
               }`}
             style={{
+              backgroundColor: isActive ? 'var(--accent)' : undefined,
               padding: isOpen ? "8px 12px" : "8px 0",
               justifyContent: isOpen ? "flex-start" : "center",
             }}
+            onMouseEnter={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'var(--bg-panel)')}
+            onMouseLeave={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'transparent')}
             title={!isOpen ? item.label : undefined}
           >
             <Icon
               size={16}
-              className={isActive ? "text-blue-400" : "text-neutral-500"}
+              className={isActive ? "text-white" : "text-neutral-500"}
             />
             {isOpen && <span className="ml-3">{item.label}</span>}
           </button>

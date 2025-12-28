@@ -159,6 +159,7 @@ export interface CustomTheme {
   text1: string;
   text2: string;
   accent: string;
+  bgHeader: string;
 }
 
 export interface AppSettings {

@@ -7,6 +7,7 @@ const THEMES = {
     text2: "#94a3b8",
     textInfo: "10px",
     accent: "#3b82f6",
+    bgHeader: "#0a0a0a",
   },
   cappuccino: {
     bgMain: "#f5f1ee",
@@ -15,6 +16,7 @@ const THEMES = {
     text2: "#8b7d75",
     textInfo: "10px",
     accent: "#c17a4a",
+    bgHeader: "#e8e3df",
   },
   "tokyo-night": {
     bgMain: "#1a1b26",
@@ -23,6 +25,7 @@ const THEMES = {
     text2: "#565f89",
     textInfo: "10px",
     accent: "#7aa2f7",
+    bgHeader: "#16161e",
   },
 };
 
@@ -39,6 +42,7 @@ export const useTheme = (themeName: string, customTheme?: any) => {
     root.style.setProperty("--text-2", theme.text2);
     root.style.setProperty("--text-info", theme.textInfo || "10px");
     root.style.setProperty("--accent", theme.accent);
+    root.style.setProperty("--bg-header", theme.bgHeader || theme.bgMain);
     
     // Compute interactive state colors based on theme
     // For dark themes: use bgPanel for hover/focus
@@ -50,8 +54,5 @@ export const useTheme = (themeName: string, customTheme?: any) => {
     
     // Border color: use text2 with opacity for a subtle border
     root.style.setProperty("--border-color", theme.text2);
-    
-    // Header background (similar to bgPanel for consistency)
-    root.style.setProperty("--bg-header", theme.bgPanel);
   }, [themeName, customTheme]);
 };

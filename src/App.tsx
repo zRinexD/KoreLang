@@ -91,7 +91,7 @@ const AppContent: React.FC = () => {
       },
       updateCustomTheme: (payload) => {
         if (!payload?.colorKey || !payload?.colorValue) return;
-        const current = project.settings.customTheme || { bgMain: "", bgPanel: "", text1: "", text2: "", accent: "" };
+        const current = project.settings.customTheme || { bgMain: "", bgPanel: "", text1: "", text2: "", accent: "", bgHeader: "" };
         project.updateSettings({
           ...project.settings,
           theme: "custom",
