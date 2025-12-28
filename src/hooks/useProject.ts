@@ -7,7 +7,9 @@ import {
   ProjectConstraints,
   ScriptConfig,
   ProjectData,
+  ViewState,
 } from "../types";
+import { useSettings } from "../hooks/useSettings";
 
 const STORAGE_KEY = "conlang_studio_autosave";
 
@@ -47,6 +49,13 @@ export const useProject = () => {
   const [constraints, setConstraints] = useState<ProjectConstraints>(INITIAL_CONSTRAINTS);
   const [scriptConfig, setScriptConfig] = useState<ScriptConfig>(INITIAL_SCRIPT);
   const [notebook, setNotebook] = useState("");
+
+  // UI/interaction state for app layout
+  const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+
+  // Integrate app settings via useSettings
+  const { settings, updateSettings } = useSettings();
 
   const loadProjectData = (data: ProjectData) => {
     setProjectName(data.name || "Untitled");
@@ -133,6 +142,81 @@ export const useProject = () => {
     lastModified: Date.now(),
   });
 
+  // Handlers grouped for cleaner props spreading in App
+  const handlers = {
+    newProject: () => setCurrentView("DASHBOARD"),
+    exportProject: () => {
+      const data = getFullProjectData();
+      const text = JSON.stringify(data, null, 2);
+      const blob = new Blob([text], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `project.json`;
+      a.click();
+    },
+    openProject: () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+      input.onchange = () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          loadProjectData(JSON.parse(e.target?.result as string));
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    },
+    openSettings: () => {},
+    openProjectSettings: () => setCurrentView("DASHBOARD"),
+    openConstraints: () => setCurrentView("DASHBOARD"),
+    openConsole: () => {},
+    zoomIn: () => {},
+    zoomOut: () => {},
+    onToggleSidebar: () => {},
+    toggleScriptMode: () => {},
+    openAbout: () => {},
+  };
+
+  const states = {
+    // Project metadata
+    projectName,
+    projectAuthor,
+    projectDescription,
+    
+    // Project data
+    lexicon,
+    setLexicon,
+    grammar,
+    setGrammar,
+    morphology,
+    setMorphology,
+    phonology,
+    setPhonology,
+    rules,
+    setRules,
+    constraints,
+    setConstraints,
+    scriptConfig,
+    setScriptConfig,
+    notebook,
+    setNotebook,
+    
+    // UI settings for ProjectView
+    enableAI: settings.enableAI,
+    showLineNumbers: settings.showLineNumbers,
+    isScriptMode: false,
+    setCurrentView,
+  };
+
+  const sidebarProps = {
+    currentView: currentView as ViewState,
+    setView: setCurrentView,
+  };
+
+  // Return both legacy fields and the new grouped API to preserve compatibility
   return {
     projectName,
     setProjectName,
@@ -158,5 +242,14 @@ export const useProject = () => {
     setNotebook,
     loadProjectData,
     getFullProjectData,
+
+    // New grouped properties
+    settings,
+    updateSettings,
+    handlers,
+    states,
+    sidebarProps,
+    currentView,
+    setCurrentView,
   };
 };

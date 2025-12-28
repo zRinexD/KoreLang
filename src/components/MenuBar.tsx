@@ -39,26 +39,35 @@ interface MenuGroup {
   items: MenuEntry[];
 }
 interface MenuBarProps {
-  actions: {
-    newProject: () => void;
-    openProject: () => void;
-    exportProject: () => void;
-    openSettings: () => void;
-    openProjectSettings: () => void;
-    openConstraints: () => void;
-    openConsole: () => void;
-    zoomIn: () => void;
-    zoomOut: () => void;
-    onToggleSidebar: () => void;
-    toggleScriptMode?: () => void;
-    openAbout: () => void;
-  };
+  newProject: () => void;
+  openProject: () => void;
+  exportProject: () => void;
+  openSettings: () => void;
+  openProjectSettings: () => void;
+  openConstraints: () => void;
+  openConsole: () => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  onToggleSidebar: () => void;
+  toggleScriptMode?: () => void;
+  openAbout: () => void;
   settings: AppSettings;
   isScriptMode: boolean;
 }
 
 const MenuBar: React.FC<MenuBarProps> = ({
-  actions,
+  newProject,
+  openProject,
+  exportProject,
+  openSettings,
+  openProjectSettings,
+  openConstraints,
+  openConsole,
+  zoomIn,
+  zoomOut,
+  onToggleSidebar,
+  toggleScriptMode,
+  openAbout,
   settings,
   isScriptMode,
 }) => {
@@ -68,7 +77,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      actions.openProject();
+      openProject();
     }
     if (fileInputRef.current) fileInputRef.current.value = "";
     setActiveMenu(null);
@@ -83,20 +92,20 @@ const MenuBar: React.FC<MenuBarProps> = ({
         {
           label: t("menu.new_project"),
           icon: FileText,
-          action: actions.newProject,
+          action: newProject,
           shortcut: "Alt+N",
         },
         {
           label: t("menu.open_project"),
           icon: FolderOpen,
-          action: actions.openProject,
+          action: openProject,
           shortcut: "Alt+O",
         },
         { type: "separator" },
         {
           label: t("menu.export_json"),
           icon: Download,
-          action: actions.exportProject,
+          action: exportProject,
           shortcut: "Alt+E",
         },
       ],
@@ -108,13 +117,13 @@ const MenuBar: React.FC<MenuBarProps> = ({
         {
           label: t("menu.toggle_sidebar"),
           icon: Command,
-          action: actions.onToggleSidebar,
+          action: onToggleSidebar,
           shortcut: "Alt+B",
         },
-        { label: t("menu.zoom_in"), action: actions.zoomIn, shortcut: "Alt+" },
+        { label: t("menu.zoom_in"), action: zoomIn, shortcut: "Alt+" },
         {
           label: t("menu.zoom_out"),
-          action: actions.zoomOut,
+          action: zoomOut,
           shortcut: "Alt-",
         },
       ],
@@ -126,12 +135,12 @@ const MenuBar: React.FC<MenuBarProps> = ({
         {
           label: t("menu.validation"),
           icon: ShieldCheck,
-          action: actions.openConstraints,
+          action: openConstraints,
         },
         {
           label: t("menu.console"),
           icon: Terminal,
-          action: actions.openConsole,
+          action: openConsole,
           shortcut: "Alt+C",
         },
       ],
@@ -143,12 +152,12 @@ const MenuBar: React.FC<MenuBarProps> = ({
         {
           label: t("menu.project"),
           icon: Info,
-          action: actions.openProjectSettings,
+          action: openProjectSettings,
         },
         {
           label: t("menu.preferences"),
           icon: Settings,
-          action: actions.openSettings,
+          action: openSettings,
         },
       ],
     },
@@ -162,7 +171,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
           action: () =>
             window.open("https://github.com/zRinexD/KoreLang/", "_blank"),
         },
-        { label: t("menu.about"), action: () => actions.openAbout?.() },
+        { label: t("menu.about"), action: () => openAbout?.() },
       ],
     },
   ];
@@ -266,9 +275,9 @@ const MenuBar: React.FC<MenuBarProps> = ({
       <div className="flex-1" />
 
       <div className="flex items-center gap-4">
-        {actions.toggleScriptMode && (
+        {toggleScriptMode && (
           <button
-            onClick={actions.toggleScriptMode}
+            onClick={toggleScriptMode}
             className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-bold transition-all border ${
               isScriptMode
                 ? "bg-purple-900/40 text-purple-300 border-purple-500/50 shadow-[0_0_10px_rgba(168,85,247,0.2)]"
