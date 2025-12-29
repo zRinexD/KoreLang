@@ -1,3 +1,27 @@
+// Nouvelle base pour la sérialisation des phonèmes (modèle extensible)
+export interface PhonemeModel {
+  /** Identifiant unique du phonème (ex: "p", "b", "a") */
+  id: string;
+  /** Représentation IPA ou Unicode */
+  symbol: string;
+  /** Nom ou description (ex: "Voiced Bilabial Plosive") */
+  name: string;
+  /** Catégorie (ex: "consonant", "vowel", etc.) */
+  category: string;
+  /** Traits optionnels (ex: voicing, place, manner, etc.) */
+  features?: Record<string, string | boolean | number>;
+  /** Diacritiques ou modifications éventuelles */
+  diacritics?: string[];
+  /** Champs extensibles pour la future compatibilité */
+  [key: string]: any;
+}
+
+export interface PhonemeInventory {
+  /** Liste des phonèmes de la langue */
+  phonemes: PhonemeModel[];
+  /** Métadonnées optionnelles (ex: version, auteur, etc.) */
+  metadata?: Record<string, any>;
+}
 // Enum de tous les phonèmes (inspiré de Phoneme.cs)
 export enum PhonemeType {
   // Consonants
