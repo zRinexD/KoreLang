@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Feather, Save, Image as ImageIcon, Palette, Spline, RotateCw, RotateCcw, Square, Circle, Minus, Layers, Eye, EyeOff, Lock, Unlock, ChevronLeft, ChevronRight, Trash2, ChevronUp, ChevronDown, Plus, Edit3, Type, Grid } from 'lucide-react';
 import { ScriptConfig, ScriptGlyph, ProjectConstraints, GlyphStroke } from '../types';
 import { useTranslation } from '../i18n';
@@ -82,14 +82,14 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
     }, [selectedChar, scriptConfig]);
 
     const pushToUndo = useCallback(() => {
-        setUndoStack(prev => [...prev, JSON.parse(JSON.stringify(strokes))]);
+        setUndoStack(prev => [...prev, structuredClone(strokes)]);
         setRedoStack([]);
     }, [strokes]);
 
     const performUndo = useCallback(() => {
         if (undoStack.length === 0) return;
         const last = undoStack[undoStack.length - 1];
-        setRedoStack(prev => [...prev, JSON.parse(JSON.stringify(strokes))]);
+        setRedoStack(prev => [...prev, structuredClone(strokes)]);
         setStrokes(last);
         setUndoStack(prev => prev.slice(0, -1));
         setIsDirty(true);
@@ -98,7 +98,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
     const performRedo = useCallback(() => {
         if (redoStack.length === 0) return;
         const next = redoStack[redoStack.length - 1];
-        setUndoStack(prev => [...prev, JSON.parse(JSON.stringify(strokes))]);
+        setUndoStack(prev => [...prev, structuredClone(strokes)]);
         setStrokes(next);
         setRedoStack(prev => prev.slice(0, -1));
         setIsDirty(true);
@@ -270,6 +270,12 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
         return Math.min(CANVAS_SIZE, Math.max(50, maxX + 20));
     };
 
+    // Mémoiser la liste filtrée des caractères
+    const filteredChars = useMemo(() => 
+        Array.from({ length: 94 }, (_, i) => String.fromCharCode(i + 33))
+            .filter(c => !sidebarSearch || c.toLowerCase().includes(sidebarSearch.toLowerCase()))
+    , [sidebarSearch]);
+
     const saveGlyph = () => {
         const calculatedWidth = calculateGlyphWidth(strokes);
         const newGlyph: ScriptGlyph = {
@@ -305,13 +311,43 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
         setIsDirty(true);
     };
 
+    // Handlers optimisés avec useCallback
+    const handleStrokeWidthChange = useCallback((newWidth: number) => {
+        setStrokeWidth(newWidth);
+        if (activeLayerId) {
+            setStrokes(prev => prev.map(s => s.id === activeLayerId ? { ...s, strokeWidth: newWidth } : s));
+            setIsDirty(true);
+        }
+    }, [activeLayerId]);
+
+    const handleColorChange = useCallback((newColor: string) => {
+        setGlyphColor(newColor);
+        if (activeLayerId) {
+            setStrokes(prev => prev.map(s => s.id === activeLayerId ? { ...s, color: newColor } : s));
+            setIsDirty(true);
+        }
+    }, [activeLayerId]);
+
+    const toggleLayerLock = useCallback((id: string) => {
+        setStrokes(prev => prev.map(l => l.id === id ? { ...l, locked: !l.locked } : l));
+    }, []);
+
+    const toggleLayerVisibility = useCallback((id: string) => {
+        setStrokes(prev => prev.map(l => l.id === id ? { ...l, visible: !l.visible } : l));
+    }, []);
+
+    const deleteLayer = useCallback((id: string) => {
+        setStrokes(prev => prev.filter(l => l.id !== id));
+        if (activeLayerId === id) setActiveLayerId(null);
+    }, [activeLayerId]);
+
     return (
         <ViewLayout
             icon={Feather}
             title={t('script.title')}
             subtitle={t('script.engine_subtitle')}
             headerChildren={
-                <div className="flex gap-4 items-center text-slate-200">
+                <div className="flex items-center gap-4 text-slate-200">
                     <div className="flex gap-0 rounded h-[32px]" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
                         <ToggleButton
                             isActive={scriptConfig.spacingMode === 'proportional'}
@@ -384,8 +420,8 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
 
             <div className="flex-1 flex overflow-hidden bg-[var(--background)] text-slate-200">
                 <div className={`border-r border-neutral-800 flex flex-col bg-[var(--surface)]/50 transition-all duration-300 ${sidebarCollapsed ? 'w-12' : 'w-72'}`}>
-                    <Card className="p-3 flex justify-between items-center rounded-none border-b-0">
-                        {!sidebarCollapsed && <span className="text-xs font-bold text-neutral-500 uppercase">{t('script.symbol_map')}</span>}
+                    <Card className="flex items-center justify-between p-3 border-b-0 rounded-none">
+                        {!sidebarCollapsed && <span className="text-xs font-bold uppercase text-neutral-500">{t('script.symbol_map')}</span>}
                         <CompactButton
                             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
                             variant="ghost"
@@ -406,10 +442,8 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                         </div>
                     )}
 
-                    <div className="flex-1 overflow-y-auto flex flex-wrap content-start p-2 gap-1 custom-scrollbar">
-                        {Array.from({ length: 94 }, (_, i) => String.fromCharCode(i + 33))
-                            .filter(c => !sidebarSearch || c.toLowerCase().includes(sidebarSearch.toLowerCase()))
-                            .map(char => {
+                    <div className="flex flex-wrap content-start flex-1 gap-1 p-2 overflow-y-auto custom-scrollbar">
+                        {filteredChars.map(char => {
                                 const glyph = scriptConfig.glyphs.find(g => g.char === char);
                                 const hasGlyph = !!glyph;
                                 const active = selectedChar === char;
@@ -420,15 +454,15 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                         variant={active ? 'solid' : 'ghost'}
                                         color="var(--accent)"
                                         icon={
-                                            <div className="relative w-full h-full flex items-center justify-center font-mono font-bold text-sm">
+                                            <div className="relative flex items-center justify-center w-full h-full font-mono text-sm font-bold">
                                                 {hasGlyph ? (
-                                                    <div className="w-full h-full p-2 flex items-center justify-center overflow-hidden">
+                                                    <div className="flex items-center justify-center w-full h-full p-2 overflow-hidden">
                                                         <ConScriptText text={char} scriptConfig={scriptConfig} />
                                                     </div>
                                                 ) : (
                                                     char
                                                 )}
-                                                {hasGlyph && <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full border-2 border-neutral-950"></span>}
+                                                {hasGlyph && <span className="absolute w-2 h-2 border-2 rounded-full top-1 right-1 bg-emerald-400 border-neutral-950"></span>}
                                             </div>
                                         }
                                         label=""
@@ -440,21 +474,15 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                 </div>
 
                 <div className="flex-1 flex flex-col items-center justify-center p-8 relative bg-[var(--background)] overflow-hidden" onWheel={handleCanvasWheel}>
-                    <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                    <div className="absolute z-10 flex flex-col gap-2 top-4 left-4">
                         <Card className="flex flex-col gap-3 items-center min-w-[50px] p-2">
-                            <div className="flex flex-col gap-2 items-center w-full">
+                            <div className="flex flex-col items-center w-full gap-2">
                                 <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-tighter">Size</span>
-                                <div className="relative h-48 w-1 flex items-center justify-center">
-                                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 w-48 h-1">
+                                <div className="relative flex items-center justify-center w-1 h-48">
+                                    <div className="absolute w-48 h-1 -rotate-90 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
                                         <Slider
                                             value={strokeWidth}
-                                            onChange={(newWidth) => {
-                                                setStrokeWidth(newWidth);
-                                                if (activeLayerId) {
-                                                    setStrokes(prev => prev.map(s => s.id === activeLayerId ? { ...s, strokeWidth: newWidth } : s));
-                                                    setIsDirty(true);
-                                                }
-                                            }}
+                                            onChange={handleStrokeWidthChange}
                                             min={1}
                                             max={60}
                                             className="w-full h-1"
@@ -464,15 +492,8 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                 <span className="text-[10px] font-mono text-purple-400 font-bold">{strokeWidth}pt</span>
                             </div>
                             <label className="relative cursor-pointer p-1.5 hover:bg-neutral-800 rounded flex justify-center border border-neutral-700 group">
-                                <Palette size={16} style={{ color: glyphColor }} className="group-hover:scale-110 transition-transform" />
-                                <input type="color" value={glyphColor} onChange={(e) => {
-                                    const newColor = e.target.value;
-                                    setGlyphColor(newColor);
-                                    if (activeLayerId) {
-                                        setStrokes(prev => prev.map(s => s.id === activeLayerId ? { ...s, color: newColor } : s));
-                                        setIsDirty(true);
-                                    }
-                                }} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                <Palette size={16} style={{ color: glyphColor }} className="transition-transform group-hover:scale-110" />
+                                <input type="color" value={glyphColor} onChange={(e) => handleColorChange(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer" />
                             </label>
                         </Card>
                     </div>
@@ -501,7 +522,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                             {activeShape && drawMode === 'circle' && <circle cx={activeShape.x} cy={activeShape.y} r={Math.sqrt(activeShape.w ** 2 + activeShape.h ** 2)} stroke={glyphColor} strokeWidth={strokeWidth} fill="none" strokeOpacity="0.5" />}
                         </svg>
                     </div>
-                    <div className="absolute bottom-4 left-4 flex items-center gap-2 z-10">
+                    <div className="absolute z-10 flex items-center gap-2 bottom-4 left-4">
                         <StatBadge value={Math.round(coords.x)} label="X POS" />
                         <StatBadge value={Math.round(coords.y)} label="Y POS" />
                         <StatBadge value={`${Math.round(canvasZoom * 100)}%`} label="ZOOM" />
@@ -510,34 +531,34 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                 </div>
 
                 <div className="w-80 border-l border-neutral-800 bg-[var(--surface)]/50 flex flex-col">
-                    <Card className="p-3 flex items-center justify-between rounded-none rounded-b-none border-b-0">
+                    <Card className="flex items-center justify-between p-3 border-b-0 rounded-none rounded-b-none">
                         <div className="flex items-center gap-2">
                             <Layers size={14} className="text-purple-400" />
-                            <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Neural Layer Stack</span>
+                            <span className="text-xs font-bold tracking-widest uppercase text-neutral-400">Neural Layer Stack</span>
                         </div>
                         <CompactButton onClick={addNewLayer} variant="solid" color="var(--accent)" icon={<Plus size={14} />} label="" className="p-1" title={t('script.add_layer_title')} />
                     </Card>
-                    <div className="flex-1 overflow-y-auto p-2 space-y-2 custom-scrollbar">
+                    <div className="flex-1 p-2 space-y-2 overflow-y-auto custom-scrollbar">
                         {[...strokes].reverse().map((s, revIdx) => {
                             const actualIdx = strokes.length - 1 - revIdx;
                             const isEditing = editingLayerId === s.id;
                             return (
                                 <Card key={s.id} onClick={() => setActiveLayerId(s.id)} className={`p-2 flex items-center justify-between transition-all cursor-pointer ${activeLayerId === s.id ? 'ring-2 ring-purple-500/50' : ''}`}>
-                                    <div className="flex items-center gap-3 overflow-hidden flex-1">
+                                    <div className="flex items-center flex-1 gap-3 overflow-hidden">
                                         <div className="flex flex-col gap-0.5">
                                             <button disabled={actualIdx === strokes.length - 1} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'up'); }} className="p-0.5 text-neutral-700 hover:text-purple-400 disabled:opacity-10"><ChevronUp size={12} /></button>
                                             <button disabled={actualIdx === 0} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'down'); }} className="p-0.5 text-neutral-700 hover:text-purple-400 disabled:opacity-10"><ChevronDown size={12} /></button>
                                         </div>
-                                        <div className="w-10 h-10 bg-black rounded border border-neutral-800 flex items-center justify-center shrink-0 overflow-hidden relative">
+                                        <div className="relative flex items-center justify-center w-10 h-10 overflow-hidden bg-black border rounded border-neutral-800 shrink-0">
                                             {s.type === 'image' ? (
-                                                <img src={s.imageUrl} className="w-full h-full object-cover opacity-50" />
+                                                <img src={s.imageUrl} className="object-cover w-full h-full opacity-50" />
                                             ) : (
                                                 <svg viewBox={`0 0 ${CANVAS_SIZE} ${CANVAS_SIZE}`} className="w-8 h-8">
                                                     <path d={s.d} stroke={s.color} strokeWidth={s.strokeWidth * 1.5} fill="none" strokeLinecap="round" />
                                                 </svg>
                                             )}
                                         </div>
-                                        <div className="flex flex-col min-w-0 flex-1">
+                                        <div className="flex flex-col flex-1 min-w-0">
                                             {isEditing ? (
                                                 <input
                                                     autoFocus
@@ -558,13 +579,13 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-0.5 opacity-40 group-hover:opacity-100 transition-opacity">
-                                        <button onClick={(e) => { e.stopPropagation(); setStrokes(prev => prev.map(l => l.id === s.id ? { ...l, locked: !l.locked } : l)); }} className={`p-1 rounded hover:bg-neutral-800 ${s.locked ? 'text-amber-500' : 'text-neutral-600'}`}>
+                                        <button onClick={(e) => { e.stopPropagation(); toggleLayerLock(s.id); }} className={`p-1 rounded hover:bg-neutral-800 ${s.locked ? 'text-amber-500' : 'text-neutral-600'}`}>
                                             {s.locked ? <Lock size={12} /> : <Unlock size={12} />}
                                         </button>
-                                        <button onClick={(e) => { e.stopPropagation(); setStrokes(prev => prev.map(l => l.id === s.id ? { ...l, visible: !l.visible } : l)); }} className={`p-1.5 rounded hover:bg-neutral-800 ${s.visible ? 'text-neutral-500' : 'text-blue-500'}`}>{s.visible ? <Eye size={12} /> : <EyeOff size={12} />}</button>
+                                        <button onClick={(e) => { e.stopPropagation(); toggleLayerVisibility(s.id); }} className={`p-1.5 rounded hover:bg-neutral-800 ${s.visible ? 'text-neutral-500' : 'text-blue-500'}`}>{s.visible ? <Eye size={12} /> : <EyeOff size={12} />}</button>
                                         <button
                                             disabled={strokes.length <= 1}
-                                            onClick={(e) => { e.stopPropagation(); setStrokes(prev => prev.filter(l => l.id !== s.id)); if (activeLayerId === s.id) setActiveLayerId(null); }}
+                                            onClick={(e) => { e.stopPropagation(); deleteLayer(s.id); }}
                                             className={`p-1.5 rounded hover:bg-red-900/20 ${strokes.length <= 1 ? 'text-neutral-800 cursor-not-allowed' : 'text-neutral-700 hover:text-red-500'}`}
                                         >
                                             <Trash2 size={12} />
@@ -574,8 +595,8 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                             );
                         })}
                     </div>
-                    <Card className="p-4 flex flex-col gap-2 rounded-none rounded-t-none border-t-0">
-                        <CompactButton onClick={() => fileInputRef.current?.click()} variant="ghost" color="var(--text-secondary)" icon={<ImageIcon size={12} />} label={t('script.import_reference')} className="w-full justify-center" />
+                    <Card className="flex flex-col gap-2 p-4 border-t-0 rounded-none rounded-t-none">
+                        <CompactButton onClick={() => fileInputRef.current?.click()} variant="ghost" color="var(--text-secondary)" icon={<ImageIcon size={12} />} label={t('script.import_reference')} className="justify-center w-full" />
                         <input type="file" ref={fileInputRef} onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {

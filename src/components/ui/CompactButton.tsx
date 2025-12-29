@@ -61,7 +61,7 @@ interface CompactButtonProps {
  * />
  * ```
  */
-export const CompactButton: React.FC<CompactButtonProps> = ({ 
+export const CompactButton = React.memo<CompactButtonProps>(({ 
   onClick,
   icon,
   label,
@@ -118,4 +118,4 @@ export const CompactButton: React.FC<CompactButtonProps> = ({
       {!hideLabel && label && <span className="hidden sm:inline">{label}</span>}
     </button>
   );
-};
+});

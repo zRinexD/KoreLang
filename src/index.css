@@ -51,6 +51,28 @@
   scrollbar-color: var(--surface) var(--background);
 }
 
+/* Slider thumb styles - optimized for performance */
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 32px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--elevated);
+    cursor: pointer;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 32px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--elevated);
+    cursor: pointer;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
 /* Blink then fade out animation for copy success message with neon effect */
 @keyframes blinkFadeOut {
   0% {

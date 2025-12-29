@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { X, Plus } from 'lucide-react';
 import { Phoneme } from '../types';
 import { Card, Section } from './ui';
@@ -45,6 +45,14 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
     const rows = isVowels ? HEIGHTS : MANNERS;
     const columnLabel = (key: string) => t(`phonology.${isVowels ? 'backness' : 'place'}.${key}`);
     const rowLabel = (key: string) => t(`phonology.${isVowels ? 'height' : 'manner'}.${key}`);
+
+    // Mémoiser les données de la grille pour éviter les recalculs
+    const gridData = useMemo(() => {
+        return rows.map(row => 
+            columns.map(col => getPhonemes(row, col).filter(p => p.symbol))
+        );
+    }, [rows, columns, getPhonemes]);
+
     return (
     <Card className="flex flex-col h-full p-4 overflow-hidden">
         <Section title={title} icon={icon} className="mb-2" />
@@ -79,7 +87,7 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
                             {rowLabel(row)}
                         </th>
                         {columns.map((col, colIdx) => {
-                            const phonemes = getPhonemes(row, col).filter(p => p.symbol);
+                            const phonemes = gridData[rowIdx][colIdx];
                             return (
                                 <td
                                     key={`${row}-${col}`}
