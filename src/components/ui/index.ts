@@ -10,3 +10,4 @@ export { ViewLayout } from './ViewLayout';
 export { CompactButton } from './CompactButton';
 export { Modal } from './Modal';
 export { SearchInput } from './SearchInput';
+export { CIcon, VIcon } from './LetterIcons';

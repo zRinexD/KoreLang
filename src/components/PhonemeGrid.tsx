@@ -46,12 +46,12 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
     const columnLabel = (key: string) => t(`phonology.${isVowels ? 'backness' : 'place'}.${key}`);
     const rowLabel = (key: string) => t(`phonology.${isVowels ? 'height' : 'manner'}.${key}`);
     return (
-    <Card className="p-6 overflow-x-auto">
-        <Section title={title} icon={icon} className="mb-6" />
+    <Card className="flex flex-col h-full p-4 overflow-hidden">
+        <Section title={title} icon={icon} className="mb-2" />
 
         {unclassified?.items?.length && unclassified.position !== 'bottom' ? (
-            <div className="p-3 mb-4 text-sm border rounded bg-neutral-900 border-neutral-800 text-neutral-200">
-                <div className="mb-2 text-xs text-neutral-400">{t(unclassified.titleKey)}</div>
+            <div className="p-2 mb-2 text-sm border rounded bg-neutral-900 border-neutral-800 text-neutral-200">
+                <div className="mb-1 text-xs text-neutral-400">{t(unclassified.titleKey)}</div>
                 <div className="flex flex-wrap gap-2">
                     {unclassified.items.map((p, i) => unclassified.renderItem ? unclassified.renderItem(p, i) : (
                         <span key={`unclassified-${i}`} className="px-2 py-1 font-serif text-lg rounded bg-neutral-800">{p.symbol}</span>
@@ -60,12 +60,13 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
             </div>
         ) : null}
 
-        <table className="border-collapse inline-table" style={{ minWidth: `${minWidth}px` }}>
+        <div className="flex-1 overflow-auto">
+        <table className="w-full border-collapse" style={{ fontSize: '0.75rem' }}>
             <thead>
                 <tr>
                     <th className="w-4 p-0"></th>
                     {columns.map(col => (
-                        <th key={col} className="p-2 text-xs font-bold text-center uppercase" style={{ color: 'var(--text-tertiary)' }}>
+                        <th key={col} className="p-1 text-[10px] font-bold text-center uppercase" style={{ color: 'var(--text-tertiary)' }}>
                             {columnLabel(col)}
                         </th>
                     ))}
@@ -74,7 +75,7 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
             <tbody>
                 {rows.map((row, rowIdx) => (
                     <tr key={row} className={rowIdx === 0 ? '' : 'border-t'} style={{ borderColor: 'var(--text-tertiary)' }}>
-                        <th className="py-2 pl-0 pr-2 text-xs font-bold text-left uppercase whitespace-nowrap" style={{ color: 'var(--text-tertiary)' }}>
+                        <th className="py-1 pl-0 pr-1 text-[10px] font-bold text-left uppercase whitespace-nowrap" style={{ color: 'var(--text-tertiary)' }}>
                             {rowLabel(row)}
                         </th>
                         {columns.map((col, colIdx) => {
@@ -82,11 +83,11 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
                             return (
                                 <td
                                     key={`${row}-${col}`}
-                                    className={`p-2 text-center transition-colors cursor-pointer group hover:bg-[var(--surface)] ${colIdx === 0 ? 'border-l' : 'border-l'}`}
+                                    className={`p-1 text-center transition-colors cursor-pointer group hover:bg-[var(--surface)] ${colIdx === 0 ? 'border-l' : 'border-l'}`}
                                     style={{ borderColor: 'var(--text-tertiary)' }}
                                     onClick={() => onCellClick(row, col)}
                                 >
-                                    <div className="flex justify-center gap-2 items-center min-h-[30px]">
+                                    <div className="flex justify-center gap-1 items-center min-h-[20px]">
                                         {phonemes.length > 0 ? (
                                             phonemes.map((p, idx) => (
                                                 <div key={`${row}-${col}-${idx}-${p.symbol}`} className="relative group/ph">
@@ -101,7 +102,7 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
                                             ))
                                         ) : (
                                             <Plus
-                                                size={12}
+                                                size={10}
                                                 className="transition-colors"
                                                 style={{ color: 'var(--text-tertiary)' }}
                                             />
@@ -114,19 +115,20 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
                 ))}
             </tbody>
         </table>
+        </div>
 
         {legend ? (
-            <div className="mt-4 text-xs text-center" style={{ color: 'var(--text-tertiary)' }}>
+            <div className="mt-2 text-[10px] text-center" style={{ color: 'var(--text-tertiary)' }}>
                 {legend}
             </div>
         ) : null}
 
         {unclassified?.items?.length && unclassified.position === 'bottom' ? (
-            <div className="p-3 mt-4 text-sm border rounded bg-neutral-900 border-neutral-800 text-neutral-200">
-                <div className="mb-2 text-xs text-neutral-400">{t(unclassified.titleKey)}</div>
-                <div className="flex flex-wrap gap-2">
+            <div className="p-2 mt-2 text-xs border rounded bg-neutral-900 border-neutral-800 text-neutral-200">
+                <div className="mb-1 text-[10px] text-neutral-400">{t(unclassified.titleKey)}</div>
+                <div className="flex flex-wrap gap-1">
                     {unclassified.items.map((p, i) => unclassified.renderItem ? unclassified.renderItem(p, i) : (
-                        <span key={`unclassified-bottom-${i}`} className="px-2 py-1 font-serif text-lg rounded bg-neutral-800">{p.symbol}</span>
+                        <span key={`unclassified-bottom-${i}`} className="px-1.5 py-0.5 font-serif text-sm rounded bg-neutral-800">{p.symbol}</span>
                     ))}
                 </div>
             </div>

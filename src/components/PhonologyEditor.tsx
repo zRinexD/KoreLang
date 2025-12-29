@@ -3,7 +3,7 @@ import { Wand2, RefreshCw, Volume2, Info, LayoutGrid, EyeOff, ShieldAlert, Plus,
 import { generatePhonology, isApiKeySet } from '../services/geminiService';
 import { PhonologyConfig, Phoneme } from '../types';
 import { useTranslation } from '../i18n';
-import { Card, Section, ViewLayout, FormField, ActionButton, CompactButton, Modal, SearchInput, StatBadge } from './ui';
+import { Card, Section, ViewLayout, FormField, ActionButton, CompactButton, Modal, SearchInput, StatBadge, CIcon, VIcon } from './ui';
 import PhonemeGrid from './PhonemeGrid';
 
 interface PhonologyEditorProps {
@@ -163,17 +163,18 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
             title={t('phonology.title')}
             subtitle={t('phonology.subtitle')}
             headerChildren={headerActions}
-            footer={<span style={{ color: 'var(--text-secondary)' }} className="text-sm">{totalPhonemes} phonems</span>}
         >
             <div className="flex h-full p-6 overflow-hidden">
 
             {/* Charts */}
-            <div className="flex-1 overflow-y-auto space-y-8 pr-2 custom-scrollbar">
+            <div className="flex-1 pr-2 overflow-y-auto custom-scrollbar">
+                <div className="flex flex-col gap-6 xl:flex-row xl:items-stretch">
 
                 {/* Consonants Chart */}
+                <div className="flex-[3] h-full">
                 <PhonemeGrid
                     title={t('phonology.consonants')}
-                    icon={<LayoutGrid size={20} />}
+                    icon={<CIcon size={16} />}
                     isVowels={false}
                     getPhonemes={(manner, place) => getConsonants(manner, place)}
                     onCellClick={(manner, place) => {
@@ -185,23 +186,25 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     renderPhoneme={(p) => (
                         <span
                             title={`${p.voiced ? 'Voiced' : 'Unvoiced'} ${p.place} ${p.manner}`}
-                            className={`text-lg font-serif ${p.voiced ? 'text-neutral-200' : 'text-neutral-400'}`}
+                            className={`text-sm font-serif ${p.voiced ? 'text-neutral-200' : 'text-neutral-400'}`}
                         >
                             {p.symbol}
                         </span>
                     )}
-                    minWidth={800}
+                    minWidth={280}
                     unclassified={{
                         items: unclassifiedConsonants,
                         titleKey: 'phonology.unclassified_consonants',
                         position: 'top',
                     }}
                 />
+                </div>
 
                 {/* Vowels Chart */}
+                <div className="flex-[2] h-full">
                 <PhonemeGrid
                     title={t('phonology.vowels')}
-                    icon={<Volume2 size={20} />}
+                    icon={<VIcon size={16} />}
                     isVowels={true}
                     getPhonemes={(height, back) => getVowels(height, back)}
                     onCellClick={(height, backness) => {
@@ -212,14 +215,14 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     onRemove={(phoneme) => handleRemovePhoneme(phoneme, 'vowel')}
                     renderPhoneme={(v) => (
                         <span
-                            className="text-lg font-serif"
+                            className="font-serif text-sm"
                             style={{ color: v.rounded ? 'var(--accent)' : 'var(--primary)' }}
                             title={`${v.height} ${v.backness} ${v.rounded ? 'rounded' : 'unrounded'}`}
                         >
                             {v.symbol}
                         </span>
                     )}
-                    minWidth={520}
+                    minWidth={200}
                     legend={(
                         <div className="flex justify-center gap-4">
                             <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--primary)' }}></span> {t('phonology.unrounded')}</span>
@@ -231,21 +234,23 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                         titleKey: 'phonology.unclassified_vowels',
                         position: 'bottom',
                         renderItem: (v, i) => (
-                            <span key={`unvow-${i}`} className="px-2 py-1 bg-neutral-800 rounded font-serif text-xl border border-neutral-700" style={{ color: 'var(--text-primary)' }}>
+                            <span key={`unvow-${i}`} className="px-2 py-1 font-serif text-xl border rounded bg-neutral-800 border-neutral-700" style={{ color: 'var(--text-primary)' }}>
                                 {v.symbol}
                             </span>
                         ),
                     }}
                 />
+                </div>
 
+                </div>
             </div>
 
             {/* Phoneme Editor Modal */}
             {editingPhoneme && (
                 <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-                    <div className="bg-neutral-900 border border-neutral-700 rounded-xl w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-                        <div className="px-6 py-4 border-b border-neutral-800 flex justify-between items-center bg-neutral-950">
-                            <h3 className="text-md font-bold text-neutral-100 flex items-center gap-2 capitalize">
+                    <div className="w-full max-w-sm overflow-hidden duration-200 border shadow-2xl bg-neutral-900 border-neutral-700 rounded-xl animate-in fade-in zoom-in">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-800 bg-neutral-950">
+                            <h3 className="flex items-center gap-2 font-bold capitalize text-md text-neutral-100">
                                 <Plus size={16} className="text-blue-500" />
                                 {editingPhoneme.type === 'consonant' ? t('phonology.add_consonant') : t('phonology.add_vowel')}
                             </h3>
@@ -254,20 +259,20 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             </button>
                         </div>
                         <div className="p-6 space-y-4">
-                            <div className="text-xs text-neutral-500 uppercase font-bold text-center">
+                            <div className="text-xs font-bold text-center uppercase text-neutral-500">
                                 {editingPhoneme.type === 'consonant'
                                     ? `${t(`phonology.place.${editingPhoneme.place}`)} ${t(`phonology.manner.${editingPhoneme.manner}`)}`
                                     : `${t(`phonology.height.${editingPhoneme.height}`)} ${t(`phonology.backness.${editingPhoneme.backness}`)}`
                                 }
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase">{t('phonology.symbol_label')}</label>
+                                <label className="text-xs font-semibold uppercase text-neutral-400">{t('phonology.symbol_label')}</label>
                                 <input
                                     autoFocus
                                     value={symbol}
                                     onChange={(e) => setSymbol(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSavePhoneme()}
-                                    className="w-full bg-neutral-950 border border-neutral-700 rounded p-3 font-serif text-2xl text-center focus:border-blue-500 outline-none"
+                                    className="w-full p-3 font-serif text-2xl text-center border rounded outline-none bg-neutral-950 border-neutral-700 focus:border-blue-500"
                                     style={{ color: 'var(--text-tertiary)' }}
                                     placeholder={t('phonology.symbol_placeholder')}
                                 />
@@ -300,12 +305,12 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 </label>
                             )}
                         </div>
-                        <div className="px-6 py-4 bg-neutral-950 border-t border-neutral-800 flex justify-end gap-3">
+                        <div className="flex justify-end gap-3 px-6 py-4 border-t bg-neutral-950 border-neutral-800">
                             <button onClick={() => setEditingPhoneme(null)} className="px-4 py-2 text-sm" style={{ color: 'var(--text-secondary)' }}>{t('common.cancel')}</button>
                             <button
                                 onClick={handleSavePhoneme}
                                 disabled={!symbol}
-                                className="px-4 py-2 disabled:opacity-50 text-sm font-bold rounded flex items-center gap-2"
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold rounded disabled:opacity-50"
                                 style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
                             >
                                 <Check size={16} /> {t('common.save')}
@@ -318,8 +323,8 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
             {/* AI Preview Floating Panel */}
             {pendingPhonology && showPreview && (
                 <div className={`fixed bottom-10 right-10 z-[80] transition-all duration-300 ${isPreviewMinimized ? 'w-48 h-12' : 'w-96 h-[500px]'} bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5`}>
-                    <div className="bg-neutral-950 px-4 py-3 border-b border-neutral-800 flex justify-between items-center cursor-pointer" onClick={() => setIsPreviewMinimized(!isPreviewMinimized)}>
-                        <h3 className="text-sm font-bold text-neutral-200 flex items-center gap-2">
+                    <div className="flex items-center justify-between px-4 py-3 border-b cursor-pointer bg-neutral-950 border-neutral-800" onClick={() => setIsPreviewMinimized(!isPreviewMinimized)}>
+                        <h3 className="flex items-center gap-2 text-sm font-bold text-neutral-200">
                             <Wand2 size={14} className="text-purple-400" />
                             {t('phonology.ai_review')}
                         </h3>
@@ -335,19 +340,19 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
 
                     {!isPreviewMinimized && (
                         <>
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+                            <div className="flex-1 p-4 space-y-4 overflow-y-auto custom-scrollbar">
                                 <div className="space-y-1">
-                                    <div className="text-xs font-bold text-neutral-500 uppercase">{t('phonology.syllable_struct')}</div>
-                                    <div className="text-emerald-400 font-mono text-sm bg-neutral-950 p-2 rounded border border-neutral-800">
+                                    <div className="text-xs font-bold uppercase text-neutral-500">{t('phonology.syllable_struct')}</div>
+                                    <div className="p-2 font-mono text-sm border rounded text-emerald-400 bg-neutral-950 border-neutral-800">
                                         {pendingPhonology.syllableStructure || 'None'}
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <div className="text-xs font-bold text-neutral-500 uppercase">{t('phonology.consonants')} ({pendingPhonology.consonants.length})</div>
+                                    <div className="text-xs font-bold uppercase text-neutral-500">{t('phonology.consonants')} ({pendingPhonology.consonants.length})</div>
                                     <div className="flex flex-wrap gap-1.5 p-2 bg-neutral-950 rounded border border-neutral-800 min-h-[50px]">
                                         {pendingPhonology.consonants.map((p, i) => (
-                                            <span key={i} className="text-lg font-serif text-neutral-200 w-8 h-8 flex items-center justify-center bg-neutral-900 rounded" title={`${p.place} ${p.manner}`}>
+                                            <span key={i} className="flex items-center justify-center w-8 h-8 font-serif text-lg rounded text-neutral-200 bg-neutral-900" title={`${p.place} ${p.manner}`}>
                                                 {p.symbol}
                                             </span>
                                         ))}
@@ -355,7 +360,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 </div>
 
                                 <div className="space-y-1">
-                                    <div className="text-xs font-bold text-neutral-500 uppercase">{t('phonology.vowels')} ({pendingPhonology.vowels.length})</div>
+                                    <div className="text-xs font-bold uppercase text-neutral-500">{t('phonology.vowels')} ({pendingPhonology.vowels.length})</div>
                                     <div className="flex flex-wrap gap-1.5 p-2 bg-neutral-950 rounded border border-neutral-800 min-h-[50px]">
                                         {pendingPhonology.vowels.map((v, i) => (
                                             <span key={i} className={`text-xl font-serif w-8 h-8 flex items-center justify-center bg-neutral-900 rounded ${v.rounded ? 'text-amber-400' : 'text-blue-300'}`} title={`${v.height} ${v.backness}`}>
@@ -367,14 +372,14 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
 
                                 {pendingPhonology.bannedCombinations.length > 0 && (
                                     <div className="space-y-1">
-                                        <div className="text-xs font-bold text-neutral-500 uppercase">{t('phonology.banned_combinations')}</div>
-                                        <div className="text-xs text-red-400 p-2 bg-neutral-950 rounded border border-neutral-800">
+                                        <div className="text-xs font-bold uppercase text-neutral-500">{t('phonology.banned_combinations')}</div>
+                                        <div className="p-2 text-xs text-red-400 border rounded bg-neutral-950 border-neutral-800">
                                             {pendingPhonology.bannedCombinations.join(', ')}
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="p-3 bg-blue-900/10 border border-blue-900/30 rounded-lg flex items-start gap-3">
+                                <div className="flex items-start gap-3 p-3 border rounded-lg bg-blue-900/10 border-blue-900/30">
                                     <AlertCircle size={16} className="text-blue-400 shrink-0 mt-0.5" />
                                     <p className="text-[11px] text-blue-200 leading-relaxed">
                                         {t('phonology.replace_warning')}
@@ -382,10 +387,10 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 </div>
                             </div>
 
-                            <div className="p-4 bg-neutral-950 border-t border-neutral-800 flex gap-2">
+                            <div className="flex gap-2 p-4 border-t bg-neutral-950 border-neutral-800">
                                 <button
                                     onClick={discardPending}
-                                    className="flex-1 py-2 text-xs font-bold text-neutral-400 hover:text-white transition-colors"
+                                    className="flex-1 py-2 text-xs font-bold transition-colors text-neutral-400 hover:text-white"
                                 >
                                     {t('phonology.discard')}
                                 </button>
@@ -438,7 +443,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             onChange={(e) => setPrompt(e.target.value)}
                             placeholder={t('phonology.vibe_placeholder')}
                             autoFocus
-                            className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 outline-none resize-none"
+                            className="w-full px-3 py-2 text-sm border rounded-lg outline-none resize-none focus:ring-2"
                             style={{ 
                                 backgroundColor: 'var(--surface)', 
                                 borderColor: 'var(--border)', 
@@ -450,10 +455,10 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                         />
                     </FormField>
                     {!isApiKeySet() && (
-                        <div className="p-3 bg-amber-950/20 border border-amber-900/50 rounded-lg text-xs text-amber-200 flex items-start gap-3">
+                        <div className="flex items-start gap-3 p-3 text-xs border rounded-lg bg-amber-950/20 border-amber-900/50 text-amber-200">
                             <ShieldAlert size={14} className="shrink-0 text-amber-500" />
                             <div>
-                                {t('console.ai_failed_no_key')} <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="underline font-bold">{t('menu.docs')}</a>.
+                                {t('console.ai_failed_no_key')} <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="font-bold underline">{t('menu.docs')}</a>.
                             </div>
                         </div>
                     )}
