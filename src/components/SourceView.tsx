@@ -3,7 +3,7 @@ import { Save, RefreshCw, AlertTriangle, FileJson } from 'lucide-react';
 import CodeEditor from './CodeEditor';
 import { ProjectData } from '../types';
 import { useTranslation } from '../i18n';
-import { ViewLayout } from './ui';
+import { ViewLayout, CompactButton } from './ui';
 
 interface SourceViewProps {
   data: ProjectData;
@@ -42,22 +42,20 @@ const SourceView: React.FC<SourceViewProps> = ({ data, onApply }) => {
       subtitle={t('source.desc')}
       headerChildren={
         <div className="flex gap-2">
-          <button 
+          <CompactButton
             onClick={handleReset}
-            className="flex items-center gap-2 px-3 py-2 transition-colors text-sm font-medium"
-            style={{ color: 'var(--text-secondary)' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
-          >
-            <RefreshCw size={16} /> {t('source.reset')}
-          </button>
-          <button 
+            variant="ghost"
+            color="var(--text-secondary)"
+            icon={<RefreshCw size={16} />}
+            label={t('source.reset')}
+          />
+          <CompactButton
             onClick={handleApply}
-            className="flex items-center gap-2 px-4 py-2 rounded font-bold transition-colors shadow-lg"
-            style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
-          >
-            <Save size={16} fill="currentColor" /> {t('source.apply')}
-          </button>
+            variant="solid"
+            color="var(--accent)"
+            icon={<Save size={16} fill="currentColor" />}
+            label={t('source.apply')}
+          />
         </div>
       }
     >

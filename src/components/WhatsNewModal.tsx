@@ -2,6 +2,7 @@ import React from 'react';
 import { Sparkles, ArrowRight, Languages, LucideIcon } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { useUI } from '../ui/UIContext';
+import { CompactButton } from './ui';
 
 interface FeatureItem {
     icon: LucideIcon;
@@ -59,14 +60,14 @@ const WhatsNewModal: React.FC = () => {
                         ))}
                     </div>
 
-                    <button
+                    <CompactButton
                         onClick={() => ui.close('whatsNew')}
-                        className="w-full py-4 rounded-2xl text-sm font-black shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)', boxShadow: '0 0 40px rgba(var(--accent-rgb), 0.2)' }}
-                    >
-                        {t('whats_new.button')}
-                        <ArrowRight size={18} />
-                    </button>
+                        variant="solid"
+                        color="var(--accent)"
+                        icon={<ArrowRight size={18} />}
+                        label={t('whats_new.button')}
+                        className="w-full justify-center py-4 rounded-2xl text-sm font-black shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                    />
                 </div>
             </div>
         </div>

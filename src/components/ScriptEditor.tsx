@@ -312,7 +312,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
             subtitle={t('script.engine_subtitle')}
             headerChildren={
                 <div className="flex gap-4 items-center text-slate-200">
-                    <div className="flex gap-0 bg-neutral-900 border border-neutral-800 rounded p-1 h-[32px]">
+                    <div className="flex gap-0 rounded h-[32px]" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
                         <ToggleButton
                             isActive={scriptConfig.spacingMode === 'proportional'}
                             onClick={toggleSpacingMode}
@@ -331,16 +331,46 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                         />
                     </div>
 
-                    <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
-                        <button onClick={() => setDrawMode('free')} className={`p-1.5 rounded ${drawMode === 'free' ? '' : ''}`} style={{ backgroundColor: drawMode === 'free' ? 'var(--accent)' : '' }} title={t('script.tool_freehand_title')}><Spline size={16} /></button>
-                        <button onClick={() => setDrawMode('line')} className={`p-1.5 rounded ${drawMode === 'line' ? '' : ''}`} style={{ backgroundColor: drawMode === 'line' ? 'var(--accent)' : '' }} title={t('script.tool_line_title')}><Minus size={16} /></button>
-                        <button onClick={() => setDrawMode('rect')} className={`p-1.5 rounded ${drawMode === 'rect' ? '' : ''}`} style={{ backgroundColor: drawMode === 'rect' ? 'var(--accent)' : '' }} title={t('script.tool_rect_title')}><Square size={16} /></button>
-                        <button onClick={() => setDrawMode('circle')} className={`p-1.5 rounded ${drawMode === 'circle' ? '' : ''}`} style={{ backgroundColor: drawMode === 'circle' ? 'var(--accent)' : '' }} title={t('script.tool_circle_title')}><Circle size={16} /></button>
-                    </div>
-                    <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-800 rounded px-2 py-1">
-                        <button onClick={performUndo} disabled={undoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title={t('script.undo')}><RotateCcw size={16} /></button>
-                        <button onClick={performRedo} disabled={redoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title={t('script.redo')}><RotateCw size={16} /></button>
-                    </div>
+                                        <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
+                                                {(
+                                                    [
+                                                        { mode: 'free', icon: <Spline size={16} />, title: t('script.tool_freehand_title') },
+                                                        { mode: 'line', icon: <Minus size={16} />, title: t('script.tool_line_title') },
+                                                        { mode: 'rect', icon: <Square size={16} />, title: t('script.tool_rect_title') },
+                                                        { mode: 'circle', icon: <Circle size={16} />, title: t('script.tool_circle_title') }
+                                                    ] as const
+                                                ).map(item => (
+                                                    <CompactButton
+                                                        key={item.mode}
+                                                        onClick={() => setDrawMode(item.mode)}
+                                                        variant={drawMode === item.mode ? 'solid' : 'ghost'}
+                                                        color="var(--accent)"
+                                                        icon={item.icon}
+                                                        label=""
+                                                        className="p-1.5"
+                                                    />
+                                                ))}
+                                        </div>
+                                        <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-800 rounded px-2 py-1">
+                                                <CompactButton
+                                                        onClick={performUndo}
+                                                        disabled={undoStack.length === 0}
+                                                        variant="ghost"
+                                                        color="var(--text-secondary)"
+                                                        icon={<RotateCcw size={16} />}
+                                                        label=""
+                                                        className="p-1.5"
+                                                />
+                                                <CompactButton
+                                                        onClick={performRedo}
+                                                        disabled={redoStack.length === 0}
+                                                        variant="ghost"
+                                                        color="var(--text-secondary)"
+                                                        icon={<RotateCw size={16} />}
+                                                        label=""
+                                                        className="p-1.5"
+                                                />
+                                        </div>
                     <CompactButton
                         onClick={saveGlyph}
                         variant="solid"
@@ -356,7 +386,14 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                 <div className={`border-r border-neutral-800 flex flex-col bg-[var(--surface)]/50 transition-all duration-300 ${sidebarCollapsed ? 'w-12' : 'w-72'}`}>
                     <div className="p-3 border-b border-neutral-800 flex justify-between items-center bg-neutral-950">
                         {!sidebarCollapsed && <span className="text-xs font-bold text-neutral-500 uppercase">{t('script.symbol_map')}</span>}
-                        <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="p-1 hover:bg-neutral-800 rounded text-neutral-500">{sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}</button>
+                        <CompactButton
+                            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                            variant="ghost"
+                            color="var(--text-secondary)"
+                            icon={sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+                            label=""
+                            className="p-1"
+                        />
                     </div>
 
                     {!sidebarCollapsed && (
@@ -377,11 +414,28 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                             .map(char => {
                                 const glyph = scriptConfig.glyphs.find(g => g.char === char);
                                 const hasGlyph = !!glyph;
+                                const active = selectedChar === char;
                                 return (
-                                    <button key={char} onClick={() => setSelectedChar(char)} className={`w-12 h-12 rounded flex items-center justify-center font-mono font-bold text-sm transition-all relative ${selectedChar === char ? 'bg-purple-600 text-white shadow-lg' : 'text-neutral-500 hover:bg-neutral-800'}`}>
-                                        {hasGlyph ? <div className="w-full h-full p-2 flex items-center justify-center overflow-hidden"><ConScriptText text={char} scriptConfig={scriptConfig} /></div> : char}
-                                        {hasGlyph && <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full border-2 border-neutral-950"></span>}
-                                    </button>
+                                    <CompactButton
+                                        key={char}
+                                        onClick={() => setSelectedChar(char)}
+                                        variant={active ? 'solid' : 'ghost'}
+                                        color="var(--accent)"
+                                        icon={
+                                            <div className="relative w-full h-full flex items-center justify-center font-mono font-bold text-sm">
+                                                {hasGlyph ? (
+                                                    <div className="w-full h-full p-2 flex items-center justify-center overflow-hidden">
+                                                        <ConScriptText text={char} scriptConfig={scriptConfig} />
+                                                    </div>
+                                                ) : (
+                                                    char
+                                                )}
+                                                {hasGlyph && <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full border-2 border-neutral-950"></span>}
+                                            </div>
+                                        }
+                                        label=""
+                                        className="w-12 h-12 p-0"
+                                    />
                                 );
                             })}
                     </div>

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { ViewState } from "../types";
 import { useTranslation } from "../i18n";
+import { CompactButton } from "./ui";
 
 export interface SidebarHandle {
   toggle: () => void;
@@ -100,13 +101,14 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
             </div>
           )}
 
-          <button
+          <CompactButton
             onClick={toggleSidebar}
-            className="p-1 transition-colors text-neutral-500 hover:text-white"
-            title={t("menu.toggle_sidebar")}
-          >
-            {isOpen ? "«" : <SidebarOpen size={20} />}
-          </button>
+            variant="ghost"
+            color="var(--text-secondary)"
+            icon={isOpen ? <span className="text-sm">«</span> : <SidebarOpen size={18} />}
+            label=""
+            className="p-1"
+          />
         </div>
 
         <div className="flex justify-center mb-1.5">

@@ -73,8 +73,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ value, onChange, language = 'bn
       
       {/* Sidebar: Line Numbers (Conditionally Rendered) */}
       {showLineNumbers && (
-        // CHANGED: border-r -> border-e, text-right -> text-end, pr-3 -> pe-3 for RTL support
-        <div className="w-10 bg-slate-900 border-e border-slate-800 text-end py-4 pe-3 text-slate-600 select-none flex flex-col items-end leading-6 overflow-hidden">
+        <div className="w-8 bg-slate-900 border-e border-slate-800 text-center py-4 text-slate-600 select-none flex flex-col items-center leading-6 overflow-hidden">
             {Array.from({ length: Math.max(lineCount, 15) }).map((_, i) => (
             <div key={i} className="h-6">{i + 1}</div>
             ))}
@@ -89,7 +88,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ value, onChange, language = 'bn
         <pre
           ref={preRef}
           aria-hidden="true"
-          className="absolute inset-0 p-4 m-0 bg-transparent pointer-events-none whitespace-pre overflow-hidden leading-6 font-mono text-start"
+          className="absolute inset-0 p-4 m-0 bg-transparent pointer-events-none whitespace-pre-wrap overflow-hidden leading-6 font-mono text-start break-words"
         >
           {highlightBNF(value)}
           <br /> {/* Extra break to prevent scroll cutoff */}
@@ -102,7 +101,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ value, onChange, language = 'bn
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onScroll={handleScroll}
-          className="absolute inset-0 w-full h-full p-4 m-0 bg-transparent text-transparent caret-white resize-none outline-none leading-6 font-mono whitespace-pre overflow-auto z-10 selection:bg-blue-500/30 text-start"
+          className="absolute inset-0 w-full h-full p-4 m-0 bg-transparent text-transparent caret-white resize-none outline-none leading-6 font-mono whitespace-pre-wrap overflow-auto z-10 selection:bg-blue-500/30 text-start break-words"
           spellCheck={false}
           autoCapitalize="off"
           autoComplete="off"

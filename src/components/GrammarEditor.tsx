@@ -111,7 +111,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
 
                         <Card className="p-4">
                             <FormField label={t('grammar.syntax_sandbox')}>
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 items-center">
                                     <input
                                         value={testSentence}
                                         onChange={(e) => setTestSentence(e.target.value)}
@@ -124,8 +124,9 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                         disabled={loading}
                                         variant="outline"
                                         color="var(--accent)"
-                                        icon={<Play size={16} fill="currentColor" />}
+                                        icon={<Play size={13} fill="currentColor" />}
                                         label=""
+                                        className="h-[34px] px-2.5"
                                     />
                                 </div>
                             </FormField>
