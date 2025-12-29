@@ -160,14 +160,14 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
             subtitle={t('phonology.subtitle')}
             headerChildren={headerActions}
         >
-            <div className="flex h-full p-6 overflow-hidden">
+            <div className="flex h-full min-h-0 p-6 overflow-hidden">
 
             {/* Charts */}
-            <div className="flex-1 pr-2 overflow-y-auto custom-scrollbar">
-                <div className="flex flex-col gap-6 xl:flex-row xl:items-stretch">
+            <div className="flex-1 min-h-0 pr-2 overflow-y-auto custom-scrollbar">
+                <div className="flex flex-col h-full min-h-0 gap-6 xl:flex-row xl:items-stretch">
 
                 {/* Consonants Chart */}
-                <div className="flex-[3] h-full">
+                <div className="flex-[3] h-full min-h-0">
                 <PhonemeGrid
                     title={t('phonology.consonants')}
                     icon={<CIcon size={16} />}
@@ -197,7 +197,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                 </div>
 
                 {/* Vowels Chart */}
-                <div className="flex-[2] h-full">
+                <div className="flex-[2] h-full min-h-0">
                 <PhonemeGrid
                     title={t('phonology.vowels')}
                     icon={<VIcon size={16} />}

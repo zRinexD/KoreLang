@@ -54,11 +54,11 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
     }, [rows, columns, getPhonemes]);
 
     return (
-    <Card className="flex flex-col h-full p-4 overflow-hidden">
-        <Section title={title} icon={icon} className="mb-2" />
+    <Card className="flex flex-col h-full min-h-0 p-4 overflow-hidden">
+        <Section title={title} icon={icon} className="mb-2 shrink-0" />
 
         {unclassified?.items?.length && unclassified.position !== 'bottom' ? (
-            <div className="p-2 mb-2 text-sm border rounded" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
+            <div className="p-2 mb-2 text-sm border rounded shrink-0" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
                 <div className="mb-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>{t(unclassified.titleKey)}</div>
                 <div className="flex flex-wrap gap-2">
                     {unclassified.items.map((p, i) => unclassified.renderItem ? unclassified.renderItem(p, i) : (
@@ -68,7 +68,7 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
             </div>
         ) : null}
 
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 min-h-0 overflow-auto custom-scrollbar">
         <table className="w-full border-collapse" style={{ fontSize: '0.75rem' }}>
             <thead>
                 <tr>
@@ -129,13 +129,13 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
         </div>
 
         {legend ? (
-            <div className="mt-2 text-[10px] text-center" style={{ color: 'var(--text-tertiary)' }}>
+            <div className="mt-2 text-[10px] text-center shrink-0" style={{ color: 'var(--text-tertiary)' }}>
                 {legend}
             </div>
         ) : null}
 
         {unclassified?.items?.length && unclassified.position === 'bottom' ? (
-            <div className="p-2 mt-2 text-xs border rounded" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
+            <div className="p-2 mt-2 text-xs border rounded shrink-0" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
                 <div className="mb-1 text-[10px]" style={{ color: 'var(--text-tertiary)' }}>{t(unclassified.titleKey)}</div>
                 <div className="flex flex-wrap gap-1">
                     {unclassified.items.map((p, i) => unclassified.renderItem ? unclassified.renderItem(p, i) : (
