@@ -91,7 +91,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           <Card className="lg:col-span-2 p-6 flex flex-col max-h-[400px]">
             <Section title={t('dashboard.recent_words')} icon={<FileText size={16} />} className="mb-4">
               {isScriptMode && hasScript && (
-                <span className="inline-flex items-center gap-2 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-900/30 text-purple-300 border border-purple-800 animate-pulse">
+                <span className="inline-flex items-center gap-2 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider animate-pulse" style={{ backgroundColor: 'rgb(from var(--primary) r g b / 0.2)', color: 'var(--primary)', borderColor: 'rgb(from var(--primary) r g b / 0.5)', border: '1px solid' }}>
                   <Feather size={12} /> Active
                 </span>
               )}

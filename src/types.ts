@@ -170,7 +170,6 @@ export interface CustomTheme {
   error: string;
   info: string;
   hover: string;
-  active: string;
   disabled: string;
 }
 

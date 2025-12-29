@@ -235,7 +235,7 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                                     const result = isApplicable 
                                         ? (
                                             isScriptMode 
-                                            ? <ConScriptText text={resultStr} scriptConfig={scriptConfig} className="text-lg text-purple-300" />
+                                            ? <span style={{ color: 'var(--accent)' }}><ConScriptText text={resultStr} scriptConfig={scriptConfig} className="text-lg" /></span>
                                             : <span style={{ color: 'var(--accent)' }}>{resultStr}</span>
                                         )
                                         : <span style={{ color: 'var(--text-tertiary)', textDecoration: 'line-through' }}>{testRoot}</span>;

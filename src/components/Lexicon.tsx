@@ -473,7 +473,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                             {/* OMNI-GLYPH LOGIC */}
                             {isScriptMode ? (
                                 <div className="flex flex-col">
-                                    <div className="mb-1 text-4xl leading-none text-purple-200">
+                                    <div className="mb-1 text-4xl leading-none" style={{ color: 'var(--accent)' }}>
                                         <ConScriptText text={entry.word} scriptConfig={scriptConfig} />
                                     </div>
                                     <span className="font-mono text-xs text-neutral-500">{entry.word}</span>
@@ -603,7 +603,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                     <CompactButton
                         onClick={() => setActiveTab('GENERATE')}
                         variant="solid"
-                        color="var(--primary)"
+                        color="var(--accent)"
                         icon={<Wand2 size={14} />}
                         label={t('lexicon.ai_gen_btn')}
                     />
@@ -611,7 +611,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                 <CompactButton
                     onClick={openAddModal}
                     variant="solid"
-                    color="var(--primary)"
+                    color="var(--accent)"
                     icon={<Plus size={16} />}
                     label={t('lexicon.new')}
                 />

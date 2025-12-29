@@ -52,10 +52,10 @@ interface CompactButtonProps {
  *   label="Cancel" 
  * />
  * 
- * // Solid button with primary color
+ * // Solid button with accent color
  * <CompactButton 
  *   variant="solid"
- *   color="var(--primary)" 
+ *   color="var(--accent)" 
  *   onClick={handleGenerate} 
  *   icon={<Wand2 size={14} />} 
  *   label="Generate" 

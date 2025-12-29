@@ -56,7 +56,7 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
                     onClick={runSimulation}
                     disabled={loading}
                     variant="solid"
-                    color="var(--primary)"
+                    color="var(--accent)"
                     icon={loading ? <span className="animate-spin">⟳</span> : <PlayCircle size={14} />}
                     label={t('genevolve.run')}
                 />

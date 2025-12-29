@@ -17,6 +17,5 @@ export const DEFAULT_CUSTOM: CustomTheme = {
   error: '#D14343',
   info: '#5B8DBE',
   hover: '#B88762',
-  active: '#A67756',
   disabled: '#BFBBB5',
 };

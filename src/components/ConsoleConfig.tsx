@@ -133,7 +133,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ history, setHistory, load
           <Info size={10} /> KoreLang kernel_v1.1
         </span>
         <span className="flex items-center gap-2 text-emerald-500">
-          {loadingAI && <Zap size={12} className="text-purple-500 animate-pulse" />}
+          {loadingAI && <Zap size={12} style={{ color: 'var(--accent)' }} className="animate-pulse" />}
           SYSTEM_READY
         </span>
       </div>

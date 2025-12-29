@@ -94,7 +94,7 @@ const ConstraintsModal: React.FC = () => {
   const renderGlyphPreview = (char: string) => {
     if (!scriptConfig) return null;
     return (
-      <span className="ml-2 font-normal text-purple-400">
+      <span className="ml-2 font-normal" style={{ color: 'var(--accent)' }}>
         (<ConScriptText text={char} scriptConfig={scriptConfig} />)
       </span>
     );

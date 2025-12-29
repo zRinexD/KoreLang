@@ -293,6 +293,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
             icon={<Feather size={14} className={isScriptMode ? "animate-pulse" : ""} />}
             label="Script Mode"
             title="Toggle Native Neural-Glyph Rendering"
+            color="var(--primary)"
           />
         )}
         <div className="w-px h-4 bg-neutral-800" />

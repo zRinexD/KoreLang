@@ -3,27 +3,23 @@
 @tailwind utilities;
 
 :root {
-    --primary: #6B8AFF;
-    --secondary: #0A0A0A;
-    --accent: #3B82F6;
-    --background: #121212;
-    --surface: #1E1E1E;
-    --elevated: #2A2A2A;
-    --text-primary: #F1F5F9;
-    --text-secondary: #94A3B8;
-    --text-tertiary: #64748B;
-    --border: #2A2A2A;
-    --divider: #1E1E1E;
-    --success: #10B981;
-    --warning: #F59E0B;
-    --error: #EF4444;
-    --info: #3B82F6;
-    --hover: #5B7BFF;
-    --active: #4B6BEF;
-    --indicator: #A855F7;
-    --disabled: #404040;
-    --shadow-light: rgba(255, 255, 255, 0.08);
-    --shadow-dark: rgba(0, 0, 0, 0.35);
+    --primary: #A78BFA;
+    --secondary: #0B1019;
+    --accent: #1D4ED8;
+    --background: #0E1118;
+    --surface: #151B26;
+    --elevated: #1C2332;
+    --text-primary: #E5E9F2;
+    --text-secondary: #A7B3C6;
+    --text-tertiary: #7B8499;
+    --border: #242C3A;
+    --divider: #1B2230;
+    --success: #35C48D;
+    --warning: #F0C35B;
+    --error: #EE6D7A;
+    --info: #6CB6FF;
+    --hover: #3A4A66;
+    --disabled: #3A3F4D;
 }
 
 /* Scrollbars personnalisées avec couleurs du thème */

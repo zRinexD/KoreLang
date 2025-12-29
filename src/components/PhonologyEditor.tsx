@@ -147,7 +147,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     variant="solid"
                     icon={<Wand2 size={14} />}
                     label={t('phonology.generate_btn')}
-                    color="var(--primary)"
+                    color="var(--accent)"
                 />
             )}
         </div>
@@ -212,7 +212,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     renderPhoneme={(v) => (
                         <span
                             className="font-serif text-sm"
-                            style={{ color: v.rounded ? 'var(--accent)' : 'var(--primary)' }}
+                            style={{ color: v.rounded ? 'var(--accent)' : 'var(--text-secondary)' }}
                             title={`${v.height} ${v.backness} ${v.rounded ? 'rounded' : 'unrounded'}`}
                         >
                             {v.symbol}
@@ -221,7 +221,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     minWidth={200}
                     legend={(
                         <div className="flex justify-center gap-4">
-                            <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--primary)' }}></span> {t('phonology.unrounded')}</span>
+                            <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--text-secondary)' }}></span> {t('phonology.unrounded')}</span>
                             <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent)' }}></span> {t('phonology.rounded')}</span>
                         </div>
                     )}
@@ -322,7 +322,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                 <div className={`fixed bottom-10 right-10 z-[80] transition-all duration-300 ${isPreviewMinimized ? 'w-48 h-12' : 'w-96 h-[500px]'} bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5`}>
                     <div className="flex items-center justify-between px-4 py-3 border-b cursor-pointer bg-neutral-950 border-neutral-800" onClick={() => setIsPreviewMinimized(!isPreviewMinimized)}>
                         <h3 className="flex items-center gap-2 text-sm font-bold text-neutral-200">
-                            <Wand2 size={14} className="text-purple-400" />
+                            <Wand2 size={14} style={{ color: 'var(--accent)' }} />
                             {t('phonology.ai_review')}
                         </h3>
                         <div className="flex items-center gap-2">
@@ -443,7 +443,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 icon={loading ? <RefreshCw className="animate-spin" size={14} /> : <Wand2 size={14} />}
                                 label={loading ? t('phonology.analyze_btn') : t('phonology.generate_btn')}
                                 disabled={loading || !prompt}
-                                color="var(--primary)"
+                                color="var(--accent)"
                             />
                         </>
                     )}

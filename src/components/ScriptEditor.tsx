@@ -410,7 +410,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                     <CompactButton
                         onClick={saveGlyph}
                         variant="solid"
-                        color={isDirty ? 'var(--accent)' : 'var(--primary)'}
+                        color={isDirty ? 'var(--accent)' : 'var(--text-secondary)'}
                         icon={<Save size={14} />}
                         label={isDirty ? t('script.commit') : t('script.synced')}
                     />
@@ -489,7 +489,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                         />
                                     </div>
                                 </div>
-                                <span className="text-[10px] font-mono text-purple-400 font-bold">{strokeWidth}pt</span>
+                                <span className="text-[10px] font-mono font-bold" style={{ color: 'var(--accent)' }}>{strokeWidth}pt</span>
                             </div>
                             <label className="relative cursor-pointer p-1.5 hover:bg-neutral-800 rounded flex justify-center border border-neutral-700 group">
                                 <Palette size={16} style={{ color: glyphColor }} className="transition-transform group-hover:scale-110" />
@@ -513,7 +513,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                         strokeLinecap={s.cap}
                                         strokeLinejoin="round"
                                         strokeOpacity={s.locked ? 0.3 : 1}
-                                        style={activeLayerId === s.id ? { filter: 'drop-shadow(0px 0px 8px rgb(from var(--indicator) r g b / 0.4))' } : {}}
+                                        style={activeLayerId === s.id ? { filter: 'drop-shadow(0px 0px 8px rgb(from var(--accent) r g b / 0.4))' } : {}}
                                     />
                                 )
                             ))}
@@ -533,7 +533,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                 <div className="w-80 border-l border-neutral-800 bg-[var(--surface)]/50 flex flex-col">
                     <Card className="flex items-center justify-between p-3 border-b-0 rounded-none rounded-b-none">
                         <div className="flex items-center gap-2">
-                            <Layers size={14} className="text-purple-400" />
+                            <Layers size={14} className="text-[var(--accent)]" />
                             <span className="text-xs font-bold tracking-widest uppercase text-neutral-400">Neural Layer Stack</span>
                         </div>
                         <CompactButton onClick={addNewLayer} variant="solid" color="var(--accent)" icon={<Plus size={14} />} label="" className="p-1" title={t('script.add_layer_title')} />
@@ -543,11 +543,16 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                             const actualIdx = strokes.length - 1 - revIdx;
                             const isEditing = editingLayerId === s.id;
                             return (
-                                <Card key={s.id} onClick={() => setActiveLayerId(s.id)} className={`p-2 flex items-center justify-between transition-all cursor-pointer ${activeLayerId === s.id ? 'ring-2 ring-purple-500/50' : ''}`}>
+                                <div key={s.id} style={{ 
+                                    outline: activeLayerId === s.id ? '2px solid rgb(from var(--accent) r g b / 0.5)' : 'none',
+                                    outlineOffset: activeLayerId === s.id ? '2px' : '0px',
+                                    transition: 'outline 150ms ease'
+                                }}>
+                                    <Card onClick={() => setActiveLayerId(s.id)} className={`p-2 flex items-center justify-between transition-all cursor-pointer`}>
                                     <div className="flex items-center flex-1 gap-3 overflow-hidden">
                                         <div className="flex flex-col gap-0.5">
-                                            <button disabled={actualIdx === strokes.length - 1} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'up'); }} className="p-0.5 text-neutral-700 hover:text-purple-400 disabled:opacity-10"><ChevronUp size={12} /></button>
-                                            <button disabled={actualIdx === 0} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'down'); }} className="p-0.5 text-neutral-700 hover:text-purple-400 disabled:opacity-10"><ChevronDown size={12} /></button>
+                                            <button disabled={actualIdx === strokes.length - 1} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'up'); }} className="p-0.5 text-neutral-700 disabled:opacity-10" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; }}><ChevronUp size={12} /></button>
+                                            <button disabled={actualIdx === 0} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'down'); }} className="p-0.5 text-neutral-700 disabled:opacity-10" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; }}><ChevronDown size={12} /></button>
                                         </div>
                                         <div className="relative flex items-center justify-center w-10 h-10 overflow-hidden bg-black border rounded border-neutral-800 shrink-0">
                                             {s.type === 'image' ? (
@@ -567,12 +572,12 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                                     onKeyDown={(e) => e.key === 'Enter' && setEditingLayerId(null)}
                                                     onChange={(e) => renameLayer(s.id, e.target.value)}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="bg-slate-900 border border-purple-500 rounded px-1 py-0.5 text-[10px] text-white outline-none w-full"
+                                                    className="bg-slate-900 border rounded px-1 py-0.5 text-[10px] text-white outline-none w-full" style={{ borderColor: 'var(--accent)', borderWidth: '1px' }}
                                                 />
                                             ) : (
                                                 <div className="flex items-center gap-2 group/label">
-                                                    <span className={`text-[10px] font-bold truncate ${activeLayerId === s.id ? 'text-purple-300' : 'text-neutral-400'}`}>{s.label}</span>
-                                                    <button onClick={(e) => { e.stopPropagation(); setEditingLayerId(s.id); }} className="opacity-0 group-hover/label:opacity-100 text-neutral-600 hover:text-purple-400"><Edit3 size={10} /></button>
+                                                    <span className={`text-[10px] font-bold truncate`} style={{ color: activeLayerId === s.id ? 'var(--accent)' : 'var(--text-secondary)' }}>{s.label}</span>
+                                                    <button onClick={(e) => { e.stopPropagation(); setEditingLayerId(s.id); }} className="opacity-0 group-hover/label:opacity-100 text-neutral-600" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; }}><Edit3 size={10} /></button>
                                                 </div>
                                             )}
                                             <span className="text-[8px] text-neutral-600 uppercase font-mono">{s.type} {s.type !== 'image' && `• ${s.strokeWidth}pt`}</span>
@@ -592,6 +597,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                         </button>
                                     </div>
                                 </Card>
+                                </div>
                             );
                         })}
                     </div>

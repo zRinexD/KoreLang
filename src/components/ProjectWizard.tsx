@@ -65,7 +65,7 @@ const ProjectWizard: React.FC = () => {
           <CompactButton
             onClick={handleCreate}
             variant="solid"
-            color="var(--primary)"
+            color="var(--accent)"
             icon={<Check size={14} />}
             label={isCreateMode ? t('wizard.create_btn') : t('wizard.save_btn')}
           />

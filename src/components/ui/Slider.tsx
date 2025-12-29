@@ -34,7 +34,7 @@ export const Slider: React.FC<SliderProps> = ({
                 }}
             />
             <div className="absolute inset-0 h-1 rounded-lg pointer-events-none" style={{ backgroundColor: 'var(--text-tertiary)', opacity: 0.3 }} />
-            <div className="absolute bottom-0 left-0 h-1 rounded-lg pointer-events-none" style={{ backgroundColor: 'var(--primary)', width: `${percentage}%` }} />
+            <div className="absolute bottom-0 left-0 h-1 rounded-lg pointer-events-none" style={{ backgroundColor: 'var(--accent)', width: `${percentage}%` }} />
         </div>
     );
     };
