@@ -3,7 +3,7 @@ import { BookOpen, Eraser, Copy, Type } from 'lucide-react';
 import { ConScriptText } from './ConScriptRenderer';
 import { ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
-import { ViewLayout, CompactButton, StatBadge } from './ui';
+import { ViewLayout, CompactButton, StatBadge, Slider } from './ui';
 
 interface NotebookProps {
     scriptConfig?: ScriptConfig;
@@ -32,16 +32,14 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
             subtitle={t('notebook.subtitle')}
             headerChildren={
                 <>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded border" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--text-secondary)' }}>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded" style={{ backgroundColor: 'var(--elevated)' }}>
                         <Type size={14} style={{ color: 'var(--text-secondary)' }} />
-                        <input
-                            type="range"
-                            min="12"
-                            max="128"
+                        <Slider
                             value={fontSize}
-                            onChange={(e) => setFontSize(Number(e.target.value))}
-                            className="w-24 h-1 rounded-lg appearance-none cursor-pointer"
-                            style={{ backgroundColor: 'var(--surface)' }}
+                            onChange={setFontSize}
+                            min={12}
+                            max={128}
+                            className="w-24"
                         />
                         <span className="text-[10px] font-mono w-8 text-center" style={{ color: 'var(--text-secondary)' }}>{fontSize}px</span>
                     </div>

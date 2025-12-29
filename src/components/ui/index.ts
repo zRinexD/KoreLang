@@ -11,4 +11,5 @@ export { CompactButton } from './CompactButton';
 export { ToggleButton } from './ToggleButton';
 export { Modal } from './Modal';
 export { SearchInput } from './SearchInput';
+export { Slider } from './Slider';
 export { CIcon, VIcon } from './LetterIcons';
