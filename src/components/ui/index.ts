@@ -13,5 +13,4 @@ export { Modal } from './Modal';
 export { SearchInput } from './SearchInput';
 export { Slider } from './Slider';
 export { MonoToggle } from './MonoToggle';
-export { ToggleIndicator } from './ToggleIndicator';
 export { CIcon, VIcon } from './LetterIcons';

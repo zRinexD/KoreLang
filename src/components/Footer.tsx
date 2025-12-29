@@ -1,6 +1,6 @@
 import React from "react";
 import { ViewState } from "../types";
-import { ToggleIndicator } from "./ui";
+import { ToggleIndicator } from "./ui/ToggleIndicator";
 
 interface FooterProps {
   project: {
