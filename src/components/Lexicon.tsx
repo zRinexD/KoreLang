@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { Plus, Search, Trash2, BookA, GitFork, ArrowRight, Link, Filter, X, SlidersHorizontal, ShieldAlert, AlertTriangle, HelpCircle, AlertOctagon, Edit, Ban, Eye, EyeOff, Copy, Check, Feather, Type, Mic, Pin, PinOff } from 'lucide-react';
+import { Plus, Search, Trash2, BookA, GitFork, ArrowRight, Link, Filter, X, SlidersHorizontal, ShieldAlert, AlertTriangle, HelpCircle, AlertOctagon, Edit, Ban, Eye, EyeOff, Copy, Check, Feather, Type, Mic, Pin, PinOff, Wand2 } from 'lucide-react';
 import { LexiconEntry, POS_SUGGESTIONS, ProjectConstraints, PhonologyConfig, ScriptConfig } from '../types';
 import Combobox from './Combobox';
 import GenWord from './GenWord';
@@ -7,7 +7,7 @@ import { ConScriptText } from './ConScriptRenderer';
 import { useTranslation } from '../i18n';
 import { searchLexicon, SearchResult } from '../services/searchService';
 import { isApiKeySet } from '../services/geminiService';
-import { ViewLayout } from './ui';
+import { ViewLayout, CompactButton } from './ui';
 
 interface LexiconProps {
     entries: LexiconEntry[];
@@ -422,10 +422,10 @@ const Lexicon: React.FC<LexiconProps> = ({
             <div
                 key={entry.id}
                 onClick={(e) => handleCardCopy(entry, e)}
-                className="p-4 cursor-pointer transition-all group relative overflow-hidden rounded-lg border"
+                className="p-4 cursor-pointer transition-all group relative overflow-hidden rounded-lg border hover:border-[var(--accent)]"
                 style={{
                     backgroundColor: 'var(--surface)',
-                    borderColor: isInvalid ? 'var(--error)' : successMsgId === entry.id || copyFlashId === entry.id ? 'var(--accent)' : 'var(--border)',
+                    borderColor: isInvalid ? 'var(--error)' : successMsgId === entry.id || copyFlashId === entry.id ? 'var(--success)' : 'var(--border)',
                     transform: clickAnimId === entry.id ? 'scale(0.98)' : 'scale(1)',
                     transition: 'transform 0.15s ease, border-color 0.5s ease-out'
                 }}
@@ -594,13 +594,21 @@ const Lexicon: React.FC<LexiconProps> = ({
                     {isSearchActive ? `${searchResults.length} ${t('lexicon.results_count')}` : `${entries.length} ${t('lexicon.entries_count')}`}
                 </span>
                 {enableAI && (
-                    <button onClick={() => setActiveTab('GENERATE')} className="flex items-center gap-2 px-3 py-2 font-medium text-purple-400 transition-colors border border-transparent rounded-lg hover:text-purple-300 hover:bg-purple-900/20 hover:border-purple-500/50">
-                        <span className="font-mono text-lg">*</span><span className="hidden sm:inline">{t('lexicon.ai_gen_btn')}</span>
-                    </button>
+                    <CompactButton
+                        onClick={() => setActiveTab('GENERATE')}
+                        variant="solid"
+                        color="var(--primary)"
+                        icon={<Wand2 size={14} />}
+                        label={t('lexicon.ai_gen_btn')}
+                    />
                 )}
-                <button onClick={openAddModal} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-semibold transition-colors shadow-lg" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}>
-                    <Plus size={16} /><span className="hidden sm:inline">{t('lexicon.new')}</span>
-                </button>
+                <CompactButton
+                    onClick={openAddModal}
+                    variant="solid"
+                    color="var(--accent)"
+                    icon={<Plus size={16} />}
+                    label={t('lexicon.new')}
+                />
             </div>
         </div>
     );
@@ -872,8 +880,21 @@ const Lexicon: React.FC<LexiconProps> = ({
                             </div>
                         </div>
                         <div className="flex justify-end gap-3 px-6 py-4 border-t shrink-0" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
-                            <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium transition-colors" style={{ color: 'var(--text-secondary)' }}>{t('lexicon.cancel')}</button>
-                            <button onClick={handleSaveEntry} disabled={validationErrors.length > 0} className="px-4 py-2 text-white text-sm font-medium rounded-md shadow-lg transition-all active:scale-95" style={{ backgroundColor: validationErrors.length > 0 ? 'var(--disabled)' : 'var(--accent)', opacity: validationErrors.length > 0 ? 0.5 : 1, cursor: validationErrors.length > 0 ? 'not-allowed' : 'pointer' }}>{t('lexicon.save')}</button>
+                            <CompactButton
+                                onClick={() => setIsModalOpen(false)}
+                                variant="outline"
+                                color="var(--error)"
+                                icon={<X size={12} />}
+                                label={t('lexicon.cancel')}
+                            />
+                            <CompactButton
+                                onClick={handleSaveEntry}
+                                disabled={validationErrors.length > 0}
+                                variant="solid"
+                                color="var(--accent)"
+                                icon={<Check size={16} />}
+                                label={t('lexicon.save')}
+                            />
                         </div>
                     </div>
                 </div>

@@ -4,7 +4,7 @@ import { Feather, Save, Image as ImageIcon, Palette, Spline, RotateCw, RotateCcw
 import { ScriptConfig, ScriptGlyph, ProjectConstraints, GlyphStroke } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
-import { Card, Section, ViewLayout } from './ui';
+import { Card, Section, ViewLayout, CompactButton, ToggleButton } from './ui';
 
 interface ScriptEditorProps {
     scriptConfig: ScriptConfig;
@@ -312,27 +312,23 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
             subtitle={t('script.engine_subtitle')}
             headerChildren={
                 <div className="flex gap-4 items-center text-slate-200">
-                    <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
-                        <button
+                    <div className="flex gap-0 bg-neutral-900 border border-neutral-800 rounded p-1 h-[32px]">
+                        <ToggleButton
+                            isActive={scriptConfig.spacingMode === 'proportional'}
                             onClick={toggleSpacingMode}
-                            className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${
-                                scriptConfig.spacingMode === 'proportional' ? 'shadow' : ''
-                            }`}
-                            style={scriptConfig.spacingMode === 'proportional' ? { backgroundColor: 'var(--accent)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
+                            icon={<Type size={14} />}
+                            label={t('script.spacing_proportional')}
                             title={t('script.spacing_proportional_desc')}
-                        >
-                            <Type size={14} /> {t('script.spacing_proportional')}
-                        </button>
-                        <button
+                            position="first"
+                        />
+                        <ToggleButton
+                            isActive={scriptConfig.spacingMode === 'mono'}
                             onClick={toggleSpacingMode}
-                            className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${
-                                scriptConfig.spacingMode === 'mono' ? 'shadow' : ''
-                            }`}
-                            style={scriptConfig.spacingMode === 'mono' ? { backgroundColor: 'var(--accent)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
+                            icon={<Grid size={14} />}
+                            label={t('script.spacing_mono')}
                             title={t('script.spacing_mono_desc')}
-                        >
-                            <Grid size={14} /> {t('script.spacing_mono')}
-                        </button>
+                            position="last"
+                        />
                     </div>
 
                     <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
@@ -345,9 +341,13 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                         <button onClick={performUndo} disabled={undoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title={t('script.undo')}><RotateCcw size={16} /></button>
                         <button onClick={performRedo} disabled={redoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title={t('script.redo')}><RotateCw size={16} /></button>
                     </div>
-                    <button onClick={saveGlyph} className={`px-4 py-2 rounded font-bold flex items-center gap-2 shadow-lg transition-all ${isDirty ? 'scale-105' : ''}`} style={{ backgroundColor: isDirty ? 'var(--accent)' : 'var(--surface)', color: isDirty ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
-                        <Save size={18} /> {isDirty ? t('script.commit') : t('script.synced')}
-                    </button>
+                    <CompactButton
+                        onClick={saveGlyph}
+                        variant="solid"
+                        color={isDirty ? 'var(--accent)' : 'var(--primary)'}
+                        icon={<Save size={14} />}
+                        label={isDirty ? t('script.commit') : t('script.synced')}
+                    />
                 </div>
             }
         >

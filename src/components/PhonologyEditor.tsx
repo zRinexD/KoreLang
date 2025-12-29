@@ -132,23 +132,19 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
             <div className="flex items-center gap-4">
                 <StatBadge value={data.consonants?.length || 0} label="C" />
                 <StatBadge value={data.vowels?.length || 0} label="V" />
-                <button
+                <CompactButton
                     onClick={clearAll}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors border"
-                    style={{ 
-                        backgroundColor: 'var(--surface)',
-                        borderColor: 'var(--error)',
-                        color: 'var(--error)'
-                    }}
-                >
-                    <Trash2 size={12} />
-                    <span className="hidden sm:inline">{t('phonology.clear_inventory')}</span>
-                </button>
+                    variant="outline"
+                    color="var(--error)"
+                    icon={<Trash2 size={12} />}
+                    label={t('phonology.clear_inventory')}
+                />
             </div>
             {/* Right: AI Actions */}
             {enableAI && (
                 <CompactButton
                     onClick={() => setShowAIModal(true)}
+                    variant="solid"
                     icon={<Wand2 size={14} />}
                     label={t('phonology.generate_btn')}
                     color="var(--primary)"
@@ -306,15 +302,21 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             )}
                         </div>
                         <div className="flex justify-end gap-3 px-6 py-4 border-t bg-neutral-950 border-neutral-800">
-                            <button onClick={() => setEditingPhoneme(null)} className="px-4 py-2 text-sm" style={{ color: 'var(--text-secondary)' }}>{t('common.cancel')}</button>
-                            <button
+                            <CompactButton
+                                onClick={() => setEditingPhoneme(null)}
+                                variant="outline"
+                                color="var(--error)"
+                                icon={<X size={12} />}
+                                label={t('common.cancel')}
+                            />
+                            <CompactButton
                                 onClick={handleSavePhoneme}
                                 disabled={!symbol}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold rounded disabled:opacity-50"
-                                style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
-                            >
-                                <Check size={16} /> {t('common.save')}
-                            </button>
+                                variant="solid"
+                                color="var(--accent)"
+                                icon={<Check size={16} />}
+                                label={t('common.save')}
+                            />
                         </div>
                     </div>
                 </div>
@@ -388,19 +390,21 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             </div>
 
                             <div className="flex gap-2 p-4 border-t bg-neutral-950 border-neutral-800">
-                                <button
+                                <CompactButton
                                     onClick={discardPending}
-                                    className="flex-1 py-2 text-xs font-bold transition-colors text-neutral-400 hover:text-white"
-                                >
-                                    {t('phonology.discard')}
-                                </button>
-                                <button
+                                    variant="ghost"
+                                    icon={<X size={14} />}
+                                    label={t('phonology.discard')}
+                                    className="flex-1"
+                                />
+                                <CompactButton
                                     onClick={confirmReplace}
-                                    className="flex-[2] py-2 text-xs font-bold rounded flex items-center justify-center gap-2 transition-all"
-                                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
-                                >
-                                    <Check size={14} /> {t('phonology.apply_replace')}
-                                </button>
+                                    variant="solid"
+                                    color="var(--accent)"
+                                    icon={<Check size={14} />}
+                                    label={t('phonology.apply_replace')}
+                                    className="flex-[2]"
+                                />
                             </div>
                         </>
                     )}
@@ -417,13 +421,13 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     maxWidth="max-w-md"
                     footer={(
                         <>
-                            <button
+                            <CompactButton
                                 onClick={() => setShowAIModal(false)}
-                                className="px-4 py-2 text-sm font-medium transition-colors"
-                                style={{ color: 'var(--text-secondary)' }}
-                            >
-                                {t('common.cancel')}
-                            </button>
+                                variant="outline"
+                                color="var(--error)"
+                                icon={<X size={12} />}
+                                label={t('common.cancel')}
+                            />
                             <CompactButton
                                 onClick={() => {
                                     handleGenerate();

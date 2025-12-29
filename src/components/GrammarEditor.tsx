@@ -5,7 +5,7 @@ import MorphologyEditor from './MorphologyEditor';
 import CodeEditor from './CodeEditor';
 import { MorphologyState, ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
-import { Card, Section, ViewLayout } from './ui';
+import { Card, Section, ViewLayout, CompactButton, ToggleButton } from './ui';
 
 interface GrammarEditorProps {
     grammar: string;
@@ -42,31 +42,21 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
             title={t('grammar.title')}
             subtitle={t('grammar.desc')}
             headerChildren={
-                <div className="flex p-1 rounded-lg border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
-                    <button
+                <div className="flex bg-neutral-900 border border-neutral-800 rounded gap-0 h-[32px]" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                    <ToggleButton
+                        isActive={activeTab === 'SYNTAX'}
                         onClick={() => setActiveTab('SYNTAX')}
-                        className={`px-4 py-2 rounded-md text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'SYNTAX'
-                            ? 'shadow-lg'
-                            : ''
-                            }`}
-                        style={activeTab === 'SYNTAX' ? { backgroundColor: 'var(--accent)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
-                        onMouseEnter={(e) => { if (activeTab !== 'SYNTAX') e.currentTarget.style.color = 'var(--text-primary)'; }}
-                        onMouseLeave={(e) => { if (activeTab !== 'SYNTAX') e.currentTarget.style.color = 'var(--text-secondary)'; }}
-                    >
-                        <Code size={16} /> {t('grammar.tab.syntax')}
-                    </button>
-                    <button
+                        icon={<Code size={14} />}
+                        label={t('grammar.tab.syntax')}
+                        position="first"
+                    />
+                    <ToggleButton
+                        isActive={activeTab === 'MORPHOLOGY'}
                         onClick={() => setActiveTab('MORPHOLOGY')}
-                        className={`px-4 py-2 rounded-md text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'MORPHOLOGY'
-                            ? 'shadow-lg'
-                            : ''
-                            }`}
-                        style={activeTab === 'MORPHOLOGY' ? { backgroundColor: 'var(--accent)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
-                        onMouseEnter={(e) => { if (activeTab !== 'MORPHOLOGY') e.currentTarget.style.color = 'var(--text-primary)'; }}
-                        onMouseLeave={(e) => { if (activeTab !== 'MORPHOLOGY') e.currentTarget.style.color = 'var(--text-secondary)'; }}
-                    >
-                        <Table size={16} /> {t('grammar.tab.morphology')}
-                    </button>
+                        icon={<Table size={14} />}
+                        label={t('grammar.tab.morphology')}
+                        position="last"
+                    />
                 </div>
             }
         >

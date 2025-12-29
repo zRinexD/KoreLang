@@ -3,7 +3,7 @@ import { Plus, Trash2, Table, Tag, Box, ArrowRight, Save, Grid, BookDashed, Filt
 import { MorphologyState, MorphParadigm, MorphDimension, InflectionRule, POS_SUGGESTIONS, ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
-import { Card, Section, ViewLayout } from './ui';
+import { Card, Section, ViewLayout, CompactButton } from './ui';
 
 interface MorphologyEditorProps {
   data: MorphologyState;
@@ -203,9 +203,13 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                 <div className="flex-1 overflow-auto p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h4 className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>{t('grammar.morph_rules')}</h4>
-                        <button onClick={addRule} className="text-xs flex items-center gap-1 px-3 py-1.5 rounded transition-colors" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}>
-                            <Plus size={12} /> {t('grammar.add_rule')}
-                        </button>
+                        <CompactButton
+                            onClick={addRule}
+                            variant="solid"
+                            color="var(--accent)"
+                            icon={<Plus size={14} />}
+                            label={t('morphology.add_rule')}
+                        />
                     </div>
 
                     <div className="rounded-lg overflow-hidden border" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>

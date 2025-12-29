@@ -4,7 +4,7 @@ import { generateWords } from '../services/geminiService';
 import { LexiconEntry, PartOfSpeech, ProjectConstraints, ScriptConfig, PhonologyConfig } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
-import { ViewLayout } from './ui';
+import { ViewLayout, CompactButton } from './ui';
 
 interface GenWordState {
   generated: Array<{ word: string, ipa: string }>;
@@ -165,9 +165,12 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
             <div className="flex items-center gap-3">
               <span className="text-xs bg-slate-900 px-2 py-1 rounded" style={{ color: 'var(--text-secondary)' }}>{generated.length} {t('genword.keep')}</span>
               {generated.length > 0 && (
-                <button onClick={handleClear} className="text-xs flex items-center gap-1" style={{ color: 'var(--accent)' }}>
-                  <Trash size={12} /> {t('genword.clear')}
-                </button>
+                <CompactButton
+                    onClick={handleClear}
+                    variant="ghost"
+                    icon={<Trash size={14} />}
+                    label={t('genword.clear')}
+                />
               )}
             </div>
           </div>

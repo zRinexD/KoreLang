@@ -6,7 +6,7 @@ import { AppSettings } from '../types';
 import { DEFAULT_CUSTOM } from '../constants';
 import { isApiKeySet, getApiKey } from '../services/geminiService';
 import { useCommandExecutor } from '../state/commandStore';
-import { Card, Section } from './ui';
+import { Card, Section, CompactButton } from './ui';
 
 // Presets de thèmes pour copie dans custom
 const THEME_PRESETS = {
@@ -436,7 +436,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
 
         {/* Footer */}
         <div className="flex justify-end p-4 border-t" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
-          <button onClick={() => ui.close('settings')} className="px-4 py-2 text-sm font-bold rounded shadow-lg" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}>OK</button>
+          <CompactButton
+            onClick={() => ui.close('settings')}
+            variant="solid"
+            color="var(--accent)"
+            icon={<Check size={14} />}
+            label="OK"
+          />
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { LexiconEntry, SoundChangeRule, ScriptConfig } from '../types';
 import { evolveWords } from '../services/geminiService';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
-import { ViewLayout } from './ui';
+import { ViewLayout, CompactButton } from './ui';
 
 interface GenEvolveProps {
   entries: LexiconEntry[];
@@ -52,15 +52,14 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
             title={t('genevolve.title')}
             subtitle={t('genevolve.desc')}
             headerChildren={
-                <button
+                <CompactButton
                     onClick={runSimulation}
                     disabled={loading}
-                    className="px-6 py-2 rounded-lg font-bold flex items-center gap-2 disabled:opacity-50"
-                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
-                >
-                    {loading ? <span className="animate-spin">⟳</span> : <PlayCircle />}
-                    {t('genevolve.run')}
-                </button>
+                    variant="solid"
+                    color="var(--primary)"
+                    icon={loading ? <span className="animate-spin">⟳</span> : <PlayCircle size={14} />}
+                    label={t('genevolve.run')}
+                />
             }
         >
 
@@ -108,9 +107,13 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
                         {isScriptMode && <Feather size={14} style={{ color: 'var(--accent)' }} />}
                     </h3>
                      {preview.length > 0 && (
-                        <button onClick={applyChanges} className="text-sm px-3 py-1 rounded flex items-center gap-2 transition-colors" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}>
-                            <Save size={14} /> {t('genevolve.commit')}
-                        </button>
+                        <CompactButton
+                            onClick={applyChanges}
+                            variant="solid"
+                            color="var(--accent)"
+                            icon={<Save size={14} />}
+                            label={t('genevolve.commit')}
+                        />
                     )}
                 </div>
 

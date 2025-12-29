@@ -8,6 +8,7 @@ export { FormField } from './FormField';
 export { ViewHeader } from './ViewHeader';
 export { ViewLayout } from './ViewLayout';
 export { CompactButton } from './CompactButton';
+export { ToggleButton } from './ToggleButton';
 export { Modal } from './Modal';
 export { SearchInput } from './SearchInput';
 export { CIcon, VIcon } from './LetterIcons';

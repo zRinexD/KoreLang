@@ -3,6 +3,7 @@ import { X, Box, User, FileText, Check, ShieldCheck } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { useUI } from '../ui/UIContext';
 import { useProject } from '../hooks/useProject';
+import { CompactButton } from './ui';
 
 const ProjectWizard: React.FC = () => {
   const { t } = useTranslation();
@@ -39,6 +40,10 @@ const ProjectWizard: React.FC = () => {
     }
 
     ui.close('wizard');
+  };
+
+  const handleCreate = () => {
+    handleSubmit({ preventDefault: () => {} } as React.FormEvent);
   };
 
   return (
@@ -125,21 +130,20 @@ const ProjectWizard: React.FC = () => {
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <button 
-              type="button"
+            <CompactButton
               onClick={() => ui.close('wizard')}
-              className="px-4 py-2 text-sm font-medium transition-colors text-slate-400 hover:text-white"
-            >
-              {t('common.cancel')}
-            </button>
-            <button 
-              type="submit"
-              className="flex items-center gap-2 px-6 py-2 text-sm font-bold transition-all rounded-lg shadow-lg shadow-blue-900/20 active:scale-95"
-              style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
-            >
-              <Check size={16} />
-              {isCreateMode ? t('wizard.create_btn') : t('wizard.save_btn')}
-            </button>
+              variant="outline"
+              color="var(--error)"
+              icon={<X size={12} />}
+              label={t('common.cancel')}
+            />
+            <CompactButton
+              onClick={handleCreate}
+              variant="solid"
+              color="var(--primary)"
+              icon={<Check size={14} />}
+              label={isCreateMode ? t('wizard.create_btn') : t('wizard.save_btn')}
+            />
           </div>
         </form>
       </div>
