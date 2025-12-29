@@ -28,7 +28,7 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
   const { t } = useTranslation();
 
   // Use state lifted from parent
-  const { generated, constraints, vibe, count } = initialState;
+  const { generated, constraints, vibe, count } = initialState || { generated: [], constraints: '', vibe: '', count: 5 };
 
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
