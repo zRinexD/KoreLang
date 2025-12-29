@@ -11,7 +11,7 @@ const PLACES = ['bilabial', 'labiodental', 'dental', 'alveolar', 'postalveolar',
 const HEIGHTS = ['close', 'near-close', 'close-mid', 'mid', 'open-mid', 'near-open', 'open'];
 const BACKNESS = ['front', 'central', 'back'];
 
-// Détermination des cases impossibles selon la structure C# (Phoneme.cs)
+// Détermination des cases impossibles selon la structure C#
 // --- Voyelles ---
 const impossibleVowelCells: Record<string, Record<string, boolean>> = {
     'close':      { front: false, central: false, back: false },

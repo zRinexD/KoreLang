@@ -308,17 +308,6 @@ export interface ScriptConfig {
   spacingMode?: 'mono' | 'proportional';
 }
 
-export interface Phoneme {
-  symbol: string;
-  type: 'consonant' | 'vowel';
-  manner?: string;
-  place?: string;
-  voiced?: boolean;
-  height?: string;
-  backness?: string;
-  rounded?: boolean;
-  description?: string;
-}
 
 export interface PhonologyConfig {
   name: string;
