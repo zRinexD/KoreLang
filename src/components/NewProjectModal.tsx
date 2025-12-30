@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, User, FileText, Check } from "lucide-react";
 import { useTranslation } from "../i18n";
 import { useUI } from "../ui/UIContext";
@@ -14,8 +14,16 @@ const NewProjectModal: React.FC = () => {
   const [name, setName] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
-
   const isOpen = ui.isOpen("newProject");
+
+  useEffect(() => {
+    if (!isOpen) {
+      setName("");
+      setAuthor("");
+      setDescription("");
+    }
+  }, [isOpen]);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +33,7 @@ const NewProjectModal: React.FC = () => {
       description,
     });
     ui.close("newProject");
+    // Les champs seront reset par le useEffect ci-dessus
   };
 
   return (
