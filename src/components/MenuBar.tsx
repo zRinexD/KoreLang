@@ -120,12 +120,20 @@ const MenuBar: React.FC<MenuBarProps> = ({
           action: onToggleSidebar,
           shortcut: "Alt+B",
         },
+        { type: "separator" },
         { label: t("menu.zoom_in"), action: zoomIn, shortcut: "Alt+" },
         {
           label: t("menu.zoom_out"),
           action: zoomOut,
           shortcut: "Alt-",
         },
+        { type: "separator" },
+        {
+          label: t("menu.console"),
+          icon: Terminal,
+          action: openConsole,
+          shortcut: "Alt+C",
+        }
       ],
     },
     {
@@ -136,12 +144,6 @@ const MenuBar: React.FC<MenuBarProps> = ({
           label: t("menu.validation"),
           icon: ShieldCheck,
           action: openConstraints,
-        },
-        {
-          label: t("menu.console"),
-          icon: Terminal,
-          action: openConsole,
-          shortcut: "Alt+C",
         },
       ],
     },
