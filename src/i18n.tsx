@@ -100,11 +100,21 @@ const resources = {
 
 const rtlLanguages = ['ar', 'fa', 'ha', 'ur', 'he'];
 
+// Lire la langue depuis le localStorage/settings
+let initialLang = 'en';
+try {
+  const settings = localStorage.getItem('conlang_studio_settings');
+  if (settings) {
+    const parsed = JSON.parse(settings);
+    if (parsed.language) initialLang = parsed.language;
+  }
+} catch {}
+
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'en',
+    lng: initialLang,
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false
