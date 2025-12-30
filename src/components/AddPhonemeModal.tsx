@@ -51,7 +51,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={`${place || ''} ${manner || ''}`}
-      maxWidth="max-w-xs"
+      maxWidth="max-w-md"
       icon={null}
     >
       <div className="mb-4 text-center text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
@@ -60,14 +60,14 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
       {/* Section Registered Phonemes */}
       <div className="mb-4">
         <div className="mb-1 text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('phonology.registered_phonemes') || 'Registered phonemes'}</div>
-        <div className="grid items-center justify-center w-full grid-cols-2 gap-2 md:grid-cols-3">
+        <div className="grid items-center justify-center w-full grid-cols-2 gap-2 justify-items-center md:grid-cols-3">
           {existingPhonemes.length > 0 ? existingPhonemes.map((ph) => (
             <SelectPhonemeButton
               key={ph.id}
               symbol={ph.symbol}
               name={ph.name}
               icon="trash"
-              onClick={typeof onRemove === 'function' ? () => onRemove(ph.id) : () => {}}
+              onIconClick={typeof onRemove === 'function' ? () => onRemove(ph.id) : () => {}}
             />
           )) : <span className="text-xs text-[var(--text-tertiary)]">{t('phonology.no_registered_phoneme') || 'No phoneme registered.'}</span>}
         </div>
@@ -82,7 +82,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
               symbol={phoneme.symbol}
               name={phoneme.name}
               icon="plus"
-              onClick={() => onSelect(phoneme.id as PhonemeType)}
+              onIconClick={() => onSelect(phoneme.id as PhonemeType)}
             />
           ))}
         </div>
