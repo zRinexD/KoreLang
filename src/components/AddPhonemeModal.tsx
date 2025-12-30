@@ -1,10 +1,11 @@
-import React from 'react';
-import { Modal } from './ui';
-import { useTranslation } from '../i18n';
-import { PhonemeModel, ArticulationPlaceModification, RoundnessModification, TonguePositionModification, PhonationModification, OronasalProcessModification, TongueRootPositionModification, SyllabicRoleModification } from '../types';
+import React from "react";
+import { Modal } from "./ui";
+import { useTranslation } from "../i18n";
+import { PhonemeModel } from "../types";
 
 interface AddPhonemeModalProps {
   isOpen: boolean;
+  isConsonant: boolean;
   onClose: () => void;
   place: string;
   manner: string;
@@ -14,77 +15,64 @@ interface AddPhonemeModalProps {
 
 const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   isOpen,
+  isConsonant,
   onClose,
   place,
   manner,
   phonemes,
-  onSelect
+  onSelect,
 }) => {
   const { t } = useTranslation();
 
+  const availablePhonemes = [
+    { id: "dummy1", symbol: "d", name: "Dummy 1" },
+    { id: "dummy2", symbol: "d2", name: "Dummy 2" },
+    { id: "dummy3", symbol: "d3", name: "Dummy 3" },
+  ];
 
-  // Déterminer les options possibles pour la case sélectionnée
-  const isVowel = phonemes.length > 0 && phonemes[0].category === 'vowel';
-  let filtered: PhonemeModel[] = [];
-  if (isVowel) {
-    filtered = phonemes.filter(p => p.features?.height === manner && p.features?.backness === place);
-  } else {
-    filtered = phonemes.filter(p => p.features?.place === place && p.features?.manner === manner);
-  }
-  const [selectedPhonemeId, setSelectedPhonemeId] = React.useState<string>('');
-
-  // Always update selectedPhonemeId to first available when filtered changes or modal opens
-  React.useEffect(() => {
-    if (isOpen && filtered.length > 0) {
-      setSelectedPhonemeId(filtered[0].id);
-    } else if (!isOpen) {
-      setSelectedPhonemeId('');
-    }
-  }, [isOpen, filtered]);
+  const [selectedPhonemeId, setSelectedPhonemeId] = React.useState<string>(
+    availablePhonemes[0]?.id
+  );
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t('phonology.add_phoneme') || 'Add Phoneme'}
+      title={t("phonology.add_phoneme")}
       maxWidth="max-w-xs"
       icon={null}
     >
       <div className="mb-4 text-center text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
-        {isVowel
-          ? `${manner || ''} / ${place || ''}`
-          : `${place || ''} / ${manner || ''}`}
+        {`${place} / ${manner}`}
       </div>
-      <div className="flex flex-col gap-2 items-center">
-        {filtered.length === 0 ? (
-          <div className="text-center text-[var(--text-secondary)] text-xs py-4">
-            {t('phonology.no_phoneme_found') || 'No phoneme found for this cell.'}
-          </div>
-        ) : (
-          <>
-            <select
-              value={selectedPhonemeId}
-              onChange={e => setSelectedPhonemeId(e.target.value)}
-              style={{ minWidth: 180, minHeight: 32, border: '2px solid #888', color: '#222', background: '#fff', borderRadius: 4, fontSize: 15, margin: 4 }}
-            >
-              {filtered.map(phoneme => (
-                <option key={phoneme.id} value={phoneme.id}>
-                  [{phoneme.symbol}] {phoneme.name}
-                </option>
-              ))}
-            </select>
-            <button
-              className="mt-2 px-4 py-2 rounded bg-[var(--accent)] text-white font-bold hover:bg-[var(--accent-dark)]"
-              disabled={!selectedPhonemeId}
-              onClick={() => {
-                const selected = filtered.find(p => p.id === selectedPhonemeId);
-                if (selected) onSelect(selected);
-              }}
-            >
-              {t('phonology.add_phoneme') || 'Add Phoneme'}
-            </button>
-          </>
-        )}
+      <div className="flex flex-col items-center gap-2">
+        <select
+          value={selectedPhonemeId}
+          onChange={(e) => setSelectedPhonemeId(e.target.value)}
+          style={{
+            minWidth: 180,
+            minHeight: 32,
+            border: "2px solid #888",
+            color: "#222",
+            background: "#fff",
+            borderRadius: 4,
+            fontSize: 15,
+            margin: 4,
+          }}
+        >
+          {availablePhonemes.map((phoneme) => (
+            <option key={phoneme.id} value={phoneme.id}>
+              [{phoneme.symbol}] {phoneme.name}
+            </option>
+          ))}
+        </select>
+        <button
+          className="mt-2 px-4 py-2 rounded bg-[var(--accent)] text-white font-bold hover:bg-[var(--accent-dark)]"
+          disabled={!selectedPhonemeId}
+          onClick={() => {}}
+        >
+          {t("phonology.add_phoneme")}
+        </button>
       </div>
     </Modal>
   );

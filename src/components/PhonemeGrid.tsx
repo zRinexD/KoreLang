@@ -11,8 +11,6 @@ const PLACES = ['bilabial', 'labiodental', 'dental', 'alveolar', 'postalveolar',
 const HEIGHTS = ['close', 'near-close', 'close-mid', 'mid', 'open-mid', 'near-open', 'open'];
 const BACKNESS = ['front', 'central', 'back'];
 
-// Détermination des cases impossibles selon la structure C#
-// --- Voyelles ---
 const impossibleVowelCells: Record<string, Record<string, boolean>> = {
     'close':      { front: false, central: false, back: false },
     'near-close': { front: false, central: true,  back: false },
@@ -23,7 +21,6 @@ const impossibleVowelCells: Record<string, Record<string, boolean>> = {
     'open':       { front: false, central: true,  back: false },
 };
 
-// --- Consonnes ---
 const impossibleConsonantCells: Record<string, Record<string, boolean>> = {
     'plosive': {
         bilabial: false, labiodental: true,  dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: false, velar: false, uvular: false, pharyngeal: true,  glottal: false
@@ -119,7 +116,7 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
         className="p-1 text-center border-l bg-[var(--surface)] relative"
         style={{ borderColor: 'var(--text-tertiary)', cursor: 'not-allowed', opacity: 0.6, minWidth: 0, minHeight: 0 }}
       >
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none w-full h-full">
+        <div className="absolute inset-0 flex items-center justify-center w-full h-full pointer-events-none select-none">
           <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
             <defs>
               <pattern id="hatchPattern" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
@@ -214,18 +211,17 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
         </div>
         {/* Nouvelle modal d'ajout de phonème */}
         <AddPhonemeModal
-            isOpen={addModal.open}
-            onClose={() => setAddModal({ open: false, row: null, col: null })}
-            place={addModal.col || ''}
-            manner={addModal.row || ''}
-            phonemes={phonemeModels}
-            onSelect={(phoneme) => {
-                if (addModal.row && addModal.col) {
-                    onAddPhoneme(phoneme, addModal.row, addModal.col, isVowels);
-                }
-                setAddModal({ open: false, row: null, col: null });
-            }}
-        />
+                isOpen={addModal.open}
+                onClose={() => setAddModal({ open: false, row: null, col: null })}
+                place={addModal.col || ''}
+                manner={addModal.row || ''}
+                phonemes={phonemeModels}
+                onSelect={(phoneme) => {
+                    if (addModal.row && addModal.col) {
+                        onAddPhoneme(phoneme, addModal.row, addModal.col, isVowels);
+                    }
+                    setAddModal({ open: false, row: null, col: null });
+                } } isConsonant={!isVowels}        />
 
         {legend ? (
             <div className="mt-2 text-[10px] text-center shrink-0" style={{ color: 'var(--text-tertiary)' }}>
