@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal } from "./ui";
 import { useTranslation } from "../i18n";
-import { PhonemeModel } from "../types";
+import { PhonemeModel, PhonemeType } from "../types";
 
 import { Manner, Place, Height, Backness } from "../types";
 interface AddPhonemeModalProps {
@@ -14,6 +14,8 @@ interface AddPhonemeModalProps {
 }
 
 import * as PhonemeCategories from "../phonemeCategories";
+import { PhonemeDataService } from "../services/PhonemeDataService";
+import { StatBadge } from "./ui/StatBadge";
 
 const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   isOpen,
@@ -54,10 +56,28 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
         return (PhonemeCategories as any)[mannerKey].includes(p);
       }
       return true;
-    }).map((id: string) => ({ id, symbol: id, name: id }));
+    }).map((id: string) => {
+      // On suppose que id correspond à une valeur de PhonemeType
+      const ipa = PhonemeDataService.getIPA(id as PhonemeType) || id;
+      // Chercher le nom humain si possible (sinon fallback sur id)
+      const model = phonemes.find(p => p.id === id);
+      return {
+        id,
+        symbol: ipa,
+        name: model?.name || id
+      };
+    });
   } else if (mannerKey && (PhonemeCategories as any)[mannerKey]) {
     // voyelles par manner (hauteur)
-    availablePhonemes = (PhonemeCategories as any)[mannerKey].map((id: string) => ({ id, symbol: id, name: id }));
+    availablePhonemes = (PhonemeCategories as any)[mannerKey].map((id: string) => {
+      const ipa = PhonemeDataService.getIPA(id as PhonemeType) || id;
+      const model = phonemes.find(p => p.id === id);
+      return {
+        id,
+        symbol: ipa,
+        name: model?.name || id
+      };
+    });
   }
 
   const [selectedPhonemeId, setSelectedPhonemeId] = React.useState<string>(
@@ -92,14 +112,28 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
         >
           {availablePhonemes.map((phoneme) => (
             <option key={phoneme.id} value={phoneme.id}>
-              [{phoneme.symbol}] {phoneme.name}
+              {/* Badge IPA + nom */}
+              {phoneme.symbol} {phoneme.name}
             </option>
           ))}
         </select>
+        {/* Affichage du badge IPA + nom en dehors du select pour prévisualisation */}
+        {selectedPhonemeId && (
+          <div className="flex items-center gap-2 mt-2">
+            <StatBadge value={availablePhonemes.find(p => p.id === selectedPhonemeId)?.symbol || ''} label="IPA" />
+            <span className="font-semibold text-sm">{availablePhonemes.find(p => p.id === selectedPhonemeId)?.name || ''}</span>
+          </div>
+        )}
         <button
           className="mt-2 px-4 py-2 rounded bg-[var(--accent)] text-white font-bold hover:bg-[var(--accent-dark)]"
           disabled={!selectedPhonemeId}
-          onClick={() => {}}
+          onClick={() => {
+            const selected = availablePhonemes.find(p => p.id === selectedPhonemeId);
+            if (selected) {
+              const model = phonemes.find(p => p.id === selected.id);
+              if (model) onSelect(model);
+            }
+          }}
         >
           {t("phonology.add_phoneme")}
         </button>
