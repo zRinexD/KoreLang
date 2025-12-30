@@ -101,6 +101,7 @@ export const useProject = () => {
       fetch("/sindarin_complete.json")
         .then(res => res.json())
         .then(data => {
+          loadProjectData(data);
           setIsInitialLoadComplete(true);
         })
         .catch(err => {
