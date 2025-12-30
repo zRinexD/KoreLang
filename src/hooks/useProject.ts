@@ -164,7 +164,27 @@ export const useProject = () => {
 
   // Handlers grouped for cleaner props spreading in App
   const handlers = {
-    newProject: () => setCurrentView("DASHBOARD"),
+    newProject: (payload?: { name?: string; author?: string; description?: string }) => {
+      setProjectName(payload?.name || "Untitled");
+      setProjectAuthor(payload?.author || "Unknown");
+      setProjectDescription(payload?.description || "");
+      setLexicon([]);
+      setGrammar("");
+      setMorphology({ dimensions: [], paradigms: [] });
+      setPhonology({
+        name: "Default Phonology",
+        description: "",
+        consonants: [],
+        vowels: [],
+        syllableStructure: "",
+        bannedCombinations: [],
+      });
+      setRules([]);
+      setConstraints({ ...INITIAL_CONSTRAINTS });
+      setScriptConfig(INITIAL_SCRIPT);
+      setNotebook("");
+      setCurrentView("DASHBOARD");
+    },
     exportProject: (fileName?: string) => {
       const data = getFullProjectData();
       const text = JSON.stringify(data, null, 2);

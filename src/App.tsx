@@ -56,7 +56,10 @@ const AppContent: React.FC = () => {
           new CustomEvent("console-shortcut", { detail: { action: "minimize" } })
         );
       },
-      newProject: () => open("wizard"),
+      newProject: (payload) => {
+        // Si la commande vient de la console ou d'un bouton, on utilise le handler métier
+        project.handlers.newProject(payload);
+      },
       openProject: project.handlers.openProject,
       loadProject: (payload) => {
         if (payload?.data) {
