@@ -12,6 +12,7 @@ interface AddPhonemeModalProps {
   place: Place | Backness | null;
   manner: Manner | Height | null;
   onSelect: (phoneme: PhonemeType) => void;
+  existingPhonemes?: { id: string, symbol: string, name: string }[];
 }
 
 import { PhonemeDataService } from "../services/PhonemeDataService";
@@ -24,6 +25,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   place,
   manner,
   onSelect,
+  existingPhonemes = [],
 }) => {
   const { t } = useTranslation();
 
@@ -42,9 +44,17 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
     }));
   }
 
-  const [selectedPhonemeId, setSelectedPhonemeId] = React.useState<string>(
-    availablePhonemes[0]?.id || ""
-  );
+
+  const [selectedPhonemeId, setSelectedPhonemeId] = React.useState<string>("");
+
+  // Reset selectedPhonemeId when modal opens or availablePhonemes change
+  React.useEffect(() => {
+    if (isOpen && availablePhonemes.length > 0) {
+      setSelectedPhonemeId(availablePhonemes[0].id);
+    } else if (!isOpen) {
+      setSelectedPhonemeId("");
+    }
+  }, [isOpen, place, manner, availablePhonemes.length]);
 
   return (
     <Modal
@@ -57,6 +67,14 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
       <div className="mb-4 text-center text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
         {place && manner ? `${t(`phonology.place.${place}`) || place} / ${t(`phonology.manner.${manner}`) || manner}` : ''}
       </div>
+      {/* Affichage des phonèmes déjà présents dans la case */}
+      {existingPhonemes.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2 justify-center">
+          {existingPhonemes.map((ph) => (
+            <StatBadge key={ph.id} value={ph.symbol} label={ph.name} />
+          ))}
+        </div>
+      )}
       <div className="flex flex-col items-center gap-2">
         <select
           value={selectedPhonemeId}

@@ -75,6 +75,12 @@ export class PhonemeDataService {
     [PhonemeType.VoicedRetroflexLateralApproximant]: { category: 'consonant', manner: 'lateral approximant', place: 'retroflex' },
     [PhonemeType.VoicedPalatalLateralApproximant]: { category: 'consonant', manner: 'lateral approximant', place: 'palatal' },
     [PhonemeType.VoicedVelarLateralApproximant]: { category: 'consonant', manner: 'lateral approximant', place: 'velar' },
+    // Manquants pour la couverture complète
+    [PhonemeType.VoicedPostAlveolarSibilantFricative]: { category: 'consonant', manner: 'fricative', place: 'postalveolar' },
+    [PhonemeType.VoicelessPostAlveolarSibilantFricative]: { category: 'consonant', manner: 'fricative', place: 'postalveolar' },
+    [PhonemeType.VoicedLabioDentalFricative]: { category: 'consonant', manner: 'fricative', place: 'labiodental' },
+    [PhonemeType.VoicelessLabioDentalFricative]: { category: 'consonant', manner: 'fricative', place: 'labiodental' },
+    [PhonemeType.VoicedLabioDentalNasal]: { category: 'consonant', manner: 'nasal', place: 'labiodental' },
     // Vowels (close)
     [PhonemeType.CloseFrontUnrounded]: { category: 'vowel', height: 'close', backness: 'front' },
     [PhonemeType.CloseFrontRounded]: { category: 'vowel', height: 'close', backness: 'front' },

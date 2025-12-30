@@ -25,12 +25,18 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
 
   const { phonology, setData } = props;
   // Utility: get phonemes for a consonant cell
-  const getConsonantPhonemes = (manner: string, place: string) =>
-    phonology.consonants.filter(p => p.manner === manner && p.place === place);
+  const getConsonantPhonemes = React.useCallback(
+    (manner: string, place: string) =>
+      phonology.consonants.filter(p => p.manner === manner && p.place === place),
+    [phonology.consonants]
+  );
 
   // Utility: get phonemes for a vowel cell
-  const getVowelPhonemes = (height: string, backness: string) =>
-    phonology.vowels.filter(p => p.height === height && p.backness === backness);
+  const getVowelPhonemes = React.useCallback(
+    (height: string, backness: string) =>
+      phonology.vowels.filter(p => p.height === height && p.backness === backness),
+    [phonology.vowels]
+  );
 
   // Remove a phoneme instance
   const handleRemove = (instance: PhonemeInstance, isVowel: boolean) => {

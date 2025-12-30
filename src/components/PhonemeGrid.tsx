@@ -200,12 +200,25 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
             onClose={() => setAddModal({ open: false, row: null, col: null })}
             place={addModal.col}
             manner={addModal.row}
+            existingPhonemes={(() => {
+                if (!addModal.row || !addModal.col) return [];
+                const phonemes = getPhonemes(addModal.row, addModal.col);
+                return phonemes.map((p) => ({
+                    id: p.id,
+                    symbol: PhonemeDataService.getIPA(p.phoneme) || p.phoneme,
+                    name: p.phoneme
+                }));
+            })()}
             onSelect={(phonemeType) => {
                 if (addModal.row && addModal.col) {
                     const phonemeInstance: PhonemeInstance = {
                         id: `${phonemeType}-${addModal.row}-${addModal.col}`,
                         phoneme: phonemeType,
                         type: isVowels ? 'vowel' : 'consonant',
+                        ...(isVowels
+                            ? { height: addModal.row as string, backness: addModal.col as string }
+                            : { manner: addModal.row as string, place: addModal.col as string }
+                        )
                     };
                     onAddPhoneme(phonemeInstance, addModal.row, addModal.col, isVowels);
                 }
