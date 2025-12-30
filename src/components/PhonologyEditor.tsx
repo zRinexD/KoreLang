@@ -3,7 +3,7 @@ import React from "react";
 import { Volume2 } from "lucide-react";
 import { PhonologyConfig, PhonemeInstance, PhonemeModel } from "../types";
 
-import { ViewLayout, StatBadge, CIcon, VIcon } from "./ui";
+import { ViewLayout, StatBadge, CIcon, VIcon, CompactButton, Modal } from "./ui";
 import PhonemeGrid from "./PhonemeGrid";
 import { useTranslation } from "../i18n";
 
@@ -16,6 +16,7 @@ interface PhonologyEditorProps {
 
 const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
   const { phonology, setData } = props;
+  const [showClearModal, setShowClearModal] = React.useState(false);
   const getConsonantPhonemes = React.useCallback(
     (manner: string, place: string) =>
       phonology.consonants.filter(
@@ -74,10 +75,10 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
   return (
     <ViewLayout
       icon={Volume2}
-      title="Phonology"
-      subtitle="Manage your phoneme inventory and grid."
+      title={t("phonology.title")}
+      subtitle={t("phonology.subtitle")}
       headerChildren={
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <StatBadge
             value={phonology.consonants.length}
             label="C"
@@ -88,6 +89,33 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
             label="V"
             className="min-w-[50px]"
           />
+          <CompactButton
+            label={t("phonology.clear_inventory")}
+            variant="outline"
+            style={{ border: '2px solid var(--error)', color: 'var(--error)', background: 'transparent', fontWeight: 600, transition: 'all 0.15s' }}
+            onClick={() => setShowClearModal(true)}
+            className="hover:bg-[var(--error)] hover:text-white hover:border-[var(--error)]"
+          />
+          <Modal isOpen={showClearModal} showCloseButton={false}>
+            <div className="p-6 flex flex-col items-center">
+              <div className="text-lg font-semibold mb-4">{t("phonology.clear_confirm")}</div>
+              <div className="flex gap-4 mt-2">
+                <CompactButton
+                  label={t("common.confirm")}
+                  style={{ background: 'var(--error)', color: 'white', border: '2px solid var(--error)' }}
+                  onClick={() => {
+                    setData({ ...phonology, consonants: [], vowels: [] });
+                    setShowClearModal(false);
+                  }}
+                />
+                <CompactButton
+                  label={t("common.cancel")}
+                  variant="outline"
+                  onClick={() => setShowClearModal(false)}
+                />
+              </div>
+            </div>
+          </Modal>
         </div>
       }
     >

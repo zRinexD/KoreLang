@@ -9,6 +9,7 @@ interface ModalProps {
   children: ReactNode;
   footer?: ReactNode;
   maxWidth?: string;
+  showCloseButton?: boolean;
 }
 
 /**
@@ -25,7 +26,8 @@ export const Modal: React.FC<ModalProps> = ({
   icon,
   children,
   footer,
-  maxWidth = 'max-w-lg'
+  maxWidth = 'max-w-lg',
+  showCloseButton = true
 }) => {
   if (!isOpen) return null;
 
@@ -46,13 +48,15 @@ export const Modal: React.FC<ModalProps> = ({
             {icon && <span style={{ color: 'var(--accent)' }}>{icon}</span>}
             {title}
           </h2>
-          <button 
-            onClick={onClose} 
-            className="transition-colors hover:opacity-80" 
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            <X size={18} />
-          </button>
+          {showCloseButton && (
+            <button 
+              onClick={onClose} 
+              className="transition-colors hover:opacity-80" 
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              <X size={18} />
+            </button>
+          )}
         </div>
         
         <div 
