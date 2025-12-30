@@ -41,29 +41,11 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
   };
 
   // Add a phoneme instance to the grid
-  const handleAddPhoneme = (phoneme: PhonemeModel, row: string, col: string, isVowel: boolean) => {
+  const handleAddPhoneme = (phonemeInstance: PhonemeInstance, row: string, col: string, isVowel: boolean) => {
     if (isVowel) {
-      const newInstance: PhonemeInstance = {
-        id: `${phoneme.id}-v-${row}-${col}-${Date.now()}`,
-        phoneme,
-        type: 'vowel',
-        height: row,
-        backness: col,
-        diacritics: [],
-        features: {},
-      };
-      setData({ ...phonology, vowels: [...phonology.vowels, newInstance] });
+      setData({ ...phonology, vowels: [...phonology.vowels, phonemeInstance] });
     } else {
-      const newInstance: PhonemeInstance = {
-        id: `${phoneme.id}-c-${row}-${col}-${Date.now()}`,
-        phoneme,
-        type: 'consonant',
-        manner: row,
-        place: col,
-        diacritics: [],
-        features: {},
-      };
-      setData({ ...phonology, consonants: [...phonology.consonants, newInstance] });
+      setData({ ...phonology, consonants: [...phonology.consonants, phonemeInstance] });
     }
   };
 

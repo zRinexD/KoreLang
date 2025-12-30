@@ -13,9 +13,9 @@ interface AddPhonemeModalProps {
   onSelect: (phoneme: PhonemeModel) => void;
 }
 
-import * as PhonemeCategories from "../phonemeCategories";
 import { PhonemeDataService } from "../services/PhonemeDataService";
 import { StatBadge } from "./ui/StatBadge";
+import { getPhonemesForCell } from "../services/phonemeGridUtils";
 
 const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   isOpen,
@@ -27,57 +27,16 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // Déterminer la liste à utiliser selon place/manner
-  // (exemple simple, à adapter selon structure réelle)
+  // Nouvelle logique : on utilise la source centrale des phonèmes pour remplir la dropdown
   let availablePhonemes: any[] = [];
-  // Correction : map enums to correct property names in PhonemeCategories
-  function getCategoryKey(val: any): string {
-    if (!val) return '';
-    // exceptions pour les noms de catégories
-    switch (val) {
-      case 'nasal': return 'nasals';
-      case 'plosive': return 'plosive';
-      case 'trill': return 'trill';
-      case 'tap': return 'tapOrFlap';
-      case 'fricative': return 'fricative';
-      case 'lateral-fricative': return 'lateralFricative';
-      case 'approximant': return 'approximant';
-      case 'lateral-approximant': return 'lateralApproximant';
-      default: return val;
-    }
-  }
-
-  const placeKey = getCategoryKey(place);
-  const mannerKey = getCategoryKey(manner);
-  if (placeKey && (PhonemeCategories as any)[placeKey]) {
-    // consonnes par place
-    availablePhonemes = (PhonemeCategories as any)[placeKey].filter((p: string) => {
-      if (mannerKey && (PhonemeCategories as any)[mannerKey]) {
-        return (PhonemeCategories as any)[mannerKey].includes(p);
-      }
-      return true;
-    }).map((id: string) => {
-      // On suppose que id correspond à une valeur de PhonemeType
-      const ipa = PhonemeDataService.getIPA(id as PhonemeType) || id;
-      // Chercher le nom humain si possible (sinon fallback sur id)
-      const model = phonemes.find(p => p.id === id);
-      return {
-        id,
-        symbol: ipa,
-        name: model?.name || id
-      };
-    });
-  } else if (mannerKey && (PhonemeCategories as any)[mannerKey]) {
-    // voyelles par manner (hauteur)
-    availablePhonemes = (PhonemeCategories as any)[mannerKey].map((id: string) => {
-      const ipa = PhonemeDataService.getIPA(id as PhonemeType) || id;
-      const model = phonemes.find(p => p.id === id);
-      return {
-        id,
-        symbol: ipa,
-        name: model?.name || id
-      };
-    });
+  if (place && manner) {
+    const isVowel = phonemes.some(p => p.category === 'vowel');
+    const found = getPhonemesForCell(phonemes, manner, place, isVowel);
+    availablePhonemes = found.map((model) => ({
+      id: model.id,
+      symbol: PhonemeDataService.getIPA(model.id as PhonemeType) || model.symbol,
+      name: model.name
+    }));
   }
 
   const [selectedPhonemeId, setSelectedPhonemeId] = React.useState<string>(

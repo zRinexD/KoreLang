@@ -6,7 +6,7 @@ import { PhonemeInstance, PhonemeModel, Manner, Place, Height, Backness } from '
 import { Card, Section } from './ui';
 import AddPhonemeModal from './AddPhonemeModal';
 import { useTranslation } from '../i18n';
-import * as PhonemeCategories from '../phonemeCategories';
+import { getPhonemesForCell, isCellPossible } from '../services/phonemeGridUtils';
 
 const MANNERS = Object.values(Manner);
 const PLACES = Object.values(Place);
@@ -14,32 +14,7 @@ const HEIGHTS = Object.values(Height);
 const BACKNESS = Object.values(Backness);
 
 
-// Utilitaire pour savoir si une case (row, col) est possible selon les catégories
-function isCellPossible(row: string, col: string, isVowel: boolean): boolean {
-  // On mappe les clés enum vers les clés de PhonemeCategories
-  function getCategoryKey(val: any): string {
-    if (!val) return '';
-    switch (val) {
-      case 'nasal': return 'nasals';
-      case 'plosive': return 'plosive';
-      case 'trill': return 'trill';
-      case 'tap': return 'tapOrFlap';
-      case 'fricative': return 'fricative';
-      case 'lateral-fricative': return 'lateralFricative';
-      case 'approximant': return 'approximant';
-      case 'lateral-approximant': return 'lateralApproximant';
-      default: return val;
-    }
-  }
-  const rowKey = getCategoryKey(row);
-  const colKey = getCategoryKey(col);
-  if (!rowKey || !colKey) return false;
-  const rowList = (PhonemeCategories as any)[rowKey] || [];
-  const colList = (PhonemeCategories as any)[colKey] || [];
-  // Intersection
-  const intersection = rowList.filter((p: string) => colList.includes(p));
-  return intersection.length > 0;
-}
+
 
 export type PhonemeGridProps = {
     title: string;
@@ -68,7 +43,7 @@ interface AddPhonemeModalState {
 
 export type PhonemeGridWithModelsProps = PhonemeGridProps & {
     phonemeModels: PhonemeModel[];
-    onAddPhoneme: (phoneme: PhonemeModel, row: string, col: string, isVowel: boolean) => void;
+    onAddPhoneme: (phoneme: PhonemeInstance, row: string, col: string, isVowel: boolean) => void;
 };
 
 const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
@@ -93,16 +68,14 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
     const columnLabel = (key: string) => t(`phonology.${isVowels ? 'backness' : 'place'}.${key}`);
     const rowLabel = (key: string) => t(`phonology.${isVowels ? 'height' : 'manner'}.${key}`);
 
-    // Mémoiser les données de la grille pour éviter les recalculs
+    // Nouvelle logique : on utilise la source centrale des phonèmes pour remplir la grille
     const gridData = useMemo(() => {
-        return rows.map(row => 
+        return rows.map(row =>
             columns.map(col => {
-                const arr = getPhonemes(row, col);
-                if (!Array.isArray(arr)) return [];
-                return arr.filter(p => p && p.phoneme && typeof p.phoneme.symbol === 'string');
+                return getPhonemesForCell(phonemeModels, row, col, isVowels);
             })
         );
-    }, [rows, columns, getPhonemes]);
+    }, [rows, columns, phonemeModels, isVowels]);
 
     // Composant réutilisable pour une case hachurée
     const HatchCell: React.FC = () => (
@@ -158,7 +131,7 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
                         </th>
                         {columns.map((col, colIdx) => {
                             const phonemes = gridData[rowIdx][colIdx];
-                            const impossible = !isCellPossible(rows[rowIdx], columns[colIdx], isVowels);
+                            const impossible = !isCellPossible(phonemeModels, rows[rowIdx], columns[colIdx], isVowels);
                             if (impossible) {
                                 return <HatchCell key={`${row}-${col}`} />;
                             }
@@ -171,20 +144,30 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
                                 >
                                     <div className="flex justify-center gap-1 items-center min-h-[20px]">
                                         {phonemes.length > 0 ? (
-                                            phonemes.map((p, idx) => (
-                                                <div key={`${row}-${col}-${idx}-${p.phoneme.symbol}`} className="relative group/ph">
-                                                    {renderPhoneme(p)}
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); onRemove(p); }}
-                                                        className="absolute hidden rounded-full -top-4 -right-2 group-hover/ph:block"
-                                                        style={{ color: 'var(--error)', backgroundColor: 'var(--background)' }}
-                                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8' }
-                                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1' }
-                                                    >
-                                                        <X size={10} />
-                                                    </button>
-                                                </div>
-                                            ))
+                                            phonemes.map((p, idx) => {
+                                                // S'assurer que p est bien un PhonemeInstance
+                                                const phonemeInstance: PhonemeInstance = (p as any).phoneme && (p as any).type
+                                                    ? (p as unknown as PhonemeInstance)
+                                                    : {
+                                                        id: (p as any).id || `${(p as any).symbol}-${row}-${col}`,
+                                                        phoneme: p as PhonemeModel,
+                                                        type: isVowels ? 'vowel' : 'consonant',
+                                                    };
+                                                return (
+                                                    <div key={`${row}-${col}-${idx}-${phonemeInstance.phoneme.symbol}`} className="relative group/ph">
+                                                        {renderPhoneme(phonemeInstance)}
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); onRemove(phonemeInstance); }}
+                                                            className="absolute hidden rounded-full -top-4 -right-2 group-hover/ph:block"
+                                                            style={{ color: 'var(--error)', backgroundColor: 'var(--background)' }}
+                                                            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8' }
+                                                            onMouseLeave={(e) => e.currentTarget.style.opacity = '1' }
+                                                        >
+                                                            <X size={10} />
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })
                                         ) : (
                                             <Plus
                                                 size={10}
@@ -203,17 +186,22 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
         </div>
         {/* Nouvelle modal d'ajout de phonème */}
         <AddPhonemeModal
-                isOpen={addModal.open}
-                onClose={() => setAddModal({ open: false, row: null, col: null })}
-                place={addModal.col }
-                manner={addModal.row}
-                phonemes={phonemeModels}
-                onSelect={(phoneme) => {
-                    if (addModal.row && addModal.col) {
-                        onAddPhoneme(phoneme, addModal.row, addModal.col, isVowels);
-                    }
-                    setAddModal({ open: false, row: null, col: null });
-                }}
+            isOpen={addModal.open}
+            onClose={() => setAddModal({ open: false, row: null, col: null })}
+            place={addModal.col}
+            manner={addModal.row}
+            phonemes={phonemeModels}
+            onSelect={(phonemeModel) => {
+                if (addModal.row && addModal.col) {
+                    const phonemeInstance: PhonemeInstance = {
+                        id: `${phonemeModel.id}-${addModal.row}-${addModal.col}`,
+                        phoneme: phonemeModel,
+                        type: isVowels ? 'vowel' : 'consonant',
+                    };
+                    onAddPhoneme(phonemeInstance, addModal.row, addModal.col, isVowels);
+                }
+                setAddModal({ open: false, row: null, col: null });
+            }}
         />
 
         {legend ? (
