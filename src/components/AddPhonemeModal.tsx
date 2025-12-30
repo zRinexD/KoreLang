@@ -6,12 +6,14 @@ import { PhonemeType } from "../types";
 
 import { Manner, Place, Height, Backness } from "../types";
 
+import { Trash2, Plus } from 'lucide-react';
 interface AddPhonemeModalProps {
   isOpen: boolean;
   onClose: () => void;
   place: Place | Backness | null;
   manner: Manner | Height | null;
   onSelect: (phoneme: PhonemeType) => void;
+  onRemove?: (phonemeId: string) => void;
   existingPhonemes?: { id: string, symbol: string, name: string }[];
 }
 
@@ -25,6 +27,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   place,
   manner,
   onSelect,
+  onRemove,
   existingPhonemes = [],
 }) => {
   const { t } = useTranslation();
@@ -45,16 +48,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   }
 
 
-  const [selectedPhonemeId, setSelectedPhonemeId] = React.useState<string>("");
 
-  // Reset selectedPhonemeId when modal opens or availablePhonemes change
-  React.useEffect(() => {
-    if (isOpen && availablePhonemes.length > 0) {
-      setSelectedPhonemeId(availablePhonemes[0].id);
-    } else if (!isOpen) {
-      setSelectedPhonemeId("");
-    }
-  }, [isOpen, place, manner, availablePhonemes.length]);
 
   return (
     <Modal
@@ -67,55 +61,57 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
       <div className="mb-4 text-center text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
         {place && manner ? `${t(`phonology.place.${place}`) || place} / ${t(`phonology.manner.${manner}`) || manner}` : ''}
       </div>
-      {/* Affichage des phonèmes déjà présents dans la case */}
-      {existingPhonemes.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2 justify-center">
-          {existingPhonemes.map((ph) => (
-            <StatBadge key={ph.id} value={ph.symbol} label={ph.name} />
-          ))}
+      {/* Section Registered Phonemes */}
+      <div className="mb-4">
+        <div className="mb-1 text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('phonology.registered_phonemes') || 'Registered phonemes'}</div>
+        <div className="flex flex-wrap justify-center gap-2">
+          {existingPhonemes.length > 0 ? existingPhonemes.map((ph) => (
+            <div key={ph.id} className="relative flex flex-col items-center justify-center p-2 rounded border border-[var(--border)] min-w-[80px] min-h-[70px] bg-[var(--surface)]">
+              {typeof onRemove === 'function' && (
+                <button
+                  className="absolute top-1.5 right-1.5 p-1 rounded-full bg-transparent hover:bg-[var(--error-bg)] flex items-center justify-center shadow-none border-none outline-none"
+                  style={{ color: 'var(--error)', zIndex: 2 }}
+                  onClick={() => onRemove(ph.id)}
+                  title={t('phonology.remove_phoneme') || 'Remove'}
+                >
+                  <Trash2 size={18} />
+                </button>
+              )}
+              <span className="mb-1 font-serif text-2xl">{ph.symbol}</span>
+              <span className="text-[10px] uppercase text-center font-bold" style={{ color: 'var(--text-tertiary)' }}>{ph.name.replace(/([A-Z])/g, ' $1').trim()}</span>
+            </div>
+          )) : <span className="text-xs text-[var(--text-tertiary)]">{t('phonology.no_registered_phoneme') || 'No phoneme registered.'}</span>}
         </div>
-      )}
-      <div className="flex flex-col items-center gap-2">
-        <select
-          value={selectedPhonemeId}
-          onChange={(e) => setSelectedPhonemeId(e.target.value)}
-          style={{
-            minWidth: 180,
-            minHeight: 32,
-            border: "2px solid #888",
-            color: "#222",
-            background: "#fff",
-            borderRadius: 4,
-            fontSize: 15,
-            margin: 4,
-          }}
-        >
-          {availablePhonemes.map((phoneme) => (
-            <option key={phoneme.id} value={phoneme.id}>
-              {/* Badge IPA + nom */}
-              {phoneme.symbol} {phoneme.name}
-            </option>
-          ))}
-        </select>
-        {/* Affichage du badge IPA + nom en dehors du select pour prévisualisation */}
-        {selectedPhonemeId && (
-          <div className="flex items-center gap-2 mt-2">
-            <StatBadge value={availablePhonemes.find(p => p.id === selectedPhonemeId)?.symbol || ''} label="IPA" />
-            <span className="font-semibold text-sm">{availablePhonemes.find(p => p.id === selectedPhonemeId)?.name || ''}</span>
-          </div>
-        )}
-        <button
-          className="mt-2 px-4 py-2 rounded bg-[var(--accent)] text-white font-bold hover:bg-[var(--accent-dark)]"
-          disabled={!selectedPhonemeId}
-          onClick={() => {
-            const selected = availablePhonemes.find(p => p.id === selectedPhonemeId);
-            if (selected) {
-              onSelect(selected.id as PhonemeType);
-            }
-          }}
-        >
-          {t("phonology.add_phoneme")}
-        </button>
+      </div>
+      {/* Section Add Phoneme */}
+      <div>
+        <div className="mb-1 text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('phonology.add_phoneme') || 'Add phoneme'}</div>
+        <div className="flex flex-wrap justify-center gap-2">
+          {availablePhonemes.map((phoneme) => {
+            const isRegistered = existingPhonemes.some(ph => ph.id === phoneme.id);
+            return (
+              <button
+                key={phoneme.id}
+                className="relative flex flex-col items-center justify-center p-2 rounded border border-[var(--border)] min-w-[80px] min-h-[70px] bg-[var(--surface)] hover:bg-[var(--accent-bg)] transition-colors"
+                style={{ opacity: isRegistered ? 0.4 : 1, cursor: isRegistered ? 'not-allowed' : 'pointer' }}
+                disabled={isRegistered}
+                onClick={() => !isRegistered && onSelect(phoneme.id as PhonemeType)}
+              >
+                {/* Bouton + en overlay haut droite */}
+                {!isRegistered && (
+                  <span className="absolute top-1.5 right-1.5 bg-[var(--surface)] rounded-full p-0.5 shadow" style={{ zIndex: 2 }}>
+                    <Plus size={16} style={{ color: 'var(--accent)' }} />
+                  </span>
+                )}
+                {isRegistered && (
+                  <span className="absolute top-1.5 right-1.5 text-[var(--accent)] font-bold">✓</span>
+                )}
+                <span className="mb-1 font-serif text-2xl">{phoneme.symbol}</span>
+                <span className="text-[10px] uppercase text-center font-bold" style={{ color: 'var(--text-tertiary)' }}>{phoneme.name.replace(/([A-Z])/g, ' $1').trim()}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </Modal>
   );

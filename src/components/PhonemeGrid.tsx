@@ -222,7 +222,17 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
                     };
                     onAddPhoneme(phonemeInstance, addModal.row, addModal.col, isVowels);
                 }
-                setAddModal({ open: false, row: null, col: null });
+                // Ne pas fermer la modal après ajout
+            }}
+            onRemove={(phonemeId) => {
+                if (addModal.row && addModal.col) {
+                    // On doit retrouver l'instance complète pour la suppression
+                    const phonemes = getPhonemes(addModal.row, addModal.col);
+                    const instance = phonemes.find(p => p.id === phonemeId);
+                    if (instance) {
+                        onRemove(instance);
+                    }
+                }
             }}
         />
 
