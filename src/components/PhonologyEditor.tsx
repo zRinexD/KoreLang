@@ -1,6 +1,6 @@
 import { PhonemeDataService } from "../services/PhonemeDataService";
 import React from "react";
-import { Check, Cross, Trash, Volume2 } from "lucide-react";
+import { Check, X, Trash, Volume2 } from "lucide-react";
 import { PhonologyConfig, PhonemeInstance, PhonemeModel } from "../types";
 
 import { ViewLayout, StatBadge, CIcon, VIcon, CompactButton, Modal } from "./ui";
@@ -105,7 +105,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
                   label={t("common.confirm")}
                   color="var(--error)"
                   variant="solid"
-                  icon={<Check />}
+                  icon={<Trash />}
                   onClick={() => {
                     setData({ ...phonology, consonants: [], vowels: [] });
                     setShowClearModal(false);
@@ -113,7 +113,8 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
                 />
                 <CompactButton
                   label={t("common.cancel")}
-                  icon={<Cross />}
+                  icon={<X size={14} />}
+                  color="var(--error)"
                   variant="outline"
                   onClick={() => setShowClearModal(false)}
                 />
