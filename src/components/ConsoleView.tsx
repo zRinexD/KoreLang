@@ -1,61 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "../i18n";
 import { X, ChevronDown, ChevronUp, Terminal } from "lucide-react";
+import { ViewState } from "../types";
 import ConsoleConfig from "./ConsoleConfig";
-import {
-  ProjectConstraints,
-  AppSettings,
-  LexiconEntry,
-  LogEntry,
-  ScriptConfig,
-  ViewState,
-} from "../types";
 
 interface ConsoleViewProps {
   isOpen: boolean;
+  loadingAI: boolean;
   onClose: () => void;
-
-  constraints: ProjectConstraints;
-  setConstraints: (c: ProjectConstraints) => void;
-  settings: AppSettings;
-  setSettings: (s: AppSettings) => void;
-  entries: LexiconEntry[];
-  setEntries: React.Dispatch<React.SetStateAction<LexiconEntry[]>>;
-  history: LogEntry[];
-  setHistory: React.Dispatch<React.SetStateAction<LogEntry[]>>;
-  setProjectName: (name: string) => void;
-  setProjectDescription: (desc: string) => void;
-  setProjectAuthor: (author: string) => void;
-  setIsSidebarOpen: (open: boolean) => void;
-  setView: (view: ViewState) => void;
-  setJumpToTerm: (term: string | null) => void;
-  setDraftEntry: (entry: Partial<LexiconEntry> | null) => void;
-  scriptConfig?: ScriptConfig;
-  isScriptMode?: boolean;
   author?: string;
+  currentView?: ViewState;
 }
 
 const ConsoleView: React.FC<ConsoleViewProps> = ({
   isOpen,
+  loadingAI,
   onClose,
-  constraints,
-  setConstraints,
-  settings,
-  setSettings,
-  entries,
-  setEntries,
-  history,
-  setHistory,
-  setProjectName,
-  setProjectDescription,
-  setProjectAuthor,
-  setIsSidebarOpen,
-  setView,
-  setJumpToTerm,
-  setDraftEntry,
-  scriptConfig,
-  isScriptMode,
   author,
+  currentView,
 }) => {
   const { t } = useTranslation();
 
@@ -252,8 +214,10 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
   return (
     <div className="bottom-0 left-0 right-0 flex-none">
       <div
-        className="relative bg-[#1e1e1e] border-t border-white/10 shadow-2xl flex flex-col"
+        className="relative border-t shadow-2xl flex flex-col"
         style={{
+          backgroundColor: 'var(--surface)',
+          borderColor: 'rgb(from var(--text-primary) r g b / 0.1)',
           height,
           transition: isResizing
             ? "none"
@@ -270,13 +234,13 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
         )}
 
         {/* Header */}
-        <div className="h-6 bg-[var(--bg-panel)] border-b border-neutral-700 flex items-center justify-between px-4 text-xs text-[var(--text-2)] relative">
+        <div className="h-6 bg-[var(--surface)] border-b border-neutral-700 flex items-center justify-between px-4 text-xs text-[var(--text-secondary)] relative">
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
+            style={{ backgroundColor: 'rgb(from var(--text-primary) r g b / 0.03)' }}
           />
-          <h2 className="flex items-center gap-2 text-xs font-bold text-[var(--text-2)] relative z-10">
-            <Terminal size={16} className="text-[var(--text-2)]" />
+          <h2 className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)] relative z-10">
+            <Terminal size={16} className="text-[var(--text-secondary)]" />
             <span className="leading-none">{t("menu.console")}</span>
           </h2>
           <div className="relative z-10 flex items-center gap-2">
@@ -316,7 +280,10 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
                   setIsMinimized(false);
                 }
               }}
-              className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white"
+              className="p-1 transition-colors rounded-lg"
+              style={{ color: 'var(--text-secondary)', backgroundColor: 'transparent' }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgb(from var(--text-primary) r g b / 0.1)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
               aria-label={isMinimized ? "Restore console" : "Minimize console"}
             >
               {isMinimized ? (
@@ -328,37 +295,23 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
 
             <button
               onClick={onClose}
-              className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white"
+              className="p-1 transition-colors rounded-lg"
+              style={{ color: 'var(--text-secondary)', backgroundColor: 'transparent' }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgb(from var(--text-primary) r g b / 0.1)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
             >
               <X size={10} />
             </button>
           </div>
         </div>
 
-        {!isMinimized && (
-          <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-main)]">
-            <ConsoleConfig
-              constraints={constraints}
-              setConstraints={setConstraints}
-              settings={settings}
-              setSettings={setSettings}
-              entries={entries}
-              setEntries={setEntries}
-              history={history}
-              setHistory={setHistory}
-              setProjectName={setProjectName}
-              setProjectDescription={setProjectDescription}
-              setProjectAuthor={setProjectAuthor}
-              setIsSidebarOpen={setIsSidebarOpen}
-              setView={setView}
-              setJumpToTerm={setJumpToTerm}
-              setDraftEntry={setDraftEntry}
-              scriptConfig={scriptConfig}
-              isScriptMode={isScriptMode}
-              author={author}
-            />
-          </div>
-        )}
+        <div className={`flex-1 flex flex-col overflow-hidden bg-[var(--background)] ${isMinimized ? 'hidden' : ''}`}>
+          <ConsoleConfig
+            loadingAI={loadingAI}
+            author={author}
+            currentView={currentView}
+          />
+        </div>
       </div>
     </div>
   );

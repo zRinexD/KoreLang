@@ -1,234 +1,520 @@
+import React, { useState, useEffect } from 'react';
+import { X, Moon, Sun, Cpu, Palette, Download, Upload, Check, Eye, EyeOff, HelpCircle, ExternalLink, ChevronLeft, ChevronDown } from 'lucide-react';
+import { useTranslation, languages } from '../i18n';
+import { useUI } from '../ui/UIContext';
+import { AppSettings } from '../types';
+import { DEFAULT_CUSTOM } from '../constants';
+import { isApiKeySet, getApiKey } from '../services/geminiService';
+import { useCommandExecutor } from '../state/commandStore';
+import { Card, Section, CompactButton, ToggleButton, FormField, Modal } from './ui';
 
-import React, { useState } from 'react';
-import { X, Moon, Sun, CloudMoon, Cpu, CloudSun, Palette, Download, Upload, Check, Eye, EyeOff, HelpCircle, ExternalLink, ChevronLeft } from 'lucide-react';
-import { AppSettings, CustomTheme } from '../types';
-import { useTranslation, languages, LanguageCode } from '../i18n';
-
-interface SettingsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  settings: AppSettings;
-  onUpdateSettings: (s: AppSettings) => void;
-}
-
-import { isApiKeySet, getApiKey, setApiKey } from '../services/geminiService';
-
-const DEFAULT_CUSTOM: CustomTheme = {
-  bgMain: '#0f172a',
-  bgPanel: '#1e293b',
-  text1: '#f8fafc',
-  text2: '#94a3b8',
-  accent: '#3b82f6'
+// Presets de thèmes pour copie dans custom
+const THEME_PRESETS = {
+  dark: {
+    primary: "#A78BFA",
+    secondary: "#0B1019",
+    accent: "#1D4ED8",
+    background: "#0E1118",
+    surface: "#151B26",
+    elevated: "#1C2332",
+    inputField: "#1C2332",
+    textPrimary: "#E5E9F2",
+    textSecondary: "#A7B3C6",
+    textTertiary: "#7B8499",
+    border: "#242C3A",
+    divider: "#1B2230",
+    success: "#35C48D",
+    warning: "#F0C35B",
+    error: "#EE6D7A",
+    info: "#6CB6FF",
+    hover: "#3A4A66",
+    disabled: "#3A3F4D",
+  },
+  cappuccino: {
+    primary: "#0EA5A9",
+    secondary: "#EDE5D9",
+    accent: "#C17A4F",
+    background: "#FAF8F4",
+    surface: "#F3EFEA",
+    elevated: "#EBE5DE",
+    inputField: "#3A2A1F",
+    textPrimary: "#2D1F15",
+    textSecondary: "#5C4A3D",
+    textTertiary: "#8B7765",
+    border: "#D9CFC4",
+    divider: "#E5DCC9",
+    success: "#059669",
+    warning: "#D97706",
+    error: "#DC2626",
+    info: "#0284C7",
+    hover: "#E0D5C7",
+    disabled: "#C4B5A0",
+  },
+  // Light (CLAIRE)
+  'cottage-core': {
+    primary: "#7C3AED",
+    secondary: "#F0E8DC",
+    accent: "#7BAA6F",
+    background: "#FAF7F2",
+    surface: "#F3EEE6",
+    elevated: "#ECE6DE",
+    inputField: "#2F2A22",
+    textPrimary: "#2C2A26",
+    textSecondary: "#60584F",
+    textTertiary: "#9A9186",
+    border: "#DCD4C8",
+    divider: "#E6DFD5",
+    success: "#2E8B57",
+    warning: "#C0853F",
+    error: "#C44949",
+    info: "#3F82A8",
+    hover: "#E9E3DA",
+    disabled: "#C8C0B6",
+  },
+  'valinor': {
+    primary: "#8A2BE2",
+    secondary: "#EAF3FA",
+    accent: "#9CCEF5",
+    background: "#F7FBFF",
+    surface: "#F0F7FD",
+    elevated: "#E7F2FB",
+    inputField: "#17212B",
+    textPrimary: "#1E2A33",
+    textSecondary: "#5A6C79",
+    textTertiary: "#8A9AA6",
+    border: "#D5E3F0",
+    divider: "#E3EEF7",
+    success: "#2EA36A",
+    warning: "#D2993B",
+    error: "#D14646",
+    info: "#3BA1D6",
+    hover: "#EAF3FA",
+    disabled: "#C9DAE8",
+  },
+  // Dark (Obscure)
+  'murasaki': {
+    primary: "#22D3EE",
+    secondary: "#1A1225",
+    accent: "#8559F2",
+    background: "#0C0813",
+    surface: "#130E1D",
+    elevated: "#1B1427",
+    inputField: "#1B1427",
+    textPrimary: "#F1E8FF",
+    textSecondary: "#C3B1E6",
+    textTertiary: "#9585B8",
+    border: "#2E2242",
+    divider: "#211833",
+    success: "#34D399",
+    warning: "#F59E0B",
+    error: "#F87171",
+    info: "#A48BFF",
+    hover: "#241B32",
+    disabled: "#3A2E50",
+  },
+  'fruity-loop': {
+    primary: "#72E06C",
+    secondary: "#1F2228",
+    accent: "#FF7A00",
+    background: "#121417",
+    surface: "#191C21",
+    elevated: "#20242A",
+    inputField: "#20242A",
+    textPrimary: "#F1F3F5",
+    textSecondary: "#AEB4BC",
+    textTertiary: "#868D96",
+    border: "#2B2F36",
+    divider: "#1D2026",
+    success: "#72E06C",
+    warning: "#F0B429",
+    error: "#E64A4A",
+    info: "#8AB7FF",
+    hover: "#252A32",
+    disabled: "#3A3F47",
+  },
+  // Colorful
+  'tangerine': {
+    primary: "#2563EB",
+    secondary: "#FFF1E3",
+    accent: "#FFB347",
+    background: "#FFFBF7",
+    surface: "#FFF3E8",
+    elevated: "#FFE8D5",
+    inputField: "#2B180C",
+    textPrimary: "#2A1A0E",
+    textSecondary: "#5C3E2A",
+    textTertiary: "#8A6A52",
+    border: "#E7D1C0",
+    divider: "#F1DDCE",
+    success: "#3FA65B",
+    warning: "#D9822B",
+    error: "#D75745",
+    info: "#5FA7DE",
+    hover: "#FFE7D0",
+    disabled: "#CBB5A4",
+  },
+  'madoka': {
+    primary: "#BFA6FF",
+    secondary: "#FFEFF6",
+    accent: "#FF85B3",
+    background: "#FFF7FB",
+    surface: "#FFEFF6",
+    elevated: "#FFE6F1",
+    inputField: "#2A1E29",
+    textPrimary: "#3A2A36",
+    textSecondary: "#6E586A",
+    textTertiary: "#988497",
+    border: "#F2D6E5",
+    divider: "#F7DFEC",
+    success: "#48C78E",
+    warning: "#F0B557",
+    error: "#E6757D",
+    info: "#8AB9F7",
+    hover: "#F7E8F0",
+    disabled: "#DBC9D3",
+  },
+  
 };
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings, onUpdateSettings }) => {
+interface SettingsModalProps {
+  settings: AppSettings;
+  updateSettings: (settings: AppSettings) => void;
+}
+
+const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings }) => {
+  const ui = useUI();
+  
+  if (!ui.isOpen('settings')) return null;
+
   const { t, i18n } = useTranslation();
-  const language = i18n.language;
-  const setLanguage = (lang: string) => onUpdateSettings({ ...settings, language: lang });
+  const executeCommand = useCommandExecutor();
   const [activeTab, setActiveTab] = useState<'GENERAL' | 'THEME'>('GENERAL');
   const [apiKey, setApiKeyLocal] = useState(getApiKey());
   const [showApiKey, setShowApiKey] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState<string>(settings.theme);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const hasApiKey = isApiKeySet();
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setCurrentTheme(settings.theme);
+  }, [settings.theme]);
 
+  const setLanguage = (lang: string) => executeCommand('setLanguage', { language: lang });
 
-  const handleCustomUpdate = (key: keyof CustomTheme, val: string) => {
-    const current = settings.customTheme || DEFAULT_CUSTOM;
-    onUpdateSettings({ ...settings, theme: 'custom', customTheme: { ...current, [key]: val } });
+  const handleCustomUpdate = (key: keyof typeof DEFAULT_CUSTOM, val: string) => {
+    executeCommand('updateCustomTheme', { colorKey: key, colorValue: val });
+  };
+
+  const setTheme = (theme: keyof typeof THEME_PRESETS | 'custom') => {
+    setCurrentTheme(theme);
+    setIsDropdownOpen(false);
+    // Copier les couleurs du preset dans customTheme pour permettre la dérivation
+    const presetColors = THEME_PRESETS[theme as keyof typeof THEME_PRESETS];
+    if (presetColors) {
+      executeCommand('setTheme', { theme: theme as any, customTheme: presetColors as any });
+    } else {
+      executeCommand('setTheme', { theme: theme as any, customTheme: settings.customTheme as any });
+    }
   };
 
   const exportTheme = () => {
     const theme = settings.customTheme || DEFAULT_CUSTOM;
     const blob = new Blob([JSON.stringify(theme, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
+    a.href = URL.createObjectURL(blob);
     a.download = `cs-theme-custom.json`;
     a.click();
   };
 
   const importTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        try {
-          const imported = JSON.parse(ev.target?.result as string);
-          onUpdateSettings({ ...settings, theme: 'custom', customTheme: imported });
-        } catch (err) { alert('Invalid theme file'); }
-      };
-      reader.readAsText(file);
-    }
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const imported = JSON.parse(ev.target?.result as string);
+        executeCommand('setTheme', { theme: 'custom', customTheme: imported as any });
+      } catch {
+        alert('Invalid theme file');
+      }
+    };
+    reader.readAsText(file);
   };
 
   const handleApiKeyChange = (val: string) => {
     setApiKeyLocal(val);
-    setApiKey(val);
+    executeCommand('setApiKey', { apiKey: val });
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center">
-      <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
-        <div className="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-950">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">{t('settings.preferences_title')}</h2>
-          <button onClick={onClose} className="text-slate-500 hover:text-white"><X size={20} /></button>
+    <Modal
+      isOpen={ui.isOpen('settings')}
+      onClose={() => ui.close('settings')}
+      title={t('settings.preferences_title')}
+      icon={<Palette size={20} />}
+      maxWidth="max-w-lg"
+    >
+        {/* Tabs */}
+        <div className="flex px-6 -mx-6 text-sm border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--elevated)' }}>
+          <ToggleButton
+            isActive={activeTab === 'GENERAL'}
+            onClick={() => setActiveTab('GENERAL')}
+            label={t('settings.tab_general')}
+            position="first"
+          />
+          <ToggleButton
+            isActive={activeTab === 'THEME'}
+            onClick={() => setActiveTab('THEME')}
+            label={t('settings.tab_visual')}
+            position="last"
+          />
         </div>
 
-        <div className="flex border-b border-slate-800 bg-slate-900 text-sm">
-          <button onClick={() => setActiveTab('GENERAL')} className={`px-6 py-2 font-bold ${activeTab === 'GENERAL' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>{t('settings.tab_general')}</button>
-          <button onClick={() => setActiveTab('THEME')} className={`px-6 py-2 font-bold ${activeTab === 'THEME' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>{t('settings.tab_visual')}</button>
-        </div>
-
-        <div className="p-6 space-y-6 overflow-y-auto">
+        {/* Content */}
+        <div className="space-y-6">
           {activeTab === 'GENERAL' ? (
             <>
-              <div className="bg-blue-900/10 border border-blue-900/30 rounded-lg p-4 flex items-center justify-between">
+              {/* AI toggle */}
+              <div className="flex items-center justify-between p-4 border rounded-lg" style={{ backgroundColor: 'rgb(from var(--accent) r g b / 0.1)', borderColor: 'var(--accent)' }}>
                 <div>
-                  <div className="flex items-center gap-2 text-slate-200 font-bold text-sm"><Cpu size={16} className="text-purple-400" /> {t('settings.cognitive_ai')}</div>
-                  <p className="text-[10px] text-slate-400">{t('settings.cognitive_ai_desc')}</p>
+                  <div className="flex items-center gap-2 text-sm font-bold" style={{ color: 'var(--text-primary)' }}><Cpu size={16} style={{ color: 'var(--accent)' }} /> {t('settings.cognitive_ai')}</div>
+                  <p className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>{t('settings.cognitive_ai_desc')}</p>
                 </div>
-                <input type="checkbox" checked={settings.enableAI} onChange={(e) => onUpdateSettings({ ...settings, enableAI: e.target.checked })} className="w-5 h-5 rounded" />
+                <input type="checkbox" checked={settings.enableAI} onChange={(e) => executeCommand('setAIEnabled', { aiEnabled: e.target.checked })} className="w-5 h-5 rounded" />
               </div>
 
-              <div className="space-y-3">
-                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
-                  {t('settings.api_key')}
-                </label>
+              {/* API key */}
+              <FormField label={t('settings.api_key')}>
                 <div className="relative">
                   <input
-                    type={showApiKey ? "text" : "password"}
+                    type={showApiKey ? 'text' : 'password'}
                     value={apiKey}
                     onChange={(e) => handleApiKeyChange(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-slate-100 pr-10 focus:border-blue-500 outline-none transition-colors"
+                    className="w-full px-3 py-2 pr-10 text-sm transition-colors border rounded outline-none focus:ring-1"
+                    style={{ backgroundColor: 'var(--inputfield)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)' }}
                     placeholder={t('settings.api_key_ph')}
                   />
-                  <button
+                  <CompactButton
                     onClick={() => setShowApiKey(!showApiKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
-                  >
-                    {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+                    variant="ghost"
+                    color="var(--text-secondary)"
+                    icon={showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                    label=""
+                    className="absolute -translate-y-1/2 right-1.5 top-1/2"
+                  />
                 </div>
-                {!apiKey && (
-                  <p className="text-[10px] text-amber-500 flex items-center gap-1 font-bold">
-                    <Check size={10} className="rotate-45" /> {t('settings.api_key_required')}
-                  </p>
-                )}
-                <button
-                  onClick={() => setShowHelp(true)}
-                  className="text-[10px] text-blue-400 hover:text-blue-300 flex items-center gap-1 font-bold transition-all hover:translate-x-1"
-                >
-                  <HelpCircle size={10} /> {t('settings.api_key_help')}
-                </button>
-              </div>
+              </FormField>
 
+              {/* Language */}
               <div>
-                <label className="text-xs font-bold text-slate-500 uppercase mb-3 block">{t('settings.language_label')}</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-950 p-2 rounded max-h-[200px] overflow-y-auto custom-scrollbar">
+                <label className="block mb-3 text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('settings.language_label')}</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-2 rounded max-h-[200px] overflow-y-auto custom-scrollbar" style={{ backgroundColor: 'var(--elevated)' }}>
                   {languages.map(lang => (
-                    <button key={lang.code} onClick={() => setLanguage(lang.code)} className={`py-1.5 px-2 text-[10px] font-medium rounded truncate transition-all ${language === lang.code ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40 translate-y-[-1px]' : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800'}`} title={lang.label}>{lang.label}</button>
+                    <CompactButton
+                      key={lang.code}
+                      onClick={() => setLanguage(lang.code)}
+                      variant={i18n.language === lang.code ? 'solid' : 'ghost'}
+                      color="var(--accent)"
+                      icon={null}
+                      label={lang.label}
+                      className="justify-center text-[10px]"
+                    />
                   ))}
                 </div>
               </div>
             </>
           ) : (
-            <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-              <div>
-                <label className="text-xs font-bold text-slate-500 uppercase mb-3 block">{t('settings.global_presets')}</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['dark', 'light', 'tokyo-night'].map(tName => (
-                    <button key={tName} onClick={() => onUpdateSettings({ ...settings, theme: tName as any })} className={`p-2 text-[10px] font-bold uppercase rounded border ${settings.theme === tName ? 'bg-blue-600 text-white border-blue-400' : 'bg-slate-950 border-slate-800 text-slate-500'}`}>{tName.replace('-', ' ')}</button>
-                  ))}
+            <>
+              {/* Theme selector dropdown */}
+              <div className="relative space-y-2">
+                <label className="block text-xs font-bold uppercase text-slate-500">{t('settings.theme_select') || 'Thème actif'}</label>
+                
+                {/* Dropdown button */}
+                <div
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-stretch w-full overflow-hidden text-sm font-medium text-left transition-all rounded cursor-pointer"
+                  style={{
+                    border: '1px solid var(--border)'
+                  }}
+                >
+                  <span
+                    className="flex items-center flex-1 px-4 py-2"
+                    style={{
+                      backgroundColor: 'var(--surface)',
+                      color: 'var(--text-primary)'
+                    }}
+                  >
+                    {currentTheme.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
+                  </span>
+                  <span
+                    className="flex items-center justify-center px-3"
+                    style={{
+                      backgroundColor: 'var(--hover)',
+                      color: 'var(--accent)'
+                    }}
+                  >
+                    <ChevronDown className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  </span>
                 </div>
+
+                {/* Dropdown menu */}
+                {isDropdownOpen && (
+                  <div
+                    className="absolute left-0 right-0 z-50 mt-1 overflow-y-auto rounded shadow-lg top-full max-h-64 custom-scrollbar"
+                    style={{
+                      backgroundColor: 'var(--surface)',
+                      border: '1px solid var(--border)'
+                    }}
+                  >
+                    {/* Theme options */}
+                    {Object.keys(THEME_PRESETS).map((theme) => (
+                      <button
+                        key={theme}
+                        onClick={() => setTheme(theme as any)}
+                        className="w-full px-4 py-2.5 text-sm text-left transition-colors flex items-center"
+                        style={{
+                          backgroundColor: currentTheme === theme ? 'var(--hover)' : 'transparent',
+                          color: currentTheme === theme ? 'var(--text-primary)' : 'var(--text-secondary)'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (currentTheme !== theme) {
+                            e.currentTarget.style.backgroundColor = 'var(--elevated)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (currentTheme !== theme) {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                          }
+                        }}
+                      >
+                        {currentTheme === theme && <Check size={16} className="mr-2" />}
+                        <span style={{ marginLeft: currentTheme === theme ? 0 : '24px' }}>
+                          {theme.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
+                        </span>
+                      </button>
+                    ))}
+                    {/* Custom option */}
+                    <button
+                      onClick={() => setTheme('custom')}
+                      className="w-full px-4 py-2.5 text-sm text-left transition-colors flex items-center border-t"
+                      style={{
+                        backgroundColor: currentTheme === 'custom' ? 'var(--hover)' : 'transparent',
+                        color: currentTheme === 'custom' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                        borderColor: 'var(--divider)'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (currentTheme !== 'custom') {
+                          e.currentTarget.style.backgroundColor = 'var(--elevated)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (currentTheme !== 'custom') {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }
+                      }}
+                    >
+                      {currentTheme === 'custom' && <Check size={16} className="mr-2" />}
+                      <span style={{ marginLeft: currentTheme === 'custom' ? 0 : '24px' }}>
+                        Custom
+                      </span>
+                    </button>
+                  </div>
+                )}
               </div>
 
-              <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-2 text-blue-400 font-bold text-sm"><Palette size={16} /> {t('settings.custom_branding')}</div>
-                  <div className="flex gap-2">
-                    <button onClick={exportTheme} className="p-1 hover:bg-slate-800 rounded text-slate-400" title={t('settings.export_json')}><Download size={14} /></button>
-                    <label className="p-1 hover:bg-slate-800 rounded text-slate-400 cursor-pointer" title={t('settings.import_json')}><Upload size={14} /><input type="file" onChange={importTheme} className="hidden" accept=".json" /></label>
+              {/* Custom theme section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-bold text-blue-400">
+                    <Palette size={16} /> {t('settings.custom_theme') || 'Branding personnalisé'}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CompactButton
+                      onClick={exportTheme}
+                      variant="ghost"
+                      color="var(--text-secondary)"
+                      icon={<Download size={14} />}
+                      label=""
+                      className="p-1.5"
+                    />
+                    <label className="cursor-pointer">
+                      <CompactButton
+                        onClick={() => {}}
+                        variant="ghost"
+                        color="var(--text-secondary)"
+                        icon={<Upload size={14} />}
+                        label=""
+                        className="p-1.5"
+                      />
+                      <input
+                        type="file"
+                        accept=".json"
+                        onChange={importTheme}
+                        className="hidden"
+                      />
+                    </label>
                   </div>
                 </div>
-
-                <div className="space-y-3">
+                
+                <div className="p-4 space-y-3 border rounded-lg" style={{ backgroundColor: 'rgb(from var(--background) r g b / 0.5)', borderColor: 'var(--border)' }}>
                   {[
-                    { k: 'bgMain', l: t('settings.canvas_bg') },
-                    { k: 'bgPanel', l: t('settings.sec_panels') },
-                    { k: 'text1', l: t('settings.prim_text') },
-                    { k: 'accent', l: t('settings.active_accent') }
-                  ].map(item => (
-                    <div key={item.k} className="flex justify-between items-center text-xs">
-                      <span className="text-slate-400">{item.l}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] text-slate-500">{(settings.customTheme as any)?.[item.k] || (DEFAULT_CUSTOM as any)[item.k]}</span>
-                        <input type="color" value={(settings.customTheme as any)?.[item.k] || (DEFAULT_CUSTOM as any)[item.k]} onChange={(e) => handleCustomUpdate(item.k as any, e.target.value)} className="w-8 h-8 rounded border-0 bg-transparent cursor-pointer" />
+                    { key: 'primary', label: t('settings.primary_color') || 'Couleur primaire' },
+                    { key: 'secondary', label: t('settings.secondary_color') || 'Couleur secondaire' },
+                    { key: 'accent', label: t('settings.accent_color') || 'Couleur d\'accent' },
+                    { key: 'background', label: t('settings.background') || 'Arrière-plan principal' },
+                    { key: 'surface', label: t('settings.surface') || 'Surface / Panneaux' },
+                    { key: 'elevated', label: t('settings.elevated') || 'Élevé / En-têtes' },
+                    { key: 'inputField', label: t('settings.inputfield') || 'Champ de saisie' },
+                    { key: 'textPrimary', label: t('settings.text_primary') || 'Texte principal' },
+                    { key: 'textSecondary', label: t('settings.text_secondary') || 'Texte secondaire' },
+                    { key: 'textTertiary', label: t('settings.text_tertiary') || 'Texte tertiaire' },
+                    { key: 'border', label: t('settings.border') || 'Bordures' },
+                    { key: 'divider', label: t('settings.divider') || 'Séparateurs' },
+                    { key: 'success', label: t('settings.success') || 'Succès' },
+                    { key: 'warning', label: t('settings.warning') || 'Avertissement' },
+                    { key: 'error', label: t('settings.error') || 'Erreur' },
+                    { key: 'info', label: t('settings.info') || 'Information' },
+                    { key: 'hover', label: t('settings.hover') || 'Survol' },
+                    { key: 'active', label: t('settings.active') || 'Actif' },
+                    { key: 'disabled', label: t('settings.disabled') || 'Désactivé' }
+                  ].map(({ key, label }) => (
+                    <div key={key} className="flex items-center justify-between gap-4">
+                      <label className="flex-1 text-sm" style={{ color: 'var(--text-primary)' }}>{label}</label>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-mono min-w-[60px] text-right" style={{ color: 'var(--text-tertiary)' }}>
+                          {settings.customTheme?.[key as keyof typeof DEFAULT_CUSTOM] || DEFAULT_CUSTOM[key as keyof typeof DEFAULT_CUSTOM]}
+                        </span>
+                        <div className="relative w-10 h-10 overflow-hidden transition-colors border-2 rounded hover:border-[var(--accent)]" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
+                          <input
+                            type="color"
+                            value={settings.customTheme?.[key as keyof typeof DEFAULT_CUSTOM] || DEFAULT_CUSTOM[key as keyof typeof DEFAULT_CUSTOM]}
+                            onChange={(e) => handleCustomUpdate(key as keyof typeof DEFAULT_CUSTOM, e.target.value)}
+                            className="absolute border-0 outline-none cursor-pointer"
+                            style={{ 
+                              width: '200%', 
+                              height: '200%', 
+                              top: '-50%', 
+                              left: '-50%',
+                              padding: 0,
+                              margin: 0
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                {settings.theme === 'custom' && <div className="mt-4 text-center text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center justify-center gap-1"><Check size={10} /> {t('settings.active_theme')}</div>}
+                {currentTheme === 'custom' && (
+                  <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
+                    <Check size={10} /> {t('settings.active_theme') || 'Thème actif'}
+                  </div>
+                )}
               </div>
-            </div>
+            </>
           )}
         </div>
-
-        <div className="p-4 bg-slate-950 border-t border-slate-800 flex justify-end">
-          <button onClick={onClose} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-bold shadow-lg shadow-blue-900/20">{t('settings.finalize')}</button>
-        </div>
-
-        {showHelp && (
-          <div className="absolute inset-0 z-[110] bg-slate-900 animate-in slide-in-from-right duration-300 flex flex-col">
-            <div className="flex items-center gap-4 p-4 border-b border-slate-800 bg-slate-950">
-              <button onClick={() => setShowHelp(false)} className="text-slate-500 hover:text-white flex items-center gap-1 text-xs font-bold">
-                <ChevronLeft size={16} /> {t('settings.help_back')}
-              </button>
-              <h3 className="text-sm font-bold text-white">{t('settings.help_title')}</h3>
-            </div>
-            <div className="p-6 overflow-y-auto space-y-4 text-sm text-slate-300">
-              <p className="text-xs text-slate-400 italic">{t('settings.help_subtitle')}</p>
-
-              <div className="space-y-4">
-                {[
-                  { step: 1, text: t('settings.help_step_1'), link: "https://aistudio.google.com/" },
-                  { step: 2, text: t('settings.help_step_2') },
-                  { step: 3, text: t('settings.help_step_3') },
-                  { step: 4, text: t('settings.help_step_4') },
-                  { step: 5, text: t('settings.help_step_5') }
-                ].map(s => (
-                  <div key={s.step} className="flex gap-4 items-start">
-                    <span className="w-6 h-6 rounded-full bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-[10px] font-bold text-blue-400 shrink-0">
-                      {s.step}
-                    </span>
-                    <div className="space-y-1">
-                      <p className="leading-tight">{s.text}</p>
-                      {s.link && (
-                        <a href={s.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-[10px] flex items-center gap-1">
-                          <ExternalLink size={10} /> {t('settings.open_ai_studio')}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 p-4 bg-emerald-900/10 border border-emerald-900/30 rounded-lg">
-                <p className="text-[10px] text-emerald-400 font-bold mb-1 uppercase tracking-wider flex items-center gap-1">
-                  <Check size={10} /> {t('settings.help_is_free')}
-                </p>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  {t('settings.help_free_desc')}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+    </Modal>
   );
 };
 

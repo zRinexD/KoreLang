@@ -14,17 +14,17 @@ export default {
             colors: {
                 // DYNAMIC SEMANTIC MAPPING
                 slate: {
-                    50: 'var(--text-1)',
-                    100: 'var(--text-2)',
-                    200: 'var(--text-2)',
+                    50: 'var(--text-primary)',
+                    100: 'var(--text-secondary)',
+                    200: 'var(--text-secondary)',
                     300: 'var(--text-3)',
                     400: 'var(--text-4)',
                     500: 'var(--text-5)',
                     600: 'var(--border-bright)',
                     700: 'var(--border-dim)',
-                    800: 'var(--bg-panel)',
+                    800: 'var(--surface)',
                     850: 'var(--bg-sidebar)',
-                    900: 'var(--bg-main)',
+                    900: 'var(--background)',
                     950: 'var(--bg-deep)',
                 },
                 // Blue Accents - Now Dynamic using RGB Channels for Opacity Support

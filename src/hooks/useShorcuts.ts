@@ -1,20 +1,13 @@
 import { useEffect } from "react";
+import { CommandId, CommandPayload } from "../state/commandStore";
 
 type UseShortcutsParams = {
   isConsoleOpen: boolean;
-  setIsConsoleOpen: (v: boolean | ((v: boolean) => boolean)) => void;
-  setIsSidebarOpen: (v: boolean | ((v: boolean) => boolean)) => void;
-
-  onNewProject: () => void;
-  onOpenProject: () => void;
-  onExportProject: () => void;
-
-  onZoomIn: () => void;
-  onZoomOut: () => void;
+  executeCommand: (id: CommandId, payload?: CommandPayload) => void;
 };
 
 type Shortcut = {
-  keys: string[]; 
+  keys: string[];
   alt?: boolean;
   ctrl?: boolean;
   meta?: boolean;
@@ -23,25 +16,20 @@ type Shortcut = {
 
 export function useShortcuts({
   isConsoleOpen,
-  setIsConsoleOpen,
-  setIsSidebarOpen,
-  onNewProject,
-  onOpenProject,
-  onExportProject,
-  onZoomIn,
-  onZoomOut,
+  executeCommand,
 }: UseShortcutsParams) {
   useEffect(() => {
     const pressed = new Set<string>();
 
     const shortcuts: Shortcut[] = [
-      { keys: ["c"], alt: true, action: () => setIsConsoleOpen(true) },
-      { keys: ["b"], alt: true, action: () => setIsSidebarOpen((v) => !v) },
-      { keys: ["n"], alt: true, action: onNewProject },
-      { keys: ["o"], alt: true, action: onOpenProject },
-      { keys: ["e"], alt: true, action: onExportProject },
-      { keys: ["+"], alt: true, action: onZoomIn },
-      { keys: ["-"], alt: true, action: onZoomOut },
+      { keys: ["c"], alt: true, action: () => executeCommand("openConsole") },
+      { keys: ["b"], alt: true, action: () => executeCommand("toggleSidebar") },
+      { keys: ["n"], alt: true, action: () => executeCommand("newProject") },
+      { keys: ["o"], alt: true, action: () => executeCommand("openProject") },
+      { keys: ["e"], alt: true, action: () => executeCommand("exportProject") },
+      { keys: ["+"], alt: true, action: () => executeCommand("zoomIn") },
+      { keys: ["-"], alt: true, action: () => executeCommand("zoomOut") },
+      { keys: [","], alt: true, action: () => executeCommand("openModal", { modal: "settings" }) },
     ];
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -63,11 +51,12 @@ export function useShortcuts({
       if (isConsoleOpen && pressed.has("c") && e.altKey) {
         if (e.key === "ArrowUp" || e.key === "ArrowDown") {
           e.preventDefault();
-          window.dispatchEvent(
-            new CustomEvent("console-shortcut", {
-              detail: { action: e.key === "ArrowUp" ? "maximize" : "minimize" },
-            })
+          executeCommand(
+            e.key === "ArrowUp" ? "maximizeConsole" : "minimizeConsole"
           );
+        } else if (e.key.toLowerCase() === "q") {
+          e.preventDefault();
+          executeCommand("closeConsole");
         }
       }
     };
@@ -83,14 +72,5 @@ export function useShortcuts({
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
     };
-  }, [
-    isConsoleOpen,
-    setIsConsoleOpen,
-    setIsSidebarOpen,
-    onNewProject,
-    onOpenProject,
-    onExportProject,
-    onZoomIn,
-    onZoomOut,
-  ]);
+  }, [isConsoleOpen, executeCommand]);
 }

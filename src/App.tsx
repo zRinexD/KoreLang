@@ -1,688 +1,200 @@
-import React, { useState, useEffect, useMemo } from "react";
-import Sidebar from "./components/Sidebar";
+import React, { useEffect, useState } from "react";
+import Sidebar, { SidebarHandle } from "./components/Sidebar";
 import MenuBar from "./components/MenuBar";
-import Lexicon from "./components/Lexicon";
-import GrammarEditor from "./components/GrammarEditor";
-import GenEvolve from "./components/GenEvolve";
-import PhonologyEditor from "./components/PhonologyEditor";
-import Dashboard from "./components/Dashboard";
 import ConsoleView from "./components/ConsoleView";
-import ScriptEditor from "./components/ScriptEditor";
-import Notebook from "./components/Notebook";
-import ProjectWizard from "./components/ProjectWizard";
-import ConstraintsModal from "./components/ConstraintsModal";
-import AboutModal from "./components/AboutModal";
-import SettingsModal from "./components/SettingsModal";
-import WhatsNewModal from "./components/WhatsNewModal";
+
+import { useTheme } from "./hooks/useTheme";
+import { useProject } from "./hooks/useProject";
+import { useModals } from "./hooks/useModals";
 import { useShortcuts } from "./hooks/useShorcuts";
+import { ProjectView } from "./components/ProjectView";
+import { Modals } from "./components/Modals";
+import { Footer } from "./components/Footer";
+
+import { ViewState } from "./types";
+
+import { LanguageProvider, i18n } from "./i18n";
+import { UIProvider, useUI } from "./ui/UIContext";
 import {
-  ViewState,
-  LexiconEntry,
-  SoundChangeRule,
-  ProjectData,
-  AppSettings,
-  MorphologyState,
-  PhonologyConfig,
-  ProjectConstraints,
-  LogEntry,
-  ScriptConfig,
-} from "./types";
-import { LanguageProvider, useTranslation, i18n } from "./i18n";
+  useCommandExecutor,
+  useCommandRegister,
+  resolveModal,
+} from "./state/commandStore";
+import { setApiKey as persistApiKey } from "./services/geminiService";
 
-const STORAGE_KEY = "conlang_studio_autosave";
-const EXPORT_SNAPSHOT_KEY = "conlang_studio_last_export_snapshot";
-const SETTINGS_STORAGE_KEY = "conlang_studio_settings";
 
-const INITIAL_CONSTRAINTS_TEMPLATE: ProjectConstraints = {
-  allowDuplicates: true,
-  caseSensitive: false,
-  bannedSequences: [],
-  allowedGraphemes: "",
-  phonotacticStructure: "",
-  mustStartWith: [],
-  mustEndWith: [],
-};
-
-const INITIAL_SCRIPT_CONFIG: ScriptConfig = {
-  name: "Standard Script",
-  direction: "ltr",
-  glyphs: [],
-  spacingMode: "proportional", // Activado por defecto: Protocolo de Estética Profesional
-};
-
-const THEMES = {
-  dark: {
-    bgMain: "#121212",
-    bgPanel: "#1e1e1e",
-    text1: "#f1f5f9",
-    text2: "#94a3b8",
-    textInfo: "10px",
-    accent: "#3b82f6",
-  },
-  light: {
-    bgMain: "#f8fafc",
-    bgPanel: "#ffffff",
-    text1: "#0f172a",
-    text2: "#475569",
-    textInfo: "10px",
-    accent: "#2563eb",
-  },
-  "tokyo-night": {
-    bgMain: "#1a1b26",
-    bgPanel: "#24283b",
-    text1: "#a9b1d6",
-    text2: "#565f89",
-    textInfo: "10px",
-    accent: "#7aa2f7",
-  },
-  "tokyo-light": {
-    bgMain: "#d5d6db",
-    bgPanel: "#cbccd1",
-    text1: "#343b58",
-    text2: "#565a6e",
-    textInfo: "10px",
-    accent: "#34548a",
-  },
-};
 
 const AppContent: React.FC = () => {
-  const { t, i18n } = useTranslation();
-  const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isConstraintsOpen, setIsConstraintsOpen] = useState(false);
+  const project = useProject();
+  useTheme(project.settings.theme, project.settings.customTheme);
+  const modals = useModals();
+  const { open } = useUI();
+  const executeCommand = useCommandExecutor();
+  const registerCommands = useCommandRegister();
+
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const [isWhatsNewOpen, setIsWhatsNewOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  const [projectSessionId, setProjectSessionId] = useState<number>(Date.now());
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isScriptMode, setIsScriptMode] = useState(false);
-  const [projectName, setProjectName] = useState(t("defaults.project_name"));
-  const [projectAuthor, setProjectAuthor] = useState(t("defaults.author"));
-  const [projectDescription, setProjectDescription] = useState("");
-  const [isWizardOpen, setIsWizardOpen] = useState(false);
-  const [wizardMode, setWizardMode] = useState<"create" | "edit">("create");
-  const [zoomLevel, setZoomLevel] = useState(100);
-  const [jumpToTerm, setJumpToTerm] = useState<string | null>(null);
-  const [draftEntry, setDraftEntry] = useState<Partial<LexiconEntry> | null>(
-    null
-  );
-  const [consoleHistory, setConsoleHistory] = useState<LogEntry[]>([]);
-
-  const [settings, setSettings] = useState<AppSettings>(() => {
-    const saved = localStorage.getItem(SETTINGS_STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to load settings", e);
-      }
-    }
-    return {
-      theme: "dark",
-      autoSave: true,
-      showLineNumbers: true,
-      enableAI: true,
-      language: i18n.language,
-    };
-  });
-
-  const [lexicon, setLexicon] = useState<LexiconEntry[]>([]);
-  const [grammar, setGrammar] = useState(t("defaults.grammar"));
-  const [morphology, setMorphology] = useState<MorphologyState>({
-    dimensions: [],
-    paradigms: [],
-  });
-  const [phonology, setPhonology] = useState<PhonologyConfig>({
-    name: t("defaults.phonology_name"),
-    description: "",
-    consonants: [],
-    vowels: [],
-    syllableStructure: "",
-    bannedCombinations: [],
-  });
-  const [rules, setRules] = useState<SoundChangeRule[]>([]);
-  const [constraints, setConstraints] = useState<ProjectConstraints>(
-    INITIAL_CONSTRAINTS_TEMPLATE
-  );
-  const [scriptConfig, setScriptConfig] = useState<ScriptConfig>(
-    INITIAL_SCRIPT_CONFIG
-  );
-  const [notebook, setNotebook] = useState("");
-
-  const [genWordState, setGenWordState] = useState({
-    generated: [],
-    constraints: "",
-    vibe: "",
-    count: 10,
-  });
-
-  // Re-calibración: Zoom Global solo mediante Alt + Rueda del ratón
-  useEffect(() => {
-    const handleGlobalWheelZoom = (e: WheelEvent) => {
-      if (e.altKey) {
-        e.preventDefault();
-        const delta = e.deltaY < 0 ? 5 : -5; // Velocidad de zoom optimizada
-        setZoomLevel((p) => Math.min(Math.max(p + delta, 50), 150));
-      }
-    };
-    window.addEventListener("wheel", handleGlobalWheelZoom, { passive: false });
-    return () => window.removeEventListener("wheel", handleGlobalWheelZoom);
-  }, []);
+  const [zoomLevel, setZoomLevel] = useState(80);
+  const sidebarRef = React.useRef<SidebarHandle>(null);
 
   useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 1024;
-      setIsMobile(mobile);
-      if (mobile && isSidebarOpen) setIsSidebarOpen(false);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useShortcuts({
-    isConsoleOpen,
-    setIsConsoleOpen,
-    setIsSidebarOpen,
-
-    onNewProject: () => {
-      setWizardMode("create");
-      setIsWizardOpen(true);
-    },
-
-    onOpenProject: () => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = ".json";
-
-      input.onchange = () => {
-        const file = input.files?.[0];
-        if (!file) return;
-
-        const r = new FileReader();
-        r.onload = (e) =>
-          loadProjectData(JSON.parse(e.target?.result as string));
-        r.readAsText(file);
-      };
-
-      input.click();
-    },
-
-    onExportProject: () => {
-      const data = getFullProjectData();
-      const text = JSON.stringify(data, null, 2);
-      const a = document.createElement("a");
-
-      a.href = URL.createObjectURL(
-        new Blob([text], { type: "application/json" })
-      );
-      a.download = `${projectName.toLowerCase().replace(/\s/g, "-")}.json`;
-      a.click();
-
-      try {
-        const normalize = (s: string) => {
-          const obj = JSON.parse(s);
-          if (obj && typeof obj === "object") delete obj.lastModified;
-          return JSON.stringify(obj);
-        };
-        localStorage.setItem(EXPORT_SNAPSHOT_KEY, normalize(text));
-      } catch {}
-    },
-    onZoomIn: () => setZoomLevel((p) => Math.min(p + 10, 150)),
-    onZoomOut: () => setZoomLevel((p) => Math.max(p - 10, 50)),
-  });
-
-  useEffect(() => {
-    const themeData =
-      settings.theme === "custom" && settings.customTheme
-        ? settings.customTheme || THEMES.dark
-        : THEMES[settings.theme as keyof typeof THEMES] || THEMES.dark;
-
-    const root = document.documentElement;
-    root.style.setProperty("--bg-main", themeData.bgMain);
-    root.style.setProperty("--bg-panel", themeData.bgPanel);
-    root.style.setProperty("--text-1", themeData.text1);
-    root.style.setProperty("--text-2", themeData.text2);
-    root.style.setProperty(
-      "--text-info",
-      (themeData as any).textInfo || "10px"
-    );
-    root.style.setProperty("--accent", themeData.accent);
-  }, [settings.theme, settings.customTheme]);
-
-  useEffect(() => {
-    const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        if (!savedData) return undefined;
-
-        const normalize = (s: string | null) => {
-          if (!s) return null;
-          try {
-            const obj = JSON.parse(s);
-            if (obj && typeof obj === "object") delete obj.lastModified;
-            return JSON.stringify(obj);
-          } catch (err) {
-            return s;
-          }
-        };
-
-        const savedNorm = normalize(savedData);
-        const exported = localStorage.getItem(EXPORT_SNAPSHOT_KEY);
-        const exportedNorm = normalize(exported);
-
-        if (!exportedNorm || exportedNorm !== savedNorm) {
-          e.preventDefault();
-          (e as BeforeUnloadEvent).returnValue = "";
-          return "";
+    registerCommands({
+      toggleSidebar: () => sidebarRef.current?.toggle(),
+      openSidebar: () => sidebarRef.current?.open(),
+      closeSidebar: () => sidebarRef.current?.close(),
+      openConsole: () => setIsConsoleOpen(true),
+      closeConsole: () => setIsConsoleOpen(false),
+      maximizeConsole: () => {
+        setIsConsoleOpen(true);
+        window.dispatchEvent(
+          new CustomEvent("console-shortcut", { detail: { action: "maximize" } })
+        );
+      },
+      minimizeConsole: () => {
+        if (!isConsoleOpen) return;
+        window.dispatchEvent(
+          new CustomEvent("console-shortcut", { detail: { action: "minimize" } })
+        );
+      },
+      newProject: () => open("wizard"),
+      openProject: project.handlers.openProject,
+      loadProject: (payload) => {
+        if (payload?.data) {
+          project.loadProjectData(payload.data);
         }
-        return undefined;
-      } catch (err) {}
-      return undefined;
-    };
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-    if (settings.language && i18n.language !== settings.language) {
-      i18n.changeLanguage(settings.language);
-    }
-  }, [settings]);
-
-  const loadProjectData = (data: ProjectData) => {
-    setProjectSessionId(Date.now());
-    if (data.name) setProjectName(data.name);
-    setProjectAuthor(data.author || "Unknown");
-    setProjectDescription(data.description || "");
-    if (data.lexicon) setLexicon(data.lexicon);
-    if (data.grammar) setGrammar(data.grammar);
-    if (data.morphology) setMorphology(data.morphology);
-    if (data.phonology) setPhonology(data.phonology);
-    if (data.evolutionRules) setRules(data.evolutionRules);
-    if (data.scriptConfig) {
-      setScriptConfig(data.scriptConfig);
-    } else {
-      setScriptConfig(INITIAL_SCRIPT_CONFIG);
-    }
-    setNotebook(data.notebook || "");
-    if (data.constraints)
-      setConstraints({ ...INITIAL_CONSTRAINTS_TEMPLATE, ...data.constraints });
-  };
-
-  useEffect(() => {
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-      try {
-        loadProjectData(JSON.parse(savedData));
-      } catch (e) {
-        console.error("Hydration failed", e);
-      }
-    }
-    setIsLoaded(true);
-
-    const WHATS_NEW_KEY = "whats_new_v1.1_seen";
-    const hasSeen = sessionStorage.getItem(WHATS_NEW_KEY);
-    if (!hasSeen) {
-      setIsWhatsNewOpen(true);
-    }
-  }, []);
-
-  const closeWhatsNew = () => {
-    setIsWhatsNewOpen(false);
-    sessionStorage.setItem("whats_new_v1.1_seen", "true");
-  };
-
-  useEffect(() => {
-    if (!isLoaded) return;
-    const projectData: ProjectData = {
-      version: "1.1",
-      name: projectName,
-      author: projectAuthor,
-      description: projectDescription,
-      lexicon,
-      grammar,
-      morphology,
-      phonology,
-      evolutionRules: rules,
-      constraints,
-      scriptConfig,
-      notebook,
-      lastModified: Date.now(),
-    };
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData));
-    } catch (e) {
-      console.error("Auto-save failed", e);
-    }
+      },
+      exportProject: (payload) => {
+        project.handlers.exportProject(payload?.fileName as string);
+      },
+      openModal: (payload) => {
+        const modal = resolveModal(payload?.modal);
+        if (modal) open(modal);
+      },
+      setLanguage: (payload) => {
+        if (!payload?.language) return;
+        i18n.changeLanguage(payload.language);
+        project.updateSettings({
+          ...project.settings,
+          language: payload.language,
+        });
+      },
+      setAIEnabled: (payload) => {
+        if (payload?.aiEnabled === undefined) return;
+        project.updateSettings({
+          ...project.settings,
+          enableAI: payload.aiEnabled,
+        });
+      },
+      setApiKey: (payload) => {
+        persistApiKey(payload?.apiKey || "");
+      },
+      setTheme: (payload) => {
+        if (!payload?.theme) return;
+        const customTheme = (payload.customTheme || project.settings.customTheme) as any;
+        project.updateSettings({
+          ...project.settings,
+          theme: payload.theme,
+          customTheme,
+        });
+      },
+      updateCustomTheme: (payload) => {
+        if (!payload?.colorKey || !payload?.colorValue) return;
+        const current = project.settings.customTheme || {
+          primary: "", secondary: "", accent: "",
+          background: "", surface: "", elevated: "", inputField: "",
+          textPrimary: "", textSecondary: "", textTertiary: "",
+          border: "", divider: "",
+          success: "", warning: "", error: "", info: "",
+          hover: "", active: "", disabled: ""
+        };
+        project.updateSettings({
+          ...project.settings,
+          theme: "custom",
+          customTheme: { ...current, [payload.colorKey]: payload.colorValue },
+        });
+      },
+      navigateTo: (payload) => {
+        if (!payload?.view) return;
+        project.setCurrentView(payload.view as ViewState);
+      },
+      toggleScriptMode: () => setIsScriptMode((s) => !s),
+      zoomIn: () => setZoomLevel((z) => Math.min(z + 10, 150)),
+      zoomOut: () => setZoomLevel((z) => Math.max(z - 10, 50)),
+    });
   }, [
-    projectName,
-    projectAuthor,
-    projectDescription,
-    lexicon,
-    grammar,
-    morphology,
-    phonology,
-    rules,
-    constraints,
-    scriptConfig,
-    notebook,
-    isLoaded,
+    registerCommands,
+    open,
+    project.handlers.openProject,
+    project.handlers.exportProject,
+    isConsoleOpen,
+    project.settings,
+    project.updateSettings,
+    project.setCurrentView,
   ]);
 
-  const handleWizardSubmit = (data: {
-    name: string;
-    author: string;
-    description: string;
-    constraints?: Partial<ProjectConstraints>;
-  }) => {
-    if (
-      wizardMode === "create" &&
-      typeof window !== "undefined" &&
-      confirm(t("wizard.overwrite_confirm"))
-    ) {
-      setIsLoaded(false);
-      localStorage.removeItem(STORAGE_KEY);
-      setProjectSessionId(Date.now());
-      setLexicon([]);
-      setGrammar(t("defaults.grammar"));
-      setMorphology({ dimensions: [], paradigms: [] });
-      setPhonology({
-        name: t("defaults.phonology_name"),
-        description: "",
-        consonants: [],
-        vowels: [],
-        syllableStructure: "",
-        bannedCombinations: [],
-      });
-      setRules([]);
-      setScriptConfig(INITIAL_SCRIPT_CONFIG);
-      setIsScriptMode(false);
-      setConstraints({
-        ...INITIAL_CONSTRAINTS_TEMPLATE,
-        ...(data.constraints || {}),
-      });
-      setProjectName(data.name);
-      setProjectAuthor(data.author);
-      setProjectDescription(data.description);
-      setCurrentView("DASHBOARD");
-      setTimeout(() => {
-        setIsLoaded(true);
-      }, 50);
-    } else if (wizardMode === "edit") {
-      setProjectName(data.name);
-      setProjectAuthor(data.author);
-      setProjectDescription(data.description);
-      if (data.constraints)
-        setConstraints((prev) => ({ ...prev, ...data.constraints }));
-    }
-    setIsWizardOpen(false);
-  };
-
-  const getFullProjectData = (): ProjectData => ({
-    version: "1.1",
-    name: projectName,
-    author: projectAuthor,
-    description: projectDescription,
-    lexicon,
-    grammar,
-    morphology,
-    phonology,
-    evolutionRules: rules,
-    constraints,
-    scriptConfig,
-    notebook,
-    lastModified: Date.now(),
+  // Setup keyboard shortcuts
+  useShortcuts({
+    isConsoleOpen,
+    executeCommand,
   });
 
-  const renderView = () => {
-    const commonProps = { scriptConfig, isScriptMode };
-    switch (currentView) {
-      case "DASHBOARD":
-        return (
-          <Dashboard
-            entries={lexicon}
-            projectName={projectName}
-            author={projectAuthor}
-            description={projectDescription}
-            setView={setCurrentView}
-            {...commonProps}
-          />
-        );
-      case "PHONOLOGY":
-        return (
-          <PhonologyEditor
-            data={phonology}
-            setData={setPhonology}
-            enableAI={settings.enableAI}
-          />
-        );
-      case "LEXICON":
-        return (
-          <Lexicon
-            entries={lexicon}
-            setEntries={setLexicon}
-            constraints={constraints}
-            enableAI={settings.enableAI}
-            phonology={phonology}
-            genWordState={genWordState}
-            setGenWordState={setGenWordState}
-            jumpToTerm={jumpToTerm}
-            setJumpToTerm={setJumpToTerm}
-            draftEntry={draftEntry}
-            setDraftEntry={setDraftEntry}
-            {...commonProps}
-          />
-        );
-      case "GRAMMAR":
-        return (
-          <GrammarEditor
-            grammar={grammar}
-            setGrammar={setGrammar}
-            morphology={morphology}
-            setMorphology={setMorphology}
-            showLineNumbers={settings.showLineNumbers}
-            {...commonProps}
-          />
-        );
-      case "GENEVOLVE":
-        return (
-          <GenEvolve
-            entries={lexicon}
-            onUpdateEntries={setLexicon}
-            rules={rules}
-            setRules={setRules}
-            {...commonProps}
-          />
-        );
-      case "SCRIPT":
-        return (
-          <ScriptEditor
-            scriptConfig={scriptConfig}
-            setScriptConfig={setScriptConfig}
-            constraints={constraints}
-          />
-        );
-      case "NOTEBOOK":
-        return (
-          <Notebook {...commonProps} text={notebook} setText={setNotebook} />
-        );
-      default:
-        return (
-          <Dashboard
-            entries={lexicon}
-            projectName={projectName}
-            author={projectAuthor}
-            description={projectDescription}
-            setView={setCurrentView}
-            {...commonProps}
-          />
-        );
-    }
-  };
-
   return (
-    <div className="flex flex-col h-screen w-screen bg-[var(--bg-main)] text-[var(--text-1)] font-sans overflow-hidden transition-colors duration-200">
+    <div className="flex flex-col h-screen w-screen bg-[var(--background)]">
       <MenuBar
-        onNewProject={() => {
-          setWizardMode("create");
-          setIsWizardOpen(true);
-        }}
-        onSaveProject={() => {
-          if (typeof window !== "undefined") {
-            const data = getFullProjectData();
-            const text = JSON.stringify(data, null, 2);
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(
-              new Blob([text], {
-                type: "application/json",
-              })
-            );
-            a.download = `${projectName
-              .toLowerCase()
-              .replace(/\s/g, "-")}.json`;
-            a.click();
-            try {
-              // store a normalized snapshot (without lastModified) so we can
-              // detect if the project has changed since the last export
-              const normalize = (s: string) => {
-                try {
-                  const obj = JSON.parse(s);
-                  if (obj && typeof obj === "object") delete obj.lastModified;
-                  return JSON.stringify(obj);
-                } catch (e) {
-                  return s;
-                }
-              };
-              localStorage.setItem(EXPORT_SNAPSHOT_KEY, normalize(text));
-            } catch (e) {}
-          }
-        }}
-        onOpenProject={(file) => {
-          const r = new FileReader();
-          r.onload = (e) =>
-            loadProjectData(JSON.parse(e.target?.result as string));
-          r.readAsText(file);
-        }}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenProjectSettings={() => {
-          setWizardMode("edit");
-          setIsWizardOpen(true);
-        }}
-        onOpenConstraints={() => setIsConstraintsOpen(true)}
-        onOpenConsole={() => setIsConsoleOpen(true)}
-        onZoomIn={() => setZoomLevel((p) => Math.min(p + 10, 150))}
-        onZoomOut={() => setZoomLevel((p) => Math.max(p - 10, 50))}
-        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-        settings={settings}
+        newProject={() => executeCommand("newProject")}
+        openProject={() => executeCommand("openProject")}
+        exportProject={() => executeCommand("exportProject")}
+        openSettings={() => executeCommand("openModal", { modal: "settings" })}
+        openProjectSettings={() => executeCommand("openModal", { modal: "wizard" })}
+        openConstraints={() => executeCommand("openModal", { modal: "constraints" })}
+        openConsole={() => executeCommand("openConsole")}
+        zoomIn={() => executeCommand("zoomIn")}
+        zoomOut={() => executeCommand("zoomOut")}
+        toggleScriptMode={() => executeCommand("toggleScriptMode")}
+        onToggleSidebar={() => executeCommand("toggleSidebar")}
+        openAbout={() => executeCommand("openModal", { modal: "about" })}
+        settings={project.settings}
         isScriptMode={isScriptMode}
-        onToggleScriptMode={() => setIsScriptMode(!isScriptMode)}
-        onOpenAbout={() => setIsAboutOpen(true)}
       />
-      <div className="relative flex flex-1 overflow-hidden">
-        {isMobile && isSidebarOpen && (
-          <div
-            className="absolute inset-0 z-30 bg-black/50 backdrop-blur-sm"
-            onClick={() => setIsSidebarOpen(false)}
-          />
-        )}
-        <div
-          className={`flex-shrink-0 transition-all h-full ${
-            isMobile ? "absolute z-40 shadow-2xl" : "relative"
-          }`}
-        >
-          <Sidebar
-            currentView={currentView}
-            setView={setCurrentView}
-            isOpen={isSidebarOpen}
-            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-          />
-        </div>
-
-        <main className="flex flex-col w-full h-full">
-          {/* View displayed by the side */}
-          <div
-            className="flex-1 overflow-auto"
-            style={{ zoom: zoomLevel / 100 }}
-          >
-            {renderView()}
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar ref={sidebarRef} {...project.sidebarProps} />
+        <main className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex-1 min-h-0 overflow-hidden" style={{ zoom: zoomLevel / 100 }}>
+            <ProjectView
+              currentView={project.currentView as ViewState}
+              {...project.states}
+              isScriptMode={isScriptMode}
+              setCurrentView={project.setCurrentView}
+            />
           </div>
-
-          {/* Console */}
           {isConsoleOpen && (
             <ConsoleView
               isOpen={isConsoleOpen}
+              loadingAI={project.settings.enableAI}
               onClose={() => setIsConsoleOpen(false)}
-              constraints={constraints}
-              setConstraints={setConstraints}
-              settings={settings}
-              setSettings={setSettings}
-              entries={lexicon}
-              setEntries={setLexicon}
-              history={consoleHistory}
-              setHistory={setConsoleHistory}
-              setProjectName={setProjectName}
-              setProjectDescription={setProjectDescription}
-              setProjectAuthor={setProjectAuthor}
-              setIsSidebarOpen={setIsSidebarOpen}
-              setView={setCurrentView}
-              setJumpToTerm={setJumpToTerm}
-              setDraftEntry={setDraftEntry}
-              scriptConfig={scriptConfig}
-              isScriptMode={isScriptMode}
-              author={projectAuthor}
+              currentView={project.currentView as ViewState}
+              author={project.projectAuthor}
             />
           )}
         </main>
       </div>
-      <footer className="h-6 bg-[var(--bg-panel)] border-t border-neutral-700 flex items-center px-4 text-xs text-[var(--text-2)] gap-4 shrink-0 z-50 relative">
-        <span className="flex items-center gap-1 font-bold text-emerald-500">
-          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-          Auto-Saved
-        </span>
-        <span className="text-neutral-400">{projectName}</span>
-        <span className="text-neutral-500/80 font-mono text-[11px]">v1.1</span>
-        <span className="ml-auto">Ln 1, Col 1</span>
-        <span>{lexicon.length} Words</span>
-        <span>AI: {settings.enableAI ? "READY" : "OFF"}</span>
-      </footer>
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        settings={settings}
-        onUpdateSettings={setSettings}
+      <Modals
+        modals={modals}
+        settings={project.settings}
+        updateSettings={project.updateSettings}
+        projectStates={project.states}
       />
-      <ConstraintsModal
-        isOpen={isConstraintsOpen}
-        onClose={() => setIsConstraintsOpen(false)}
-        constraints={constraints}
-        onUpdateConstraints={setConstraints}
-        {...{ scriptConfig, isScriptMode }}
-        onUpdateScriptConfig={setScriptConfig}
-      />
-      <ProjectWizard
-        isOpen={isWizardOpen}
-        mode={wizardMode}
-        initialData={{
-          name: wizardMode === "create" ? "" : projectName,
-          author: wizardMode === "create" ? "" : projectAuthor,
-          description: wizardMode === "create" ? "" : projectDescription,
-        }}
-        onClose={() => setIsWizardOpen(false)}
-        onSubmit={handleWizardSubmit}
-      />
-      <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
-      <WhatsNewModal isOpen={isWhatsNewOpen} onClose={closeWhatsNew} />
+      <Footer project={project} currentView={project.currentView as ViewState} />
     </div>
   );
 };
 
 const App: React.FC = () => (
   <LanguageProvider i18n={i18n}>
-    {" "}
-    <AppContent />{" "}
+    <UIProvider>
+      <AppContent />
+    </UIProvider>
   </LanguageProvider>
 );
+
 export default App;

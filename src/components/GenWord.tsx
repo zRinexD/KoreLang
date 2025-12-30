@@ -4,6 +4,7 @@ import { generateWords } from '../services/geminiService';
 import { LexiconEntry, PartOfSpeech, ProjectConstraints, ScriptConfig, PhonologyConfig } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
+import { ViewLayout, CompactButton, Card, FormField, StatBadge } from './ui';
 
 interface GenWordState {
   generated: Array<{ word: string, ipa: string }>;
@@ -27,7 +28,7 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
   const { t } = useTranslation();
 
   // Use state lifted from parent
-  const { generated, constraints, vibe, count } = initialState;
+  const { generated, constraints, vibe, count } = initialState || { generated: [], constraints: '', vibe: '', count: 5 };
 
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
@@ -100,121 +101,120 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
   };
 
   return (
-    <div className="h-full flex flex-col p-8 max-w-6xl mx-auto w-full">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-          <Wand2 className="text-purple-400" />
-          {t('genword.title')}
-        </h2>
-        <p className="text-slate-400">{t('genword.desc')}</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
+    <ViewLayout icon={Wand2} title={t('genword.title')} subtitle={t('genword.desc')}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full p-8 w-full">
         {/* Controls */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
-            <h3 className="text-lg font-semibold text-slate-200 mb-4 border-b border-slate-800 pb-2">{t('genword.config')}</h3>
-
+          <Card>
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">{t('genword.constraints')}</label>
+              <FormField label={t('genword.constraints')}>
                 <textarea
                   value={constraints}
                   onChange={(e) => updateState({ constraints: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:ring-2 focus:ring-purple-500 outline-none h-24 resize-none placeholder-slate-600"
                   placeholder={t('genword.constraints_ph')}
+                  className="w-full px-2 py-1 rounded text-sm resize-none border"
+                  style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
+                  rows={4}
                 />
-              </div>
+              </FormField>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">{t('genword.vibe')}</label>
+              <FormField label={t('genword.vibe')}>
                 <input
                   type="text"
                   value={vibe}
                   onChange={(e) => updateState({ vibe: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:ring-2 focus:ring-purple-500 outline-none placeholder-slate-600"
                   placeholder={t('genword.vibe_ph')}
+                  className="w-full px-2 py-1 rounded text-sm border"
+                  style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
                 />
-              </div>
+              </FormField>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">{t('genword.count')} (Max 15)</label>
+              <FormField label={t('genword.count') + ' (Max 15)'}>
                 <input
                   type="number"
-                  min="1"
-                  max="15"
                   value={count}
                   onChange={(e) => updateState({ count: Math.min(15, Math.max(1, Number(e.target.value))) })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:ring-2 focus:ring-purple-500 outline-none"
+                  min={1}
+                  max={15}
+                  className="w-full px-2 py-1 rounded text-sm border"
+                  style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
                 />
-              </div>
+              </FormField>
 
-              <button
+              <CompactButton
                 onClick={handleGenerate}
                 disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-all mt-4"
-              >
-                {loading ? <RefreshCw className="animate-spin" /> : <Wand2 size={18} />}
-                {loading ? loadingMessage : t('genword.generate')}
-              </button>
+                variant="solid"
+                color="var(--accent)"
+                icon={loading ? <RefreshCw size={16} className="animate-spin" /> : <Wand2 size={16} />}
+                label={loading ? loadingMessage : t('genword.generate')}
+              />
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Results */}
-        <div className="lg:col-span-2 bg-slate-900 rounded-xl border border-slate-800 flex flex-col overflow-hidden shadow-lg">
-          <div className="p-4 bg-slate-800/50 border-b border-slate-700 flex justify-between items-center">
-            <h3 className="font-semibold text-slate-200">{t('genword.results')}</h3>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-slate-500 bg-slate-900 px-2 py-1 rounded">{generated.length} {t('genword.keep')}</span>
-              {generated.length > 0 && (
-                <button onClick={handleClear} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1">
-                  <Trash size={12} /> {t('genword.clear')}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {errorMessage && (
-            <div className="p-4 bg-red-950/20 border-b border-red-900/50 text-red-200 text-sm flex items-start gap-3">
-              <ShieldAlert size={16} className="shrink-0 text-red-400" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-
-          <div className="flex-1 overflow-y-auto p-4">
-            {generated.length === 0 && !errorMessage ? (
-              <div className="h-full flex flex-col items-center justify-center text-slate-600 space-y-3">
-                <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mb-2">
-                  <Wand2 className="text-slate-500" size={32} />
-                </div>
-                <p>{t('genword.placeholder')}</p>
+        <div className="lg:col-span-2">
+          <Card className="flex flex-col overflow-hidden h-full">
+            <div className="flex justify-between items-center gap-4 pb-4 border-b" style={{ borderColor: 'var(--border)' }}>
+              <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{t('genword.results')}</h3>
+              <div className="flex items-center gap-3">
+                <StatBadge value={generated.length} label={t('genword.keep')} />
+                {generated.length > 0 && (
+                  <CompactButton
+                    onClick={handleClear}
+                    variant="ghost"
+                    icon={<Trash size={14} />}
+                    label=""
+                  />
+                )}
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {generated.map((item, idx) => (
-                  <div key={idx} className="bg-slate-950 border border-slate-800 p-3 rounded flex justify-between items-center group hover:border-purple-500/50 transition-colors">
-                    <div>
-                      <div className={`text-lg font-bold ${isScriptMode ? 'text-purple-300' : 'text-slate-200'}`}>
-                        <ConScriptText text={item.word} scriptConfig={isScriptMode ? scriptConfig : undefined} />
-                      </div>
-                      <div className="text-sm text-slate-500 font-mono">/{item.ipa}/</div>
-                    </div>
-                    <button
-                      onClick={() => handleAdd(item.word, item.ipa)}
-                      className="p-2 bg-slate-800 hover:bg-green-600 text-slate-400 hover:text-white rounded transition-colors"
-                      title={t('genword.edit_add') || "Edit & Add to Dictionary"}
-                    >
-                      <Download size={16} />
-                    </button>
-                  </div>
-                ))}
+            </div>
+
+            {errorMessage && (
+              <div className="p-4 bg-red-950/20 border-b border-red-900/50 text-sm flex items-start gap-3" style={{ color: 'var(--text-primary)' }}>
+                <ShieldAlert size={16} className="shrink-0" style={{ color: 'var(--accent)' }} />
+                <span>{errorMessage}</span>
               </div>
             )}
-          </div>
+
+            <div className="flex-1 overflow-y-auto p-4">
+              {generated.length === 0 && !errorMessage ? (
+                <div className="h-full flex flex-col items-center justify-center text-slate-600 space-y-3">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2" style={{ backgroundColor: 'var(--elevated)' }}>
+                    <Wand2 className="text-slate-500" size={32} />
+                  </div>
+                  <p>{t('genword.placeholder')}</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {generated.map((item, idx) => (
+                    <div key={idx} className="border rounded p-3 flex justify-between items-center group transition-colors" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
+                      <div>
+                        <div className="text-lg font-bold" style={{ color: isScriptMode ? 'var(--accent)' : 'var(--text-primary)' }}>
+                          <ConScriptText text={item.word} scriptConfig={isScriptMode ? scriptConfig : undefined} />
+                        </div>
+                        <div className="text-sm font-mono" style={{ color: 'var(--text-secondary)' }}>/{item.ipa}/</div>
+                      </div>
+                      <button
+                        onClick={() => handleAdd(item.word, item.ipa)}
+                        className="p-2 rounded transition-colors"
+                        style={{ color: 'var(--text-secondary)', backgroundColor: 'var(--elevated)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--elevated)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                        title={t('genword.edit_add') || "Edit & Add to Dictionary"}
+                      >
+                        <Download size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </Card>
         </div>
       </div>
-    </div>
+    </ViewLayout>
   );
 };
 
