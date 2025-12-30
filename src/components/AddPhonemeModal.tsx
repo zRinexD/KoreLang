@@ -54,7 +54,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t("phonology.add_phoneme")}
+      title={`${place || ''} / ${manner || ''}`}
       maxWidth="max-w-xs"
       icon={null}
     >
