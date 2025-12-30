@@ -2,44 +2,53 @@ import React, { useState, useEffect } from 'react';
 import { Box, User, FileText, Check, ShieldCheck } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { useUI } from '../ui/UIContext';
-import { useProject } from '../hooks/useProject';
+import { useProjectContext } from '../state/ProjectContext';
 import { CompactButton, Modal } from './ui';
 
 const ProjectWizard: React.FC = () => {
   const { t } = useTranslation();
   const ui = useUI();
-  const { 
-    projectName, setProjectName,
-    projectAuthor, setProjectAuthor,
-    projectDescription, setProjectDescription,
-    constraints, setConstraints
-  } = useProject();
 
-  const [allowedGraphemes, setAllowedGraphemes] = useState('');
+  const {
+    projectName,
+    setProjectName,
+    projectAuthor,
+    setProjectAuthor,
+    projectDescription,
+    setProjectDescription,
+    constraints,
+    setConstraints
+  } = useProjectContext();
 
-  const isOpen = ui.isOpen('wizard');
-  const isCreateMode = !projectName; // si nom vide = création
+  const [localName, setLocalName] = useState("");
+  const [localAuthor, setLocalAuthor] = useState("");
+  const [localDescription, setLocalDescription] = useState("");
+  const [allowedGraphemes, setAllowedGraphemes] = useState("");
 
-  // Reset form when modal opens
+  const isOpen = ui.isOpen("wizard");
+  const isCreateMode = !projectName;
+
+  // Synchronise les champs locaux à l'ouverture de la modal
   useEffect(() => {
     if (isOpen) {
-      setAllowedGraphemes('');
+      setLocalName(projectName);
+      setLocalAuthor(projectAuthor);
+      setLocalDescription(projectDescription);
+      setAllowedGraphemes("");
     }
-  }, [isOpen]);
+  }, [isOpen, projectName, projectAuthor, projectDescription]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    setProjectName(projectName || 'Untitled'); // éviter vide
-    setProjectAuthor(projectAuthor || 'Unknown');
-
+    setProjectName(localName);
+    setProjectAuthor(localAuthor);
+    setProjectDescription(localDescription);
     if (allowedGraphemes) {
       setConstraints({ ...constraints, allowedGraphemes });
     }
-
-    ui.close('wizard');
+    ui.close("wizard");
   };
 
   const handleCreate = () => {
@@ -82,8 +91,8 @@ const ProjectWizard: React.FC = () => {
               <input 
                 type="text"
                 required
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
+                value={localName}
+                onChange={(e) => setLocalName(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder-slate-700"
                 placeholder={t('wizard.name_placeholder')}
               />
@@ -96,8 +105,8 @@ const ProjectWizard: React.FC = () => {
               <User className="absolute -translate-y-1/2 left-3 top-1/2 text-slate-600" size={16} />
               <input 
                 type="text"
-                value={projectAuthor}
-                onChange={(e) => setProjectAuthor(e.target.value)}
+                value={localAuthor}
+                onChange={(e) => setLocalAuthor(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder-slate-700"
                 placeholder={t('wizard.author_placeholder')}
               />
@@ -127,8 +136,8 @@ const ProjectWizard: React.FC = () => {
             <div className="relative">
               <FileText className="absolute left-3 top-3 text-slate-600" size={16} />
               <textarea 
-                value={projectDescription}
-                onChange={(e) => setProjectDescription(e.target.value)}
+                value={localDescription}
+                onChange={(e) => setLocalDescription(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder-slate-700 h-24 resize-none"
                 placeholder={t('wizard.desc_placeholder')}
               />

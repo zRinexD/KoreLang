@@ -4,7 +4,7 @@ import MenuBar from "./components/MenuBar";
 import ConsoleView from "./components/ConsoleView";
 
 import { useTheme } from "./hooks/useTheme";
-import { useProject } from "./hooks/useProject";
+import { ProjectProvider } from "./state/ProjectContext";
 import { useModals } from "./hooks/useModals";
 import { useShortcuts } from "./hooks/useShorcuts";
 import { ProjectView } from "./components/ProjectView";
@@ -24,8 +24,10 @@ import { setApiKey as persistApiKey } from "./services/geminiService";
 
 
 
+import { useProjectContext } from "./state/ProjectContext";
+
 const AppContent: React.FC = () => {
-  const project = useProject();
+  const project = useProjectContext();
   useTheme(project.settings.theme, project.settings.customTheme);
   const modals = useModals();
   const { open } = useUI();
@@ -163,12 +165,7 @@ const AppContent: React.FC = () => {
         <Sidebar ref={sidebarRef} {...project.sidebarProps} />
         <main className="flex flex-col flex-1 overflow-hidden">
           <div className="flex-1 min-h-0 overflow-hidden" style={{ zoom: zoomLevel / 100 }}>
-            <ProjectView 
-              currentView={project.currentView as ViewState} 
-              {...project.states}
-              isScriptMode={isScriptMode}
-              setCurrentView={project.setCurrentView}
-            />
+            <ProjectView />
           </div>
           {isConsoleOpen && (
             <ConsoleView
@@ -189,7 +186,9 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => (
   <LanguageProvider i18n={i18n}>
     <UIProvider>
-      <AppContent />
+      <ProjectProvider>
+        <AppContent />
+      </ProjectProvider>
     </UIProvider>
   </LanguageProvider>
 );

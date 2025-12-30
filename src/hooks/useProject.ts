@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import {
   LexiconEntry,
   MorphologyState,
@@ -54,6 +54,9 @@ export const useProject = () => {
   const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
 
+  // Version pour forcer le rerender global
+  const [version, setVersion] = useState(0);
+
   // Track if initial load is complete to prevent auto-save before loading
   const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
 
@@ -79,6 +82,7 @@ export const useProject = () => {
     setScriptConfig(data.scriptConfig || INITIAL_SCRIPT);
     setNotebook(data.notebook || "");
     setConstraints({ ...INITIAL_CONSTRAINTS, ...(data.constraints || {}) });
+    setVersion(v => v + 1); // force rerender global
   };
 
   // Load project from localStorage on mount, or load default Sindarin project
@@ -97,7 +101,6 @@ export const useProject = () => {
       fetch("/sindarin_complete.json")
         .then(res => res.json())
         .then(data => {
-          loadProjectData(data);
           setIsInitialLoadComplete(true);
         })
         .catch(err => {
@@ -259,27 +262,27 @@ export const useProject = () => {
   // Return both legacy fields and the new grouped API to preserve compatibility
   return {
     projectName,
-    setProjectName,
+    setProjectName: (v: string) => setProjectName(v),
     projectAuthor,
-    setProjectAuthor,
+    setProjectAuthor: (v: string) => setProjectAuthor(v),
     projectDescription,
-    setProjectDescription,
+    setProjectDescription: (v: string) => setProjectDescription(v),
     lexicon,
-    setLexicon,
+    setLexicon: (v: SetStateAction<LexiconEntry[]>) => setLexicon(v),
     grammar,
-    setGrammar,
+    setGrammar: (v: string) => setGrammar(v),
     morphology,
-    setMorphology,
+    setMorphology: (v: MorphologyState) => setMorphology(v),
     phonology,
-    setPhonology,
+    setPhonology: (v: PhonologyConfig) => setPhonology(v),
     rules,
-    setRules,
+    setRules: (v: SetStateAction<SoundChangeRule[]>) => setRules(v),
     constraints,
-    setConstraints,
+    setConstraints: (v: ProjectConstraints) => setConstraints(v),
     scriptConfig,
-    setScriptConfig,
+    setScriptConfig: (v: ScriptConfig) => setScriptConfig(v),
     notebook,
-    setNotebook,
+    setNotebook: (v: string) => setNotebook(v),
     loadProjectData,
     getFullProjectData,
 
@@ -291,5 +294,6 @@ export const useProject = () => {
     sidebarProps,
     currentView,
     setCurrentView,
+    version,
   };
 };

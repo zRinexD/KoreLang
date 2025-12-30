@@ -7,6 +7,7 @@ import GenEvolve from "./GenEvolve";
 import ScriptEditor from "./ScriptEditor";
 import Notebook from "./Notebook";
 import { ViewState, LexiconEntry } from "../types";
+import { useProjectContext } from "../state/ProjectContext";
 import {
   PhonologyConfig,
   MorphologyState,
@@ -15,60 +16,38 @@ import {
   ProjectConstraints,
 } from "../types";
 
-interface ProjectViewProps {
-  currentView: ViewState;
-  // Project metadata
-  projectName: string;
-  projectAuthor: string;
-  projectDescription: string;
-  // Project data
-  lexicon: LexiconEntry[];
-  setLexicon: React.Dispatch<React.SetStateAction<LexiconEntry[]>>;
-  grammar: string;
-  setGrammar: React.Dispatch<React.SetStateAction<string>>;
-  morphology: MorphologyState;
-  setMorphology: React.Dispatch<React.SetStateAction<MorphologyState>>;
-  phonology: PhonologyConfig;
-  setPhonology: React.Dispatch<React.SetStateAction<PhonologyConfig>>;
-  rules: SoundChangeRule[];
-  setRules: React.Dispatch<React.SetStateAction<SoundChangeRule[]>>;
-  constraints: ProjectConstraints;
-  scriptConfig: ScriptConfig;
-  setScriptConfig: React.Dispatch<React.SetStateAction<ScriptConfig>>;
-  notebook: string;
-  setNotebook: React.Dispatch<React.SetStateAction<string>>;
-  // UI settings
-  enableAI?: boolean;
-  showLineNumbers?: boolean;
-  isScriptMode?: boolean;
-  setCurrentView?: (view: ViewState) => void;
-}
+// Les props sont désormais inutiles, tout passe par le contexte
 
-export const ProjectView: React.FC<ProjectViewProps> = ({
-  currentView,
-  projectName,
-  projectAuthor,
-  projectDescription,
-  lexicon,
-  setLexicon,
-  grammar,
-  setGrammar,
-  morphology,
-  setMorphology,
-  phonology,
-  setPhonology,
-  rules,
-  setRules,
-  constraints,
-  scriptConfig,
-  setScriptConfig,
-  notebook,
-  setNotebook,
-  enableAI = false,
-  showLineNumbers = true,
-  isScriptMode = false,
-  setCurrentView = () => {},
-}) => {
+export const ProjectView: React.FC = () => {
+  const {
+    currentView,
+    projectName,
+    projectAuthor,
+    projectDescription,
+    lexicon,
+    setLexicon,
+    grammar,
+    setGrammar,
+    morphology,
+    setMorphology,
+    phonology,
+    setPhonology,
+    rules,
+    setRules,
+    constraints,
+    scriptConfig,
+    setScriptConfig,
+    notebook,
+    setNotebook,
+    setCurrentView = () => {},
+    settings,
+  } = useProjectContext();
+  // Pour l’UI, on prend les settings du projet
+  const enableAI = settings?.enableAI ?? false;
+  const showLineNumbers = settings?.showLineNumbers ?? true;
+  // isScriptMode peut rester local ou venir d’un prop/context selon votre logique
+  // Ici, on le laisse à false par défaut
+  const isScriptMode = false;
   const [genWordState, setGenWordState] = useState<any>(null);
   const [draftEntry, setDraftEntry] = useState<Partial<LexiconEntry> | null>(
     null
@@ -99,7 +78,7 @@ export const ProjectView: React.FC<ProjectViewProps> = ({
       return (
         <Lexicon
           entries={lexicon}
-          setEntries={setLexicon}
+          setEntries={(v) => setLexicon(typeof v === 'function' ? v(lexicon) : v)}
           constraints={constraints}
           enableAI={enableAI}
           phonology={phonology}

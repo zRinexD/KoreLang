@@ -20,8 +20,8 @@ const COLORS = ['#007acc', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 
 const Dashboard: React.FC<DashboardProps> = ({
   entries,
-  projectName = "Untitled Project",
-  author = "Unknown Author",
+  projectName,
+  author,
   description,
   setView,
   scriptConfig,
@@ -29,8 +29,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const displayProjectName = projectName === "Untitled Project" ? t('dashboard.default_project') : (projectName || t('dashboard.default_project'));
-  const displayAuthor = author === "Unknown Author" ? t('dashboard.default_author') : (author || t('dashboard.default_author'));
+  // Affichage direct sans fallback ni placeholder
+  const displayProjectName = projectName;
+  const displayAuthor = author;
 
   // Helper for POS translation
   const getPosLabel = (posKey: string) => {

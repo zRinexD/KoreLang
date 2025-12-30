@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "../i18n";
 import { useUI } from "../ui/UIContext";
-import { useProject } from "../hooks/useProject";
+import { useProjectContext } from "../state/ProjectContext";
 import { ConScriptText } from "./ConScriptRenderer";
 import { POS_SUGGESTIONS } from "../types";
 import { Modal } from "./ui";
@@ -20,7 +20,7 @@ const ConstraintsModal: React.FC = () => {
   const { t } = useTranslation();
   const ui = useUI();
   const { constraints, setConstraints, scriptConfig, setScriptConfig } =
-    useProject();
+    useProjectContext();
 
   const [activeTab, setActiveTab] = useState<
     "GENERAL" | "PHONOTACTICS" | "ORTHOGRAPHY" | "SORTING"
