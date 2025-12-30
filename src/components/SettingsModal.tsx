@@ -182,10 +182,8 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings }) => {
+  // All hooks must be called before any conditional return!
   const ui = useUI();
-  
-  if (!ui.isOpen('settings')) return null;
-
   const { t, i18n } = useTranslation();
   const executeCommand = useCommandExecutor();
   const [activeTab, setActiveTab] = useState<'GENERAL' | 'THEME'>('GENERAL');
@@ -217,6 +215,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
       executeCommand('setTheme', { theme: theme as any, customTheme: settings.customTheme as any });
     }
   };
+
+  // Only now, after all hooks, do the conditional return
+  if (!ui.isOpen('settings')) return null;
 
   const exportTheme = () => {
     const theme = settings.customTheme || DEFAULT_CUSTOM;

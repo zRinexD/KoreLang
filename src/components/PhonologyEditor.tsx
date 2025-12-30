@@ -1,6 +1,6 @@
 import { PhonemeDataService } from "../services/PhonemeDataService";
 import React from "react";
-import { Volume2 } from "lucide-react";
+import { Check, Cross, Trash, Volume2 } from "lucide-react";
 import { PhonologyConfig, PhonemeInstance, PhonemeModel } from "../types";
 
 import { ViewLayout, StatBadge, CIcon, VIcon, CompactButton, Modal } from "./ui";
@@ -78,7 +78,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
       title={t("phonology.title")}
       subtitle={t("phonology.subtitle")}
       headerChildren={
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <StatBadge
             value={phonology.consonants.length}
             label="C"
@@ -92,17 +92,20 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
           <CompactButton
             label={t("phonology.clear_inventory")}
             variant="outline"
-            style={{ border: '2px solid var(--error)', color: 'var(--error)', background: 'transparent', fontWeight: 600, transition: 'all 0.15s' }}
+            color="var(--error)"
+            icon={<Trash />}
             onClick={() => setShowClearModal(true)}
             className="hover:bg-[var(--error)] hover:text-white hover:border-[var(--error)]"
           />
-          <Modal isOpen={showClearModal} showCloseButton={false}>
-            <div className="p-6 flex flex-col items-center">
-              <div className="text-lg font-semibold mb-4">{t("phonology.clear_confirm")}</div>
+          <Modal isOpen={showClearModal} showCloseButton={false} onClose={()=>{}} title={t("phonology.clear_inventory")}>
+            <div className="flex flex-col items-center p-6">
+              <div className="mb-4 text-lg font-semibold">{t("phonology.clear_confirm")}</div>
               <div className="flex gap-4 mt-2">
                 <CompactButton
                   label={t("common.confirm")}
-                  style={{ background: 'var(--error)', color: 'white', border: '2px solid var(--error)' }}
+                  color="var(--error)"
+                  variant="solid"
+                  icon={<Check />}
                   onClick={() => {
                     setData({ ...phonology, consonants: [], vowels: [] });
                     setShowClearModal(false);
@@ -110,6 +113,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
                 />
                 <CompactButton
                   label={t("common.cancel")}
+                  icon={<Cross />}
                   variant="outline"
                   onClick={() => setShowClearModal(false)}
                 />
