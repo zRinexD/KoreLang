@@ -1,16 +1,17 @@
 import React from "react";
 import { Modal } from "./ui";
 import { useTranslation } from "../i18n";
-import { PhonemeModel, PhonemeType } from "../types";
+import { PhonemeType } from "../types";
+
 
 import { Manner, Place, Height, Backness } from "../types";
+
 interface AddPhonemeModalProps {
   isOpen: boolean;
   onClose: () => void;
   place: Place | Backness | null;
   manner: Manner | Height | null;
-  phonemes: PhonemeModel[];
-  onSelect: (phoneme: PhonemeModel) => void;
+  onSelect: (phoneme: PhonemeType) => void;
 }
 
 import { PhonemeDataService } from "../services/PhonemeDataService";
@@ -22,20 +23,22 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   onClose,
   place,
   manner,
-  phonemes,
   onSelect,
 }) => {
   const { t } = useTranslation();
 
   // Nouvelle logique : on utilise la source centrale des phonèmes pour remplir la dropdown
-  let availablePhonemes: any[] = [];
+  let availablePhonemes: { id: string, symbol: string, name: string }[] = [];
   if (place && manner) {
-    const isVowel = phonemes.some(p => p.category === 'vowel');
-    const found = getPhonemesForCell(phonemes, manner, place, isVowel);
-    availablePhonemes = found.map((model) => ({
-      id: model.id,
-      symbol: PhonemeDataService.getIPA(model.id as PhonemeType) || model.symbol,
-      name: model.name
+    // On déduit isVowel du contexte d'appel (ex: via props ou via le parent)
+    // Ici, on suppose que la modal est appelée dans le bon contexte (consonant/vowel)
+    // On tente d'inférer isVowel à partir du type de row/col
+    const isVowel = typeof manner === 'string' && Object.values(Height).includes(manner as Height);
+    const found = getPhonemesForCell(manner as any, place as any, isVowel);
+    availablePhonemes = found.map((pt) => ({
+      id: pt,
+      symbol: PhonemeDataService.getIPA(pt) || pt,
+      name: pt
     }));
   }
 
@@ -89,8 +92,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
           onClick={() => {
             const selected = availablePhonemes.find(p => p.id === selectedPhonemeId);
             if (selected) {
-              const model = phonemes.find(p => p.id === selected.id);
-              if (model) onSelect(model);
+              onSelect(selected.id as PhonemeType);
             }
           }}
         >

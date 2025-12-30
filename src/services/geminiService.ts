@@ -1,3 +1,4 @@
+import { PhonemeDataService } from './PhonemeDataService';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { LexiconEntry, ProjectConstraints, MorphologyState, PhonologyConfig, SoundChangeRule } from "../types";
 
@@ -388,8 +389,8 @@ export const generateWords = async (
         }
 
         if (phonology) {
-            const cons = phonology.consonants.map(p => p.phoneme.symbol).join(', ');
-            const vows = phonology.vowels.map(p => p.phoneme.symbol).join(', ');
+            const cons = phonology.consonants.map(p => PhonemeDataService.getIPA(p.phoneme)).join(', ');
+            const vows = phonology.vowels.map(p => PhonemeDataService.getIPA(p.phoneme)).join(', ');
             const syl = phonology.syllableStructure || 'Free';
             globalRulesPrompt += `\nPHONOLOGY RULES:
             - Consonants available: ${cons}

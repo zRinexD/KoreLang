@@ -1,3 +1,4 @@
+import { PhonemeDataService } from '../services/PhonemeDataService';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Plus, Search, Trash2, BookA, GitFork, ArrowRight, Link, Filter, X, SlidersHorizontal, ShieldAlert, AlertTriangle, HelpCircle, AlertOctagon, Edit, Ban, Eye, EyeOff, Copy, Check, Feather, Type, Mic, Pin, PinOff, Wand2 } from 'lucide-react';
 import { LexiconEntry, POS_SUGGESTIONS, ProjectConstraints, PhonologyConfig, ScriptConfig } from '../types';
@@ -101,18 +102,18 @@ const Lexicon: React.FC<LexiconProps> = ({
 
     const isConsonant = (char: string) => {
         if (phonology.consonants.length === 0) return !'aeiouàáèéìíòóùú'.includes(char.toLowerCase());
-        return phonology.consonants.some(c => c.phoneme.symbol === char) || !'aeiouàáèéìíòóùú'.includes(char.toLowerCase());
+        return phonology.consonants.some(c => PhonemeDataService.getIPA(c.phoneme) === char) || !'aeiouàáèéìíòóùú'.includes(char.toLowerCase());
     };
 
     const isVowel = (char: string) => {
         if (phonology.vowels.length === 0) return 'aeiouàáèéìíòóùú'.includes(char.toLowerCase());
-        return phonology.vowels.some(v => v.phoneme.symbol === char) || 'aeiouàáèéìíòóùú'.includes(char.toLowerCase());
+        return phonology.vowels.some(v => PhonemeDataService.getIPA(v.phoneme) === char) || 'aeiouàáèéìíòóùú'.includes(char.toLowerCase());
     };
 
     const getCVPattern = (word: string) => {
         return word.split('').map(char => {
-            if (phonology.vowels.some(v => v.phoneme.symbol === char)) return 'V';
-            if (phonology.consonants.some(c => c.phoneme.symbol === char)) return 'C';
+            if (phonology.vowels.some(v => PhonemeDataService.getIPA(v.phoneme) === char)) return 'V';
+            if (phonology.consonants.some(c => PhonemeDataService.getIPA(c.phoneme) === char)) return 'C';
             if ('aeiouàáèéìíòóùú'.includes(char.toLowerCase())) return 'V';
             return 'C';
         }).join('');

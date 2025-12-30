@@ -38,7 +38,7 @@ export enum Backness {
 }
 export interface PhonemeInstance {
   id: string; // identifiant unique de l'instance (ex: uuid ou concat symbol+cell)
-  phoneme: PhonemeModel; // référence au modèle métier
+  phoneme: PhonemeType; // référence à l'enum source de vérité
   type: 'consonant' | 'vowel';
   // Position dans la grille
   manner?: string;

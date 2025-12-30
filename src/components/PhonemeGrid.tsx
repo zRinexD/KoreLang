@@ -2,7 +2,8 @@
 import React, { useMemo, useState } from 'react';
 import { X, Plus } from 'lucide-react';
 
-import { PhonemeInstance, PhonemeModel, Manner, Place, Height, Backness } from '../types';
+import { PhonemeInstance, PhonemeModel, Manner, Place, Height, Backness, PhonemeType } from '../types';
+import { PhonemeDataService } from '../services/PhonemeDataService';
 import { Card, Section } from './ui';
 import AddPhonemeModal from './AddPhonemeModal';
 import { useTranslation } from '../i18n';
@@ -42,7 +43,6 @@ interface AddPhonemeModalState {
 }
 
 export type PhonemeGridWithModelsProps = PhonemeGridProps & {
-    phonemeModels: PhonemeModel[];
     onAddPhoneme: (phoneme: PhonemeInstance, row: string, col: string, isVowel: boolean) => void;
 };
 
@@ -56,7 +56,6 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
     minWidth = 600,
     legend,
     unclassified,
-    phonemeModels,
     onAddPhoneme,
 }) => {
         // État pour la modal d'ajout de phonème
@@ -68,14 +67,14 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
     const columnLabel = (key: string) => t(`phonology.${isVowels ? 'backness' : 'place'}.${key}`);
     const rowLabel = (key: string) => t(`phonology.${isVowels ? 'height' : 'manner'}.${key}`);
 
-    // Nouvelle logique : on utilise la source centrale des phonèmes pour remplir la grille
+    // Nouvelle logique : on utilise l'enum PhonemeType comme source de vérité
     const gridData = useMemo(() => {
         return rows.map(row =>
             columns.map(col => {
-                return getPhonemesForCell(phonemeModels, row, col, isVowels);
+                return getPhonemesForCell(row, col, isVowels);
             })
         );
-    }, [rows, columns, phonemeModels, isVowels]);
+    }, [rows, columns, isVowels]);
 
     // Composant réutilisable pour une case hachurée
     const HatchCell: React.FC = () => (
@@ -105,7 +104,7 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
                 <div className="mb-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>{t(unclassified.titleKey)}</div>
                 <div className="flex flex-wrap gap-2">
                     {unclassified.items.map((p, i) => unclassified.renderItem ? unclassified.renderItem(p, i) : (
-                        <span key={`unclassified-${i}`} className="px-2 py-1 font-serif text-lg rounded" style={{ backgroundColor: 'var(--surface)' }}>{p.phoneme.symbol}</span>
+                        <span key={`unclassified-${i}`} className="px-2 py-1 font-serif text-lg rounded" style={{ backgroundColor: 'var(--surface)' }}>{PhonemeDataService.getIPA(p.phoneme)}</span>
                     ))}
                 </div>
             </div>
@@ -131,7 +130,7 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
                         </th>
                         {columns.map((col, colIdx) => {
                             const phonemes = gridData[rowIdx][colIdx];
-                            const impossible = !isCellPossible(phonemeModels, rows[rowIdx], columns[colIdx], isVowels);
+                            const impossible = !isCellPossible(rows[rowIdx], columns[colIdx], isVowels);
                             if (impossible) {
                                 return <HatchCell key={`${row}-${col}`} />;
                             }
@@ -149,12 +148,12 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
                                                 const phonemeInstance: PhonemeInstance = (p as any).phoneme && (p as any).type
                                                     ? (p as unknown as PhonemeInstance)
                                                     : {
-                                                        id: (p as any).id || `${(p as any).symbol}-${row}-${col}`,
-                                                        phoneme: p as PhonemeModel,
+                                                        id: (p as any).id || `${(p as any).symbol || p}-${row}-${col}`,
+                                                        phoneme: p as PhonemeType,
                                                         type: isVowels ? 'vowel' : 'consonant',
                                                     };
                                                 return (
-                                                    <div key={`${row}-${col}-${idx}-${phonemeInstance.phoneme.symbol}`} className="relative group/ph">
+                                                    <div key={`${row}-${col}-${idx}-${PhonemeDataService.getIPA(phonemeInstance.phoneme)}`} className="relative group/ph">
                                                         {renderPhoneme(phonemeInstance)}
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); onRemove(phonemeInstance); }}
@@ -190,12 +189,11 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
             onClose={() => setAddModal({ open: false, row: null, col: null })}
             place={addModal.col}
             manner={addModal.row}
-            phonemes={phonemeModels}
-            onSelect={(phonemeModel) => {
+            onSelect={(phonemeType) => {
                 if (addModal.row && addModal.col) {
                     const phonemeInstance: PhonemeInstance = {
-                        id: `${phonemeModel.id}-${addModal.row}-${addModal.col}`,
-                        phoneme: phonemeModel,
+                        id: `${phonemeType}-${addModal.row}-${addModal.col}`,
+                        phoneme: phonemeType,
                         type: isVowels ? 'vowel' : 'consonant',
                     };
                     onAddPhoneme(phonemeInstance, addModal.row, addModal.col, isVowels);
@@ -215,7 +213,7 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
                 <div className="mb-1 text-[10px]" style={{ color: 'var(--text-tertiary)' }}>{t(unclassified.titleKey)}</div>
                 <div className="flex flex-wrap gap-1">
                     {unclassified.items.map((p, i) => unclassified.renderItem ? unclassified.renderItem(p, i) : (
-                        <span key={`unclassified-bottom-${i}`} className="px-1.5 py-0.5 font-serif text-sm rounded" style={{ backgroundColor: 'var(--surface)' }}>{p.phoneme.symbol}</span>
+                        <span key={`unclassified-bottom-${i}`} className="px-1.5 py-0.5 font-serif text-sm rounded" style={{ backgroundColor: 'var(--surface)' }}>{PhonemeDataService.getIPA(p.phoneme)}</span>
                     ))}
                 </div>
             </div>

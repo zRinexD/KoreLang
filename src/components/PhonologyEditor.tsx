@@ -1,3 +1,4 @@
+import { PhonemeDataService } from '../services/PhonemeDataService';
 import React, { useState } from 'react';
 import { Wand2, RefreshCw, Volume2, Info, LayoutGrid, EyeOff, ShieldAlert, Plus, Trash2, X, Check, Eye, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 import { generatePhonology, isApiKeySet } from '../services/geminiService';
@@ -6,7 +7,7 @@ import { PhonologyConfig, PhonemeInstance, PhonemeModel } from '../types';
 import { useTranslation } from '../i18n';
 import { Card, Section, ViewLayout, FormField, ActionButton, CompactButton, Modal, SearchInput, StatBadge, CIcon, VIcon } from './ui';
 import PhonemeGrid from './PhonemeGrid';
-import { PHONEME_MODELS } from '../services/phonemeService';
+
 
 
 interface PhonologyEditorProps {
@@ -50,7 +51,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
   };
 
   // Render a phoneme instance (symbol)
-  const renderPhoneme = (p: PhonemeInstance) => <span>{p.phoneme.symbol}</span>;
+  const renderPhoneme = (p: PhonemeInstance) => <span>{PhonemeDataService.getIPA(p.phoneme)}</span>;
 
   return (
     <div style={{ padding: 32 }}>
@@ -68,7 +69,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
             getPhonemes={getConsonantPhonemes}
             onRemove={p => handleRemove(p, false)}
             renderPhoneme={renderPhoneme}
-            phonemeModels={PHONEME_MODELS.filter(p => p.category === 'consonant')}
+            // plus de phonemeModels
             onAddPhoneme={handleAddPhoneme}
           />
         </div>
@@ -84,7 +85,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
             getPhonemes={getVowelPhonemes}
             onRemove={p => handleRemove(p, true)}
             renderPhoneme={renderPhoneme}
-            phonemeModels={PHONEME_MODELS.filter(p => p.category === 'vowel')}
+            // plus de phonemeModels
             onAddPhoneme={handleAddPhoneme}
           />
         </div>
