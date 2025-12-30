@@ -1,271 +1,173 @@
 import i18n from 'i18next';
 import { initReactI18next, useTranslation, I18nextProvider } from 'react-i18next';
 
-interface TranslationResources {
-  [language: string]: {
-    [key: string]: string;
-  },
-}
+// Import translations
+import en from './locales/en.json';
+import es from './locales/es.json';
+import ar from './locales/ar.json';
+import bn from './locales/bn.json';
+import de from './locales/de.json';
+import fa from './locales/fa.json';
+import fi from './locales/fi.json';
+import fr from './locales/fr.json';
+import ha from './locales/ha.json';
+import hi from './locales/hi.json';
+import id from './locales/id.json';
+import it from './locales/it.json';
+import ja from './locales/ja.json';
+import ko from './locales/ko.json';
+import nl from './locales/nl.json';
+import pcm from './locales/pcm.json';
+import pl from './locales/pl.json';
+import ru from './locales/ru.json';
+import sr from './locales/sr.json';
+import sv from './locales/sv.json';
+import ta from './locales/ta.json';
+import te from './locales/te.json';
+import tl from './locales/tl.json';
+import tr from './locales/tr.json';
+import ur from './locales/ur.json';
+import vi from './locales/vi.json';
+import wuu from './locales/wuu.json';
+import yue from './locales/yue.json';
+import zh from './locales/zh.json';
+import pt from './locales/pt.json';
+import gu from './locales/gu.json';
+import mr from './locales/mr.json';
+import pa from './locales/pa.json';
+import kn from './locales/kn.json';
+import ml from './locales/ml.json';
+import sw from './locales/sw.json';
+import ms from './locales/ms.json';
+import jv from './locales/jv.json';
+import uk from './locales/uk.json';
+import el from './locales/el.json';
+import ro from './locales/ro.json';
+import cs from './locales/cs.json';
+import hu from './locales/hu.json';
+import he from './locales/he.json';
+import th from './locales/th.json';
+import zhtw from './locales/zh-tw.json';
 
-const resources: TranslationResources = {
-  en: {
-    "genword.title": "Generate Words",
-    "genword.desc": "Generate words based on your input.",
-    "genword.config": "Configuration",
-    "genword.constraints": "Constraints",
-    "genword.vibe": "Vibe",
-    "genword.count": "Count (Max 15)",
-    "genword.generate": "Generate",
-    "genword.loading_1": "Loading...",
-    "genword.loading_2": "Generating...",
-    "genword.loading_3": "Please wait...",
-    "genword.placeholder": "No words generated yet.",
-    "genword.edit_add": "Edit & Add",
-    "genword.clear": "Clear",
-    "genword.results": "Results",
-    "genword.keep": "to keep",
-    "genword.constraints_ph": "Enter constraints (e.g., CV structure, allowed phonemes)",
-    "genword.vibe_ph": "Enter desired semantic vibe (e.g., 'ancient', 'modern')",
-    "defaults.project_name": "New Project",
-    "defaults.author": "Author",
-    "defaults.grammar": "Rules\\n\\n// Enter your grammar rules here...",
-    "defaults.phonology_name": "Default Phonology",
-    "wizard.overwrite_confirm": "Are you sure you want to create a new project? This will overwrite the current state.",
-    "menu.file": "File",
-    "menu.new_project": "New Project",
-    "menu.open_project": "Open Project",
-    "menu.export_json": "Export JSON",
-    "menu.view": "View",
-    "menu.toggle_sidebar": "Toggle Sidebar",
-    "menu.zoom_in": "Zoom In",
-    "menu.zoom_out": "Zoom Out",
-    "menu.tools": "Tools",
-    "menu.validation": "Validation",
-    "menu.settings": "Settings",
-    "menu.preferences": "Preferences",
-    "menu.help": "Help",
-    "menu.docs": "Documentation",
-    "menu.about": "About",
-    "menu.env": "Theme",
-    "settings.dark": "Dark",
-    "settings.light": "Light",
-    "settings.tokyo": "Tokyo Night",
-    "settings.tokyo_light": "Tokyo Light",
-    "nav.dashboard": "Dashboard",
-    "nav.phonology": "Phonology",
-    "nav.morphology": "Morphology",
-    "nav.lexicon": "Lexicon",
-    "nav.grammar": "Grammar",
-    "nav.script": "Script",
-    "nav.notebook": "Notebook",
-    "nav.conscript": "ConScript",
-    "nav.genevolve": "Generate & Evolve",
-    "nav.settings": "Settings",
-    "nav.console": "Console",
-    "nav.source": "Source",
-    "source.title": "Project Source",
-    "source.desc": "View and edit the raw JSON data for your project.",
-    "source.reset": "Reset",
-    "source.apply": "Apply",
-    "source.warning": "Warning: Editing directly can lead to data corruption.",
-    "val.desc": "Configure validation rules and sorting for your lexicon.",
-    "tab.general": "General",
-    "tab.phonotactics": "Phonotactics",
-    "tab.orthography": "Orthography",
-    "tab.sorting": "Sorting",
-    "lbl.allow_duplicates": "Allow Duplicates",
-    "lbl.allow_duplicates_desc": "Allow multiple entries with the same word form.",
-    "lbl.case_sensitive": "Case Sensitive",
-    "lbl.case_sensitive_desc": "Treat 'a' and 'A' as different characters in validation.",
-    "lbl.allowed_chars": "Allowed Characters (Regex)",
-    "lbl.allowed_chars_desc": "Only words matching this regular expression will be valid. Example: a-zA-Z",
-    "sort.presets": "Sorting Presets",
-    "sort.preset_latin": "Latin",
-    "sort.preset_latin_ext": "Latin Extended",
-    "sort.preset_cyrillic": "Cyrillic",
-    "sort.preset_greek": "Greek",
-    "sort.preset_hiragana": "Hiragana",
-    "sort.preset_katakana": "Katakana",
-    "sort.preset_arabic": "Arabic",
-    "val.banned_seq": "Banned Sequences",
-    "val.banned_placeholder": "e.g. zz, qp, st",
-    "val.no_bans": "No banned sequences configured.",
-    "lbl.structure": "Phonotactic Structure (Regex)",
-    "lbl.structure_desc": "Define the allowed syllable or word structure. Use C for consonants, V for vowels. Example: C?VC?V",
-    "lbl.starts_with": "Must Start With",
-    "val.target_placeholder": "e.g. p, s, pre",
-    "val.any_pos": "Any",
-    "val.no_restrictions": "No restrictions.",
-    "lbl.ends_with": "Must End With",
-    "sort.custom_order": "Custom Sort Order",
-    "sort.custom_order_desc": "Enter characters in your desired alphabetical order. (e.g. a,b,c,aa,ab,...) for advanced sorting.",
-    "sort.locale": "Locale Sort",
-    "settings.title": "Settings",
-    "settings.done": "Done",
-    "grammar.title": "Grammar Editor",
-    "grammar.tab.syntax": "Syntax",
-    "grammar.tab.morphology": "Morphology",
-    "grammar.saved": "Grammar Saved",
-    "grammar.bnf_placeholder": "// Enter your grammar rules here...",
-    "grammar.type_sentence": "Type a sentence to parse...",
-    "grammar.analysis_output": "Analysis Output",
-    "common.confirm": "Are you sure you want to delete this item?",
-    "morph.paradigms": "Paradigms",
-    "grammar.applies_to": "Applies to",
-    "grammar.morph_rules": "Morphological Rules",
-    "grammar.add_rule": "Add Rule",
-    "grammar.rule_name": "Rule Name",
-    "grammar.affix_pattern": "Affix Pattern",
-    "grammar.preview": "Preview",
-    "grammar.no_morph_rules": "No morphological rules defined yet. Add some to get started!",
-    "dashboard.by": "by",
-    "dashboard.lexiconsize": "Lexicon Size",
-    "dashboard.manage_lexicon": "Manage Lexicon",
-    "dashboard.manage_lexicon_desc": "Add, edit, and organize words in your dictionary.",
-    "dashboard.define_grammar": "Define Grammar",
-    "dashboard.define_grammar_desc": "Craft the syntactic rules that govern your language.",
-    "dashboard.recent_words": "Recent Words",
-    "dashboard.empty_dict": "Your lexicon is empty!",
-    "dashboard.create_first": "Create your first word",
-    "dashboard.pos_dist": "Part of Speech Distribution",
-    "dashboard.no_data": "No data available.",
-    "msg.about_title": "About Korelang",
-    "msg.about_desc": "Developed by zRinexD (github.com/zRinexD)",
-    "app.title": "Korelang",
-    "app.subtitle": "The ultimate tool for conlangers",
-    "val.invalid_char": "Invalid characters found",
-    "val.must_start": "Word does not start with a required sequence.",
-    "val.must_end": "Word does not end with a required sequence.",
-    "val.structure_fail": "Word violates phonotactic structure",
-    "val.duplicate": "Duplicate word",
-    "lexicon.conflicts_group": "Conflicts",
-    "lexicon.non_canon": "Non-Canonical",
-    "val.errors_title": "Validation Errors",
-    "lexicon.derived_from": "Derived From",
-    "lexicon.root": "Root",
-    "lexicon.descendants": "Descendants",
-    "lexicon.copy_latin": "Copy Latin Text",
-    "lexicon.copy_native": "Copy Native Script Symbols (PUA)",
-    "lexicon.edit": "Edit",
-    "common.delete": "Delete",
-    "common.cancel": "Cancel",
-    "lexicon.ai_requires_key": "AI Generation requires an API Key.",
-    "lexicon.docs": "Documentation",
-    "lexicon.search": "Search lexicon...",
-    "lexicon.filter_options": "Filter Options",
-    "lexicon.view_mode_pinned": "View pinned conflicts",
-    "lexicon.view_mode_hide": "Hide conflicts",
-    "lexicon.results_count": "results",
-    "lexicon.entries_count": "entries",
-    "lexicon.ai_gen_btn": "AI Generate",
-    "lexicon.new": "New Word",
-    "lexicon.pos": "Part of Speech",
-    "lexicon.word": "Word",
-    "lexicon.definition": "Definition",
-    "lexicon.etymology": "Etymology",
-    "lexicon.ipa": "IPA",
-    "lexicon.view_mode_only": "View only conflicts",
-    "lexicon.no_matches": "No matches found.",
-    "lexicon.try_adjust": "Try adjusting your search or filters.",
-    "integrity.title": "Unlink Entry",
-    "integrity.warning": "This word is a parent to other words in your lexicon. Unlinking it will break those relationships.",
-    "integrity.desc": "If you proceed, this word will no longer be marked as a parent, and its descendants will lose their 'derived from' link. This action cannot be undone.",
-    "integrity.action_cancel": "Cancel",
-    "integrity.action_unlink": "Unlink & Delete",
-    "lexicon.delete_confirm_title": "Confirm Delete",
-    "lexicon.delete_confirm_desc": "Are you sure you want to delete the word",
-    "lexicon.action_cannot_undo": "This action cannot be undone.",
-    "lexicon.pos_placeholder": "Select POS...",
-    "lexicon.derivedFrom": "Derived From",
-    "lexicon.root_option": "-- Root --",
-    "lexicon.save": "Save",
-    "phonology.ai_generator": "AI Generator",
-    "phonology.vibe_label": "Phonological Vibe",
-    "phonology.vibe_placeholder": "e.g., 'harsh', 'flowy', 'percussive'",
-    "phonology.analyze_btn": "Analyzing...",
-    "phonology.generate_btn": "Generate",
-    "phonology.ai_disabled_title": "AI Generation Disabled",
-    "phonology.ai_disabled_desc": "Please configure your API key in settings to enable AI features.",
-    "phonology.stats": "Phonology Statistics",
-    "phonology.inventory": "Total Inventory",
-    "phonology.consonants": "Consonants",
-    "phonology.vowels": "Vowels",
-    "phonology.unclassified_consonants": "Unclassified Consonants (from AI)",
-    "phonology.unclassified_vowels": "Unclassified Vowels (from AI)",
-    "phonology.syllable_struct": "Syllable Structure",
-    "phonology.undefined": "Undefined",
-    "wizard.create_title": "Create New Project",
-    "wizard.edit_title": "Edit Project Details",
-    "wizard.create_desc": "Start a fresh new conlang project.",
-    "wizard.edit_desc": "Adjust the core details of your project.",
-    "wizard.name": "Project Name",
-    "wizard.author": "Author",
-    "wizard.constraints": "Constraints",
-    "wizard.optional": "Optional, can be configured later.",
-    "wizard.desc": "Description",
-    "wizard.create_btn": "Create Project",
-    "wizard.save_btn": "Save Changes",
-    "console.refactor_complete": "Refactoring complete and integrated.",
-    "console.review_proposals": "REVIEW PROPOSALS",
-    "console.no_violations": "The lexicon complies with the current phonotactic rules.",
-    "console.analyzing": "Analyzing",
-    "console.violations": "violations",
-    "console.available_commands": "AVAILABLE COMMANDS:",
-    "console.help_fix": "Repairs words that violate the project rules.",
-    "console.help_clear": "Clears the terminal history.",
-    "console.help_about": "Developed by zRinexD (github.com/zRinexD)",
-    "console.placeholder": "Enter command here...",
-    "genevolve.commit_alert": "Changes applied to lexicon!",
-    "genevolve.title": "Generate & Evolve",
-    "genevolve.desc": "Apply sound changes to your lexicon and see how your words evolve.",
-    "genevolve.run": "Run Sound Changes",
-    "genevolve.sound_changes": "Sound Changes",
-    "genevolve.add_rule": "Add Rule",
-    "genevolve.preview": "Preview",
-    "genevolve.commit": "Commit Changes",
-    "genevolve.placeholder": "Run sound changes to see the evolution here.",
-    "settings.api_key": "Gemini API Key",
-    "settings.api_key_ph": "Enter your Gemini API key",
-    "settings.api_key_required": "API Key is required for AI features.",
-    "settings.api_key_help": "How to get an API Key?",
-    "settings.finalize": "Finalize Settings",
-    "settings.help_back": "Back to Settings",
-    "settings.help_title": "Getting a Gemini API Key",
-    "settings.help_subtitle": "Follow these steps to generate and configure your Gemini API key.",
-    "settings.help_step_1": "1. Go to Google AI Studio to create your API Key. (You'll need a Google account)",
-    "settings.help_step_2": "2. Click on 'Get API Key in a new project' or 'Create API Key in an existing project'.",
-    "settings.help_step_3": "3. Copy the generated API key.",
-    "settings.help_step_4": "4. Paste the API key into the input field above.",
-    "settings.help_step_5": "5. Click 'Finalize Settings' to save your key.",
-    "settings.open_ai_studio": "Open Google AI Studio",
-    "settings.help_is_free": "Is it Free?",
-    "settings.help_free_desc": "Yes, using the Gemini API is free for light usage. Refer to Google's documentation for details and pricing tiers.",
-    "whats_new.title": "What's new in v1.0.2",
-    "whats_new.f1_title": "Vertical Writing",
-    "whats_new.f1_desc": "Top-to-bottom support.",
-    "whats_new.f2_title": "RTL Support",
-    "whats_new.f2_desc": "Right-to-Left horizontal writing.",
-    "whats_new.f3_title": "Better Control",
-    "whats_new.f3_desc": "New layout settings in the Dashboard",
-    "whats_new.button": "Got it!",
-  },
+const resources = {
+  en: { translation: en },
+  es: { translation: es },
+  ar: { translation: ar },
+  bn: { translation: bn },
+  de: { translation: de },
+  fa: { translation: fa },
+  fi: { translation: fi },
+  fr: { translation: fr },
+  ha: { translation: ha },
+  hi: { translation: hi },
+  id: { translation: id },
+  it: { translation: it },
+  ja: { translation: ja },
+  ko: { translation: ko },
+  nl: { translation: nl },
+  pcm: { translation: pcm },
+  pl: { translation: pl },
+  ru: { translation: ru },
+  sr: { translation: sr },
+  sv: { translation: sv },
+  ta: { translation: ta },
+  te: { translation: te },
+  tl: { translation: tl },
+  tr: { translation: tr },
+  ur: { translation: ur },
+  vi: { translation: vi },
+  wuu: { translation: wuu },
+  yue: { translation: yue },
+  zh: { translation: zh },
+  pt: { translation: pt },
+  gu: { translation: gu },
+  mr: { translation: mr },
+  pa: { translation: pa },
+  kn: { translation: kn },
+  ml: { translation: ml },
+  sw: { translation: sw },
+  ms: { translation: ms },
+  jv: { translation: jv },
+  uk: { translation: uk },
+  el: { translation: el },
+  ro: { translation: ro },
+  cs: { translation: cs },
+  hu: { translation: hu },
+  he: { translation: he },
+  th: { translation: th },
+  'zh-tw': { translation: zhtw }
 };
+
+const rtlLanguages = ['ar', 'fa', 'ha', 'ur', 'he'];
 
 i18n
   .use(initReactI18next)
   .init({
+    resources,
     lng: 'en',
     fallbackLng: 'en',
-    ns: ['translation'],
-    defaultNS: 'translation',
-    resources: {
-      en: { translation: resources.en }
-    },
     interpolation: {
       escapeValue: false
     }
   });
 
-export type Language = 'en';
+// Handle direction
+i18n.on('languageChanged', (lng) => {
+  const dir = rtlLanguages.includes(lng) ? 'rtl' : 'ltr';
+  document.documentElement.dir = dir;
+  document.documentElement.lang = lng;
+});
+
+export const languages = [
+  { code: 'ar', label: 'العربية' },
+  { code: 'bn', label: 'বাংলা' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Español' },
+  { code: 'fa', label: 'فارسی' },
+  { code: 'fi', label: 'Suomi' },
+  { code: 'fr', label: 'Français' },
+  { code: 'ha', label: 'Hausa' },
+  { code: 'hi', label: 'हिन्दी' },
+  { code: 'id', label: 'Bahasa Indonesia' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'ja', label: '日本語' },
+  { code: 'ko', label: '한국어' },
+  { code: 'nl', label: 'Nederlands' },
+  { code: 'pcm', label: 'Naijá' },
+  { code: 'pl', label: 'Polski' },
+  { code: 'ru', label: 'Русский' },
+  { code: 'sr', label: 'Српски' },
+  { code: 'sv', label: 'Svenska' },
+  { code: 'ta', label: 'தமிழ்' },
+  { code: 'te', label: 'తెలుగు' },
+  { code: 'tl', label: 'Tagalog' },
+  { code: 'tr', label: 'Türkçe' },
+  { code: 'ur', label: 'اردو' },
+  { code: 'vi', label: 'Tiếng Việt' },
+  { code: 'wuu', label: '吴语' },
+  { code: 'yue', label: '粵語' },
+  { code: 'zh', label: '简体中文' },
+  { code: 'pt', label: 'Português' },
+  { code: 'gu', label: 'ગુજરાતી' },
+  { code: 'mr', label: 'मराठी' },
+  { code: 'pa', label: 'ਪੰਜਾਬੀ' },
+  { code: 'kn', label: 'ಕನ್ನಡ' },
+  { code: 'ml', label: 'മലയാളം' },
+  { code: 'sw', label: 'Kiswahili' },
+  { code: 'ms', label: 'Bahasa Melayu' },
+  { code: 'jv', label: 'Basa Jawa' },
+  { code: 'uk', label: 'Українська' },
+  { code: 'el', label: 'Ελληνικά' },
+  { code: 'ro', label: 'Română' },
+  { code: 'cs', label: 'Čeština' },
+  { code: 'hu', label: 'Magyar' },
+  { code: 'he', label: 'עברית' },
+  { code: 'th', label: 'ไทย' },
+  { code: 'zh-tw', label: '繁體中文' }
+] as const;
+
+export type LanguageCode = typeof languages[number]['code'];
 
 export { i18n, useTranslation, I18nextProvider as LanguageProvider };
+

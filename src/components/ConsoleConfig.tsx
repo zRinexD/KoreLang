@@ -1,167 +1,8 @@
-import { Terminal, ArrowRight, Zap, ShieldAlert, CheckCircle2, AlertTriangle } from 'lucide-react';
-import React, { useState, useEffect, useRef } from 'react';
-import { ProjectConstraints, AppSettings, LexiconEntry, LogEntry, ViewState, POS_SUGGESTIONS, ScriptConfig } from '../types';
-import { useTranslation } from '../i18n';
-import { isApiKeySet, processCommandAI, repairLexicon } from '../services/geminiService';
-
-const calculateSimilarity = (s1: string, s2: string): number => {
-    const longer = s1.length > s2.length ? s1 : s2;
-    const shorter = s1.length > s2.length ? s2 : s1;
-    const longerLength = longer.length;
-    if (longerLength === 0) return 100;
-
-    const editDistance = (a: string, b: string) => {
-        const costs = [];
-        for (let i = 0; i <= a.length; i++) {
-            let lastValue = i;
-            for (let j = 0; j <= b.length; j++) {
-                if (i === 0) costs[j] = j;
-                else if (j > 0) {
-                    let newValue = costs[j - 1];
-                    if (a.charAt(i - 1) !== b.charAt(j - 1)) newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
-                    costs[j - 1] = lastValue;
-                    lastValue = newValue;
-                }
-            }
-            if (i > 0) costs[b.length] = lastValue;
-        }
-        return costs[b.length];
-    };
-
-    const dist = editDistance(longer, shorter);
-    return Math.round(((longerLength - dist) / longerLength) * 100);
-};
-
-interface RepairTableProps {
-    repairs: Array<{ id: string, word: string, ipa: string }>;
-    originalEntries: LexiconEntry[];
-    onCommit: (repairedList: Array<{ id: string, word: string, ipa: string }>) => void;
-    onCancel: () => void;
-    t: (key: string) => string;
-}
-
-const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntries, onCommit, onCancel, t }) => {
-    const [localRepairs, setLocalRepairs] = useState(repairs);
-    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(repairs.map(r => r.id)));
-    const [isApplied, setIsApplied] = useState(false);
-
-    const toggleSelection = (id: string) => {
-        const next = new Set(selectedIds);
-        if (next.has(id)) next.delete(id);
-        else next.add(id);
-        setSelectedIds(next);
-    };
-
-    const updateLocalRepair = (id: string, field: 'word' | 'ipa', value: string) => {
-        setLocalRepairs(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
-    };
-
-    if (isApplied) {
-        return (
-            <div className="py-2 px-4 bg-emerald-950/20 border border-emerald-900/50 rounded flex items-center gap-2 text-emerald-400 text-xs font-bold">
-                <CheckCircle2 size={14} /> {t('console.refactor_complete') || 'Refactoring complete and integrated.'}
-            </div>
-        );
-    }
-
-    return (
-        <div
-            className="my-4 bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden max-w-3xl shadow-2xl animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-        >
-            <div className="bg-zinc-800 px-4 py-2 border-b border-zinc-700 flex justify-between items-center">
-                <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
-                    <ShieldAlert size={12} className="text-amber-500" /> STAGING v4.6: {t('console.review_proposals') || 'REVIEW PROPOSALS'}
-                </span>
-                <span className="text-[10px] text-zinc-500">{selectedIds.size} {t('lexicon.results_count') || 'selected'}</span>
-            </div>
-            <div className="max-h-80 overflow-y-auto custom-scrollbar">
-                <table className="w-full text-[11px]">
-                    <thead className="bg-black/20 text-zinc-500 sticky top-0 z-10">
-                        <tr>
-                            <th className="p-2 text-center w-8"></th>
-                            <th className="p-2 text-left">Original</th>
-                            <th className="p-2 text-center">Fidelidad</th>
-                            <th className="p-2 text-left text-amber-400">Propuesta IA (Editable)</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-zinc-800">
-                        {localRepairs.map(repair => {
-                            const original = originalEntries.find(e => e.id === repair.id);
-                            const isSelected = selectedIds.has(repair.id);
-                            const score = original ? calculateSimilarity(original.word, repair.word) : 0;
-
-                            return (
-                                <tr key={repair.id} className={`hover: bg - zinc - 800 / 50 transition - colors ${!isSelected ? 'opacity-30' : ''} `}>
-                                    <td className="p-2 text-center">
-                                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelection(repair.id)} className="rounded bg-black border-zinc-700 text-purple-600" />
-                                    </td>
-                                    <td className="p-2">
-                                        <div className="font-bold text-zinc-400">{original?.word}</div>
-                                        <div className="text-[9px] opacity-40 font-mono">/{original?.ipa}/</div>
-                                    </td>
-                                    <td className="p-2 text-center">
-                                        <div className={`font - mono font - bold px - 1.5 py - 0.5 rounded ${score < 50 ? 'bg-red-900/30 text-red-500' : 'bg-emerald-900/20 text-emerald-500'} `}>
-                                            {score}%
-                                        </div>
-                                    </td>
-                                    <td className="p-2 space-y-1">
-                                        <input
-                                            value={repair.word}
-                                            onChange={(e) => updateLocalRepair(repair.id, 'word', e.target.value)}
-                                            disabled={!isSelected}
-                                            className="w-full bg-black border border-zinc-800 rounded px-1.5 py-0.5 font-bold text-emerald-400 focus:border-purple-500 outline-none"
-                                        />
-                                        <input
-                                            value={repair.ipa}
-                                            onChange={(e) => updateLocalRepair(repair.id, 'ipa', e.target.value)}
-                                            disabled={!isSelected}
-                                            className="w-full bg-black border border-zinc-800 rounded px-1.5 py-0.5 text-emerald-600 font-mono text-[9px] focus:border-purple-500 outline-none"
-                                        />
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-            <div className="p-3 bg-black/40 border-t border-zinc-700 flex justify-end gap-2">
-                <button onClick={onCancel} className="px-3 py-1.5 text-[10px] font-bold text-zinc-500 hover:text-zinc-300">{t('common.cancel')}</button>
-                <button
-                    onClick={() => {
-                        const finalRepairs = localRepairs.filter(r => selectedIds.has(r.id));
-                        onCommit(finalRepairs);
-                        setIsApplied(true);
-                    }}
-                    className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded text-[10px] font-bold shadow-lg flex items-center gap-2"
-                >
-                    {t('common.apply') || 'Apply Changes'} ({selectedIds.size})
-                </button>
-            </div>
-        </div>
-    );
-};
-
-interface ConsoleConfigProps {
-    constraints: ProjectConstraints;
-    setConstraints: (c: ProjectConstraints) => void;
-    settings: AppSettings;
-    setSettings: (s: AppSettings) => void;
-    entries: LexiconEntry[];
-    setEntries: React.Dispatch<React.SetStateAction<LexiconEntry[]>>;
-    history: LogEntry[];
-    setHistory: React.Dispatch<React.SetStateAction<LogEntry[]>>;
-    setProjectName: (name: string) => void;
-    setProjectDescription: (desc: string) => void;
-    setProjectAuthor: (author: string) => void;
-    setIsSidebarOpen: (open: boolean) => void;
-    setView: (view: ViewState) => void;
-    setJumpToTerm: (term: string | null) => void;
-    setDraftEntry: (entry: Partial<LexiconEntry> | null) => void;
-    scriptConfig?: ScriptConfig;
-    isScriptMode?: boolean;
-    author?: string;
-}
+import { Info, Zap } from "lucide-react";
+import React, { useState, useEffect, useRef, useMemo, memo } from "react";
+import { LogEntry, ViewState } from "../types";
+import { useTranslation } from "../i18n";
+import { useCommandExecutor, resolveModal } from "../state/commandStore";
 
 const TERMINAL_HEADER = `
 ██╗  ██╗ ██████╗ ██████╗ ███████╗██╗      █████╗ ███╗   ██╗ ██████╗ 
@@ -172,165 +13,755 @@ const TERMINAL_HEADER = `
 ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ 
 `;
 
-const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
-    constraints, setConstraints, settings, setSettings, entries, setEntries, history, setHistory,
-    setProjectName, setProjectDescription, setProjectAuthor, setIsSidebarOpen, setView, setJumpToTerm, setDraftEntry, scriptConfig, isScriptMode = false, author = 'user'
-}) => {
-    const { t } = useTranslation();
-    const [input, setInput] = useState('');
-    const [loadingAI, setLoadingAI] = useState(false);
-    const [showSuggestions, setShowSuggestions] = useState(false);
-    const [suggestions, setSuggestions] = useState<string[]>([]);
-    const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0);
+interface ConsoleConfigProps {
+  loadingAI: boolean;
+  author?: string;
+  currentView?: ViewState;
+}
 
-    const bottomRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
+// Memoized LogItem component to prevent unnecessary re-renders
+interface LogItemProps {
+  log: LogEntry;
+  author: string;
+  terminalHeader: string;
+  onDoubleClick: () => void;
+}
 
-    useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [history]);
-    useEffect(() => { inputRef.current?.focus(); }, []);
+const LogItem = memo(({ log, author, terminalHeader, onDoubleClick }: LogItemProps) => {
+  const isTerminalHeader = log.content.includes("██╗") || log.content.includes("KoreLang");
+  
+  const getTextColor = () => {
+    switch (log.type) {
+      case "error": return "text-red-500";
+      case "warning": return "text-[var(--warning)]";
+      case "success": return "text-emerald-400";
+      case "info": return "text-[var(--info)]";
+      case "command": return "text-[var(--text-1)] font-bold";
+      default: return "text-[var(--text-2)]";
+    }
+  };
 
-    const addLog = (type: LogEntry['type'], content: string, component?: React.ReactNode) => {
-        const timestamp = new Date().toLocaleTimeString();
-        setHistory(prev => [...prev, { type, content, timestamp, component }]);
-    };
+  const renderContent = () => {
+    if (log.type === "command") {
+      return (
+        <>
+          <span className="text-emerald-500">KoreLang-@{author}:~$</span>
+          <span className="ml-3">{log.content}</span>
+        </>
+      );
+    }
 
-    const clearTerminal = () => {
-        setHistory([{
-            type: 'info', content: TERMINAL_HEADER,
-            timestamp: ''
-        }]);
-    };
+    const cats = ['lexicon', 'project', 'sb', 'console'];
+    const firstWord = log.content.split(' ')[0].toLowerCase();
+    
+    if (cats.includes(firstWord)) {
+      return (
+        <>
+          <span style={{ color: 'var(--primary)' }}>{firstWord}</span>
+          {log.content.slice(firstWord.length)}
+        </>
+      );
+    }
+    
+    return log.content;
+  };
 
-    useEffect(() => {
-        if (history.length === 0) {
-            clearTerminal();
-            handleCommand('HELP');
+  return (
+    <div
+      className={`flex flex-col cursor-text ${getTextColor()}`}
+      onDoubleClick={onDoubleClick}
+    >
+      <div className="flex gap-3 leading-relaxed">
+        <span className={isTerminalHeader ? "whitespace-pre text-blue-400 font-bold leading-none" : ""} style={isTerminalHeader ? { whiteSpace: 'pre' } : {}}>
+          {renderContent()}
+        </span>
+      </div>
+      {log.component && <div className="mt-2 mb-4">{log.component}</div>}
+    </div>
+  );
+});
+
+const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user", currentView }) => {
+  const { t } = useTranslation();
+  const [history, setHistory] = useState<LogEntry[]>([
+    { type: "info", content: TERMINAL_HEADER, timestamp: new Date().toLocaleTimeString() }
+  ]);
+  const [input, setInput] = useState("");
+  const [commandHistory, setCommandHistory] = useState<string[]>([]);
+  const [historyCursor, setHistoryCursor] = useState<number>(0);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(0);
+  const executeCommand = useCommandExecutor();
+
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Root commands (no category prefix)
+  const ROOT_COMMANDS = [
+    { cmd: "cd", args: "<section>", desc: "Navigate to a section", options: ["dashboard", "lexicon", "phonology", "grammar", "morphology", "genevolve", "genword", "script", "notebook", "console"] },
+    { cmd: "help", args: "[-cat <category>]", desc: "Show help", options: ["project", "lexicon", "sb", "console"] },
+    { cmd: "clear", args: "", desc: "Clear the terminal" },
+    { cmd: "clr", args: "", desc: "Alias for CLEAR" },
+    { cmd: "about", args: "", desc: "About this console" },
+  ];
+
+  // Categories with subcommands (category --command format)
+  const COMMAND_CATEGORIES = {
+    project: {
+      name: "Project Management",
+      commands: [
+        { cmd: "--new", args: "[-n <name>] [-user <author>] [-desc <description>]", desc: "Create a new project" },
+        { cmd: "--open", args: "[-path <file_path>]", desc: "Open an existing project" },
+        { cmd: "--export", args: "", desc: "Export current project" },
+      ]
+    },
+    lexicon: {
+      name: "Lexicon",
+      commands: [
+        { cmd: "--add", args: "-w <word> -p <pos> -d <def> [-ipa <ipa>] [-ety <etym>] [-drv <derived>]", desc: "Add lexicon entry" },
+        { cmd: "--delete", args: "-w <word>", desc: "Delete an entry" },
+        { cmd: "--search", args: "-q <term>", desc: "Search lexicon" },
+      ]
+    },
+    sb: {
+      name: "Sidebar Control",
+      commands: [
+        { cmd: "--t", args: "", desc: "Toggle sidebar" },
+        { cmd: "--o", args: "", desc: "Open sidebar" },
+        { cmd: "--c", args: "", desc: "Close sidebar" },
+      ]
+    },
+    console: {
+      name: "Console Control",
+      commands: [
+        { cmd: "--open", args: "", desc: "Open console pane" },
+        { cmd: "--close", args: "", desc: "Close console pane" },
+        { cmd: "--max", args: "", desc: "Maximize console" },
+        { cmd: "--min", args: "", desc: "Minimize console" },
+      ]
+    },
+  };
+
+  // All categories for suggestions
+  const CATEGORY_NAMES = Object.keys(COMMAND_CATEGORIES);
+  const ROOT_COMMAND_NAMES = ROOT_COMMANDS.map(c => c.cmd);
+
+  // Compute single inline suggestion (next completion to add)
+  const computeInlineSuggestion = (raw: string): string => {
+    if (!raw.trim()) return ""; // No suggestion if empty
+    
+    const trimmed = raw.trim();
+    const tokens = trimmed.split(/\s+/);
+    const first = tokens[0].toLowerCase();
+    const last = tokens[tokens.length - 1];
+
+    // First token: suggest first matching command/category
+    if (tokens.length === 1) {
+      const all = [...ROOT_COMMAND_NAMES, ...CATEGORY_NAMES];
+      const matches = all.filter(c => c.toLowerCase().startsWith(first));
+      if (matches.length > 0) {
+        return matches[0]; // Return full word
+      }
+      return "";
+    }
+
+    // Root command: cd
+    if (first === "cd") {
+      const sections = ["dashboard", "lexicon", "phonology", "grammar", "morphology", "genevolve", "genword", "script", "notebook", "console"];
+      const part = tokens[1] || "";
+      const matches = sections.filter(s => s.startsWith(part.toLowerCase()));
+      if (matches.length > 0) {
+        return matches[0];
+      }
+      return "";
+    }
+
+    // Root command: help
+    if (first === "help") {
+      if (tokens.length === 2 && last === "-cat") {
+        if (CATEGORY_NAMES.length > 0) {
+          return CATEGORY_NAMES[0];
         }
-    }, [history, t, clearTerminal]);
+      }
+      if (tokens.length === 3 && tokens[1] === "-cat") {
+        const part = tokens[2] || "";
+        const matches = CATEGORY_NAMES.filter(c => c.startsWith(part.toLowerCase()));
+        if (matches.length > 0) {
+          return matches[0];
+        }
+      }
+      if (tokens.length === 2 && !last.includes("-")) {
+        return "-cat";
+      }
+      return "";
+    }
 
-    const handleCommand = async (cmdStr: string) => {
-        if (!cmdStr.trim()) return;
-        addLog('command', cmdStr);
-        const args = cmdStr.match(/[^\s"]+|"([^"]*)"/g)?.map(a => a.replace(/"/g, '')) || [];
-        const cmd = args[0]?.toUpperCase();
+    // Category-based commands
+    const category = COMMAND_CATEGORIES[first as keyof typeof COMMAND_CATEGORIES];
+    if (category) {
+      const second = tokens[1]?.toLowerCase();
+      
+      // Suggest first matching subcommand
+      if (tokens.length === 2) {
+        const matches = category.commands.filter(c => c.cmd.startsWith(second || ""));
+        if (matches.length > 0) {
+          return matches[0].cmd;
+        }
+        return "";
+      }
 
-        try {
-            switch (cmd) {
-                case 'CLEAR': case 'CLS': clearTerminal(); break;
-                case 'FIX-NON-CANON':
-                    if (!settings.enableAI) throw new Error('Servicio de IA desactivado.');
-                    const invalid = entries.filter(e => {
-                        // Validación simplificada para el comando
-                        const w = e.word.toLowerCase();
-                        return constraints.bannedSequences.some(s => w.includes(s.toLowerCase()));
-                    });
-                    if (invalid.length === 0) {
-                        addLog('success', t('console.no_violations') || 'The lexicon complies with the current phonotactic rules.');
-                        break;
-                    }
-                    addLog('info', `${t('console.analyzing') || 'Analyzing'} ${invalid.length} ${t('console.violations') || 'violations'}...`);
-                    setLoadingAI(true);
-                    const result = await repairLexicon(invalid, constraints);
-                    // Falsa carga para feedback visual
-                    setTimeout(() => setLoadingAI(false), 500);
-                    if (result.success && result.repairs) {
-                        addLog('info', 'Propuestas generadas. Revise la tabla de staging:', (
-                            <RepairReviewTable repairs={result.repairs} originalEntries={entries} t={t}
-                                onCommit={(repairedList) => {
-                                    setEntries(prev => prev.map(entry => {
-                                        const rep = repairedList.find(r => r.id === entry.id);
-                                        return rep ? { ...entry, word: rep.word, ipa: rep.ipa } : entry;
-                                    }));
-                                }}
-                                onCancel={() => addLog('info', 'Sesión de reparación abortada.')}
-                            />
-                        ));
-                    } else throw new Error(result.message || 'Fallo en la pipeline de IA.');
-                    break;
-                case 'HELP':
-                    addLog('output', t('console.available_commands') || 'AVAILABLE COMMANDS:');
-                    addLog('output', 'FIX-NON-CANON - ' + (t('console.help_fix') || 'Repairs words that violate the project rules.'));
-                    addLog('output', 'CLEAR - ' + (t('console.help_clear') || 'Clears the terminal history.'));
-                    addLog('output', 'ABOUT - ' + (t('console.help_about') || 'Shows information about the application.'));
-                    break;
-                case 'ABOUT':
-                    addLog('output', t('msg.about_desc'));
-                    break;
-                default:
-                    // Support for free-form instructions via /ai
-                    if (cmdStr.startsWith('/ai ')) {
-                        const instruction = cmdStr.slice(4).trim();
-                        if (!instruction) return;
+      // Suggest arguments for specific subcommands
+      const subCmd = category.commands.find(c => c.cmd.toLowerCase() === second);
+      if (subCmd) {
+        if (first === "lexicon" && second === "--add") {
+          const presentFlags = new Set(tokens.filter(t => t.startsWith("-") && !t.startsWith("--")).map(t => t.split(" ")[0]));
+          const params = ["-w", "-p", "-d", "-ipa", "-ety", "-drv"]
+            .filter(p => !presentFlags.has(p));
+          if (last.startsWith("-")) {
+            const matches = params.filter(p => p.startsWith(last));
+            return matches.length > 0 ? matches[0] : "";
+          }
+          return params.length > 0 ? params[0] : "";
+        }
+        if (first === "lexicon" && second === "--delete") {
+          if (last.startsWith("-")) {
+            return "-w".startsWith(last) ? "-w" : "";
+          }
+          return "-w";
+        }
+        if (first === "lexicon" && second === "--search") {
+          if (last.startsWith("-")) {
+            return "-q".startsWith(last) ? "-q" : "";
+          }
+          return "-q";
+        }
+        if (first === "project" && second === "--new") {
+          const presentFlags = new Set(tokens.filter(t => t.startsWith("-") && !t.startsWith("--")).map(t => t.split(" ")[0]));
+          const params = ["-n", "-user", "-desc"]
+            .filter(p => !presentFlags.has(p));
+          if (last.startsWith("-")) {
+            const matches = params.filter(p => p.startsWith(last));
+            return matches.length > 0 ? matches[0] : "";
+          }
+          return params.length > 0 ? params[0] : "";
+        }
+        if (first === "project" && second === "--open") {
+          if (last.startsWith("-")) {
+            return "-path".startsWith(last) ? "-path" : "";
+          }
+          return "-path";
+        }
+      }
+    }
 
-                        if (!isApiKeySet()) {
-                            addLog('error', 'AI Command Failed: No API Key configured.');
-                            addLog('info', 'Configure your API Key in the Preferences menu (Settings icon) to enable AI features.', (
-                                <div className="mt-2 p-3 bg-amber-950/20 border border-amber-900/50 rounded-lg text-xs text-amber-200 flex items-start gap-3">
-                                    <ShieldAlert size={16} className="shrink-0 text-amber-500" />
-                                    <div>
-                                        Go to <b>Preferences (Settings) {' > '} General</b> and enter your Gemini API Key.
-                                    </div>
-                                </div>
-                            ));
-                            return;
-                        }
+    return "";
+  };
 
-                        setLoadingAI(true);
-                        const result = await processCommandAI(entries, instruction, constraints);
-                        setLoadingAI(false);
-                        if (result.success && result.newLexicon) {
-                            setEntries(result.newLexicon);
-                            addLog('success', `IA aplicada: ${result.modifiedCount} palabras modificadas.`);
-                        } else {
-                            addLog('error', (result as any).message || 'Error procesando comando de IA.');
-                        }
-                        return;
-                    }
-                    addLog('error', `Command not recognized by KoreLang Core.`);
+  // Get inline suggestion
+  const inlineSuggestion = computeInlineSuggestion(input);
+
+  // Scroll automatique vers le bas
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    inputRef.current?.focus();
+  }, [history]);
+
+  const addLog = (type: LogEntry["type"], content: string, component?: React.ReactNode) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setHistory(prev => [...prev, { type, content, timestamp, component }]);
+  };
+
+  // Unified logging API
+  const log = {
+    error: (message: string) => addLog("error", message),
+    warning: (message: string) => addLog("warning", message),
+    success: (message: string) => addLog("success", message),
+    info: (message: string) => addLog("info", message),
+    msg: (category: string, message: string) => {
+      const component = (
+        <span>
+          <span style={{ color: "var(--primary)", fontWeight: "bold" }}>{category}</span>
+          {" "}
+          <span style={{ color: "var(--text-primary)" }}>{message}</span>
+        </span>
+      );
+      addLog("output", "", component);
+    },
+  };
+
+  const clearTerminal = () => {
+    setHistory([{ type: "info", content: TERMINAL_HEADER, timestamp: "" }]);
+  };
+
+  // Initial mount: restore from sessionStorage if available; otherwise initialize header
+  useEffect(() => {
+    try {
+      const savedHistory = sessionStorage.getItem("korelang.console.history");
+      const savedInput = sessionStorage.getItem("korelang.console.input");
+      const savedCmdHistory = sessionStorage.getItem("korelang.console.cmdHistory");
+      if (savedHistory) {
+        const parsed: Array<Pick<LogEntry, "type" | "content" | "timestamp">> = JSON.parse(savedHistory);
+        setHistory(parsed as LogEntry[]);
+      } else {
+        clearTerminal();
+      }
+      if (savedInput) setInput(savedInput);
+      if (savedCmdHistory) {
+        const cmds: string[] = JSON.parse(savedCmdHistory);
+        setCommandHistory(cmds);
+        setHistoryCursor(cmds.length);
+      }
+    } catch {
+      clearTerminal();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist history (without React components) and input into sessionStorage
+  useEffect(() => {
+    try {
+      const serializable = history.map(h => ({ type: h.type, content: h.content, timestamp: h.timestamp }));
+      sessionStorage.setItem("korelang.console.history", JSON.stringify(serializable));
+    } catch {}
+  }, [history]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("korelang.console.input", input);
+    } catch {}
+  }, [input]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("korelang.console.cmdHistory", JSON.stringify(commandHistory));
+    } catch {}
+  }, [commandHistory]);
+
+  const handleCommand = (cmdStr: string) => {
+    if (!cmdStr.trim()) return;
+    // Track command history for ArrowUp/ArrowDown navigation
+    setCommandHistory(prev => [...prev, cmdStr]);
+    setHistoryCursor(prev => prev + 1);
+    log.msg("command", cmdStr);
+
+    const [rawCommand, ...args] = cmdStr.trim().split(/\s+/);
+    const cmd = rawCommand.toLowerCase();
+
+    // Root commands
+    if (cmd === "clear" || cmd === "clr") {
+      clearTerminal();
+      return;
+    }
+
+    if (cmd === "about") {
+      addLog("output", "KoreLang Console v1.2 - Standardized command shell.");
+      return;
+    }
+
+    if (cmd === "help") {
+      const categoryArg = args.findIndex(arg => arg === "-cat");
+      const category = categoryArg !== -1 ? args[categoryArg + 1]?.toLowerCase() : null;
+      
+      if (category && COMMAND_CATEGORIES[category as keyof typeof COMMAND_CATEGORIES]) {
+        const cat = COMMAND_CATEGORIES[category as keyof typeof COMMAND_CATEGORIES];
+        addLog("output", "");
+        addLog("output", "", (
+          <span style={{ color: 'var(--primary)' }}>
+            [{category.toUpperCase()}]
+          </span>
+        ));
+        cat.commands.forEach(c => {
+          addLog("output", "", (
+            <span>
+              <span style={{ color: 'var(--primary)' }}>{category}</span>
+              <span style={{ color: 'var(--warning)' }}> {c.cmd}</span>
+              <span style={{ color: 'var(--info)' }}> {c.args}</span>
+              <span style={{ color: 'var(--text-2)' }}> | {c.desc}</span>
+            </span>
+          ));
+        });
+        addLog("output", "");
+        log.info(`Available categories: ${CATEGORY_NAMES.join(', ')}`);
+      } else if (category) {
+        log.error(`Unknown category: ${category}`);
+        log.info(`Available categories: ${Object.keys(COMMAND_CATEGORIES).join(', ')}`);
+      } else {
+        // Display only root commands
+        addLog("output", "");
+        addLog("output", "", (
+          <span style={{ color: 'var(--primary)' }}>
+            KORELANG CONSOLE - ROOT COMMANDS
+          </span>
+        ));
+        addLog("output", "");
+        ROOT_COMMANDS.forEach(c => {
+          addLog("output", "", (
+            <span>
+              <span style={{ color: 'var(--warning)' }}>{c.cmd}</span>
+              <span style={{ color: 'var(--info)' }}> {c.args}</span>
+              <span style={{ color: 'var(--text-2)' }}> | {c.desc}</span>
+            </span>
+          ));
+        });
+        addLog("output", "");
+        log.info(`Type 'help -cat <category>' to see available categories:`);
+        log.info(`Available: ${CATEGORY_NAMES.map(c => `${c}`).join(', ')}`);
+        addLog("output", "");
+      }
+      return;
+    }
+
+    if (cmd === "cd") {
+      const section = args[0]?.toLowerCase();
+      const validSections = ["dashboard", "lexicon", "phonology", "grammar", "morphology", "genevolve", "genword", "script", "notebook", "console"];
+      
+      // Map user input to ViewState
+      const viewMap: Record<string, string> = {
+        "dashboard": "DASHBOARD",
+        "lexicon": "LEXICON",
+        "phonology": "PHONOLOGY",
+        "grammar": "GRAMMAR",
+        "morphology": "GRAMMAR",  // morphology is part of grammar view
+        "genevolve": "GENEVOLVE",
+        "genword": "GENEVOLVE",   // genword is part of genevolve view
+        "script": "SCRIPT",
+        "notebook": "NOTEBOOK",
+        "console": "CONSOLE"
+      };
+
+      if (!section) {
+        log.error("Specify section to navigate to.");
+        log.info(`Available sections: ${validSections.join(', ')}`);
+        return;
+      }
+
+      if (!validSections.includes(section)) {
+        log.error(`${section} not found`);
+        log.info(`Available sections: ${validSections.join(', ')}`);
+        return;
+      }
+
+      // Get the view to navigate to
+      const targetView = viewMap[section];
+
+      // Check if already on this view
+      if (currentView === targetView) {
+        log.warning(`Already on ${section}`);
+        return;
+      }
+
+      executeCommand("navigateTo", { view: targetView });
+      log.success(`Navigated to: ${section}`);
+      return;
+    }
+
+    // Category-based commands
+    const category = COMMAND_CATEGORIES[cmd as keyof typeof COMMAND_CATEGORIES];
+    if (category) {
+      const subCmd = args[0]?.toLowerCase();
+      if (!subCmd) {
+        log.error(`Specify subcommand for ${cmd}.`);
+        log.info(`Available: ${category.commands.map(c => c.cmd).join(', ')}`);
+        return;
+      }
+
+      const commandDef = category.commands.find(c => c.cmd.toLowerCase() === subCmd);
+      if (!commandDef) {
+        log.error(`Unknown ${cmd} subcommand: ${subCmd}`);
+        log.info(`Available: ${category.commands.map(c => c.cmd).join(', ')}`);
+        return;
+      }
+
+      // Parse flags/parameters
+      const params: Record<string, string> = {};
+      for (let i = 1; i < args.length; i++) {
+        const a = args[i];
+        if (a.startsWith("-") && !a.startsWith("--")) {
+          const key = a.toLowerCase();
+          const val = args[i + 1];
+          if (val && !val.startsWith("-")) {
+            params[key] = val;
+            i++;
+          }
+        }
+      }
+
+      // Execute category-specific commands
+      if (cmd === "project") {
+        if (subCmd === "--new") {
+          const name = params["-n"] || "Untitled Project";
+          const author = params["-user"] || "Anonymous";
+          const description = params["-desc"] || "";
+          
+          executeCommand("newProject", { name, author, description });
+          log.success(`Creating project: "${name}"`);
+          log.info(`Author: ${author}`);
+          if (description) log.info(`Description: ${description}`);
+        } else if (subCmd === "--open") {
+          let path = params["-path"];
+          if (!path) {
+            log.error("Missing required flag: -path <file_path>");
+            log.info("Usage: project --open -path <file_path>");
+            return;
+          }
+          
+          // Clean path: remove quotes and trim whitespace
+          path = path.replace(/^["']|["']$/g, "").trim();
+          
+          // Extract filename from path
+          const fileName = path.split(/[\\\/]/).pop() || "project.json";
+          
+          // Open file picker to browse for the file
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = ".json";
+          input.onchange = () => {
+            const file = input.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              try {
+                const data = JSON.parse(e.target?.result as string);
+                executeCommand("loadProject", { data });
+                log.success(`Project loaded from: ${file.name}`);
+              } catch (error) {
+                log.error("Invalid JSON file");
+              }
+            };
+            reader.readAsText(file);
+          };
+          log.info(`Opening file picker to select: ${fileName}`);
+          input.click();
+          return;
+        } else if (subCmd === "--export") {
+          let fileName = params["-name"];
+          const path = params["-path"];
+          
+          // Extract filename from path if provided
+          if (!fileName && path) {
+            // Remove quotes and trim
+            const cleanPath = path.replace(/^["']|["']$/g, "").trim();
+            // Extract filename from path (last part after / or \)
+            const extracted = cleanPath.split(/[\\\/]/).pop();
+            if (extracted) {
+              fileName = extracted;
             }
-        } catch (e: any) { addLog('error', e.message); }
-    };
+          }
+          
+          // Default filename
+          fileName = fileName || "project.json";
+          
+          executeCommand("exportProject", { fileName });
+          
+          // Add a small delay to ensure export command completes
+          setTimeout(() => {
+            // The export command should trigger a download via the normal download mechanism
+            log.success(`Exporting project as: ${fileName}`);
+            if (path) {
+              log.info(`Navigate to the download folder to save: ${fileName}`);
+            }
+          }, 100);
+        }
+      } else if (cmd === "lexicon") {
+        if (subCmd === "--add") {
+          const requiredFlags = ["-w", "-p", "-d"];
+          const missing = requiredFlags.filter(f => !params[f]);
+          if (missing.length > 0) {
+            log.error(`Missing required flags: ${missing.join(', ')}`);
+            log.info("Required: -w <word> -p <pos> -d <def>");
+            return;
+          }
+          const newEntry = {
+            word: params["-w"],
+            pos: params["-p"],
+            definition: params["-d"],
+            ipa: params["-ipa"] || '',
+            etymology: params["-ety"] || '',
+            derivedFrom: params["-drv"] || '',
+            timestamp: Date.now()
+          };
+          executeCommand("addLexiconEntry", newEntry);
+          log.success(`Entry added: "${newEntry.word}" (${newEntry.pos})`);
+          log.info(`Definition: ${newEntry.definition}`);
+        } else if (subCmd === "--delete") {
+          const word = params["-w"];
+          if (!word) {
+            log.error("Specify word: lexicon --delete -w <word>");
+            return;
+          }
+          executeCommand("deleteLexiconEntry", { word });
+          log.success(`Deletion request for: "${word}"`);
+        } else if (subCmd === "--search") {
+          const query = params["-q"];
+          if (!query) {
+            log.error("Specify term: lexicon --search -q <term>");
+            return;
+          }
+          executeCommand("searchLexicon", { query });
+          log.success(`Searching for: "${query}"`);
+        }
+      } else if (cmd === "sb") {
+        if (subCmd === "--t") {
+          executeCommand("toggleSidebar");
+          log.success("Sidebar toggled.");
+        } else if (subCmd === "--o") {
+          executeCommand("openSidebar");
+          log.success("Sidebar opened.");
+        } else if (subCmd === "--c") {
+          executeCommand("closeSidebar");
+          log.success("Sidebar closed.");
+        }
+      } else if (cmd === "console") {
+        if (subCmd === "--open") {
+          executeCommand("openConsole");
+          log.success("Console opened.");
+        } else if (subCmd === "--close") {
+          executeCommand("closeConsole");
+          log.success("Console closed.");
+        } else if (subCmd === "--max") {
+          executeCommand("maximizeConsole");
+          log.success("Console maximized.");
+        } else if (subCmd === "--min") {
+          executeCommand("minimizeConsole");
+          log.success("Console minimized.");
+        }
+      }
+      return;
+    }
 
-    return (
-        <div className="h-full flex flex-col bg-[var(--bg-main)] font-mono text-sm relative">
-            <div className="p-2 bg-[var(--bg-panel)] border-b border-white/5 flex justify-between items-center text-xs text-[var(--text-2)]">
-                <span className="flex items-center gap-2"><Terminal size={14} /> KoreLang kernel_v1.0.2_stable</span>
-                <span className="flex items-center gap-2">
-                    {loadingAI && <Zap size={12} className="animate-pulse text-purple-500" />}
-                    SYSTEM_READY
-                </span>
-            </div>
+    // Unknown command
+    log.error(`Command not recognized: ${cmdStr}`);
+    log.info("Type 'help' to see available commands.");
+  };
+
+  return (
+    <div className="h-full flex flex-col bg-[var(--inputfield)] font-mono text-sm relative">
+      {/* Header */}
+      <div className="p-2 border-b border-white/5 bg-[var(--inputfield)] flex justify-between items-center text-xs text-[var(--text-2)]">
+        <span className="flex items-center gap-2">
+          <Info size={10} /> KoreLang kernel_v1.1
+        </span>
+        <span className="flex items-center gap-2 text-emerald-500">
+          {loadingAI && <Zap size={12} style={{ color: 'var(--accent)' }} className="animate-pulse" />}
+          SYSTEM_READY
+        </span>
+      </div>
+
+      {/* Terminal history */}
+      <div className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar" onClick={() => inputRef.current?.focus()}>
+        {history.map((log, i) => (
+          <LogItem
+            key={i}
+            log={log}
+            author={author}
+            terminalHeader={TERMINAL_HEADER}
+            onDoubleClick={() => {
+              const textToCopy = log.content;
+              navigator.clipboard.writeText(textToCopy);
+            }}
+          />
+        ))}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input avec suggestion inline */}
+      <div className="p-2 bg-[var(--inputfield)] border-t border-white/5 flex items-center relative">
+        <span className="font-bold text-emerald-500">KoreLang-@{author}:~$</span>
+        <div className="relative flex-1 ml-2">
+          {/* Input réel */}
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+              setHistoryCursor(commandHistory.length);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleCommand(input);
+                setInput("");
+                setSuggestions([]);
+                setHistoryCursor(commandHistory.length + 1);
+              } else if (e.key === "Tab" && inlineSuggestion) {
+                e.preventDefault();
+                // Complete only the missing part
+                const trimmed = input.trim();
+                const tokens = trimmed.split(/\s+/);
+                const last = tokens[tokens.length - 1];
+                
+                // Find how much of the suggestion is already typed
+                const suggestion = inlineSuggestion;
+                const alreadyTyped = last ? suggestion.substring(0, last.length) : "";
+                const toAdd = suggestion.substring(alreadyTyped.length);
+                
+                if (toAdd) {
+                  setInput(input + toAdd);
+                } else {
+                  // If it's a full word match, add a space
+                  if (suggestion && !input.endsWith(" ")) {
+                    setInput(input + " ");
+                  }
+                }
+              } else if (e.key === "ArrowLeft" && e.ctrlKey) {
+                // Reserved for future navigation
+              } else if (e.key === "ArrowRight" && e.ctrlKey) {
+                // Reserved for future navigation
+              } else if (e.key === "ArrowUp") {
+                // Navigate command history backwards
+                e.preventDefault();
+                if (commandHistory.length === 0) return;
+                const nextCursor = Math.max(0, historyCursor - 1);
+                setHistoryCursor(nextCursor);
+                setInput(commandHistory[nextCursor] ?? "");
+              } else if (e.key === "ArrowDown") {
+                // Navigate command history forwards
+                e.preventDefault();
+                if (commandHistory.length === 0) return;
+                const nextCursor = Math.min(commandHistory.length, historyCursor + 1);
+                setHistoryCursor(nextCursor);
+                if (nextCursor === commandHistory.length) {
+                  setInput("");
+                } else {
+                  setInput(commandHistory[nextCursor] ?? "");
+                }
+              }
+            }}
+            onContextMenu={(e) => {
+              // Paste from clipboard on right-click
+              e.preventDefault();
+              navigator.clipboard.readText().then(text => {
+                setInput(input + text);
+              }).catch(() => {
+                // Silent fail if clipboard read is denied
+              });
+            }}
+            className="bg-transparent border-none outline-none text-[var(--text-1)] w-full relative z-10"
+            placeholder={t("console.placeholder") || "Enter command..."}
+            autoComplete="off"
+            style={{ 
+              backgroundColor: "transparent",
+              position: "relative",
+            }}
+          />
+          
+          {/* Suggestion affichée en transparent derrière le curseur */}
+          {inlineSuggestion && input.trim() && (
             <div
-                className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar"
-                onClick={() => inputRef.current?.focus()}
+              className="absolute top-0 left-0 text-[var(--text-3)] pointer-events-none font-mono text-sm"
+              style={{
+                opacity: 0.4,
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+              }}
             >
-                {history.map((log, i) => (
-                    <div key={i} className={`flex flex - col ${log.type === 'error' ? 'text-red-500' : log.type === 'success' ? 'text-emerald-400' : log.type === 'command' ? 'text-[var(--text-1)] font-bold' : 'text-[var(--text-2)]'} `}>
-                        <div className="flex gap-3 leading-relaxed">
-                            {log.type === 'command' && <span className="text-emerald-500">KoreLang-@{author}:~$</span>}
-                            <span className={log.content === TERMINAL_HEADER ? "whitespace-pre text-blue-400 font-bold leading-none" : ""}>{log.content}</span>
-                        </div>
-                        {log.component && <div className="mt-2 mb-4">{log.component}</div>}
-                    </div>
-                ))}
-                <div ref={bottomRef} />
+              <span style={{ visibility: "hidden" }}>{input}</span>
+              <span>{inlineSuggestion.substring(input.trim().split(/\s+/).pop()?.length || 0)}</span>
             </div>
-            <div className="p-4 bg-[var(--bg-main)] border-t border-white/5 flex items-center gap-3">
-                <span className="text-emerald-500 font-bold">KoreLang-@{author}:~$</span>
-                <input
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') { handleCommand(input); setInput(''); }
-                    }}
-                    className="bg-transparent border-none outline-none text-[var(--text-1)] w-full"
-                    placeholder={t('console.placeholder')}
-                    autoComplete="off"
-                />
-            </div>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default ConsoleConfig;

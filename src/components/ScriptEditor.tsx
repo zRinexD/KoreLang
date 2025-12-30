@@ -1,9 +1,10 @@
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Feather, Save, Image as ImageIcon, Palette, Spline, RotateCw, RotateCcw, Square, Circle, Minus, Layers, Eye, EyeOff, Lock, Unlock, ChevronLeft, ChevronRight, Trash2, ChevronUp, ChevronDown, Plus, Search, Edit3, Type, Grid } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { Feather, Save, Image as ImageIcon, Palette, Spline, RotateCw, RotateCcw, Square, Circle, Minus, Layers, Eye, EyeOff, Lock, Unlock, ChevronLeft, ChevronRight, Trash2, ChevronUp, ChevronDown, Plus, Edit3, Type, Grid } from 'lucide-react';
 import { ScriptConfig, ScriptGlyph, ProjectConstraints, GlyphStroke } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
+import { Card, Section, ViewLayout, CompactButton, ToggleButton, Slider, SearchInput, StatBadge } from './ui';
 
 interface ScriptEditorProps {
     scriptConfig: ScriptConfig;
@@ -81,14 +82,14 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
     }, [selectedChar, scriptConfig]);
 
     const pushToUndo = useCallback(() => {
-        setUndoStack(prev => [...prev, JSON.parse(JSON.stringify(strokes))]);
+        setUndoStack(prev => [...prev, structuredClone(strokes)]);
         setRedoStack([]);
     }, [strokes]);
 
     const performUndo = useCallback(() => {
         if (undoStack.length === 0) return;
         const last = undoStack[undoStack.length - 1];
-        setRedoStack(prev => [...prev, JSON.parse(JSON.stringify(strokes))]);
+        setRedoStack(prev => [...prev, structuredClone(strokes)]);
         setStrokes(last);
         setUndoStack(prev => prev.slice(0, -1));
         setIsDirty(true);
@@ -97,7 +98,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
     const performRedo = useCallback(() => {
         if (redoStack.length === 0) return;
         const next = redoStack[redoStack.length - 1];
-        setUndoStack(prev => [...prev, JSON.parse(JSON.stringify(strokes))]);
+        setUndoStack(prev => [...prev, structuredClone(strokes)]);
         setStrokes(next);
         setRedoStack(prev => prev.slice(0, -1));
         setIsDirty(true);
@@ -269,6 +270,12 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
         return Math.min(CANVAS_SIZE, Math.max(50, maxX + 20));
     };
 
+    // Mémoiser la liste filtrée des caractères
+    const filteredChars = useMemo(() => 
+        Array.from({ length: 94 }, (_, i) => String.fromCharCode(i + 33))
+            .filter(c => !sidebarSearch || c.toLowerCase().includes(sidebarSearch.toLowerCase()))
+    , [sidebarSearch]);
+
     const saveGlyph = () => {
         const calculatedWidth = calculateGlyphWidth(strokes);
         const newGlyph: ScriptGlyph = {
@@ -304,130 +311,198 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
         setIsDirty(true);
     };
 
+    // Handlers optimisés avec useCallback
+    const handleStrokeWidthChange = useCallback((newWidth: number) => {
+        setStrokeWidth(newWidth);
+        if (activeLayerId) {
+            setStrokes(prev => prev.map(s => s.id === activeLayerId ? { ...s, strokeWidth: newWidth } : s));
+            setIsDirty(true);
+        }
+    }, [activeLayerId]);
+
+    const handleColorChange = useCallback((newColor: string) => {
+        setGlyphColor(newColor);
+        if (activeLayerId) {
+            setStrokes(prev => prev.map(s => s.id === activeLayerId ? { ...s, color: newColor } : s));
+            setIsDirty(true);
+        }
+    }, [activeLayerId]);
+
+    const toggleLayerLock = useCallback((id: string) => {
+        setStrokes(prev => prev.map(l => l.id === id ? { ...l, locked: !l.locked } : l));
+    }, []);
+
+    const toggleLayerVisibility = useCallback((id: string) => {
+        setStrokes(prev => prev.map(l => l.id === id ? { ...l, visible: !l.visible } : l));
+    }, []);
+
+    const deleteLayer = useCallback((id: string) => {
+        setStrokes(prev => prev.filter(l => l.id !== id));
+        if (activeLayerId === id) setActiveLayerId(null);
+    }, [activeLayerId]);
+
     return (
-        <div className="h-full flex flex-col bg-[var(--bg-main)] overflow-hidden text-slate-200">
-            <div className="p-4 border-b border-neutral-800 flex justify-between items-center bg-[var(--bg-panel)]/50 z-20">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-900/20 rounded"><Feather className="text-purple-500" size={20} /></div>
-                    <div>
-                        <h2 className="text-xl font-bold">Neural-Glyph Studio v4.6</h2>
-                        <p className="text-xs text-slate-500 tracking-wide uppercase font-bold">Professional Layer Engine</p>
-                    </div>
-                </div>
-                <div className="flex gap-4 items-center">
-                    <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
-                        <button
+        <ViewLayout
+            icon={Feather}
+            title={t('script.title')}
+            subtitle={t('script.engine_subtitle')}
+            headerChildren={
+                <div className="flex items-center gap-4 text-slate-200">
+                    <div className="flex gap-0 rounded h-[32px]" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                        <ToggleButton
+                            isActive={scriptConfig.spacingMode === 'proportional'}
                             onClick={toggleSpacingMode}
-                            className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${scriptConfig.spacingMode === 'proportional' ? 'bg-amber-600 text-white shadow' : 'text-slate-500 hover:text-slate-200'}`}
-                            title="Proportional Spacing (Dynamic Width)"
-                        >
-                            <Type size={14} /> Proportional
-                        </button>
-                        <button
+                            icon={<Type size={14} />}
+                            label={t('script.spacing_proportional')}
+                            title={t('script.spacing_proportional_desc')}
+                            position="first"
+                        />
+                        <ToggleButton
+                            isActive={scriptConfig.spacingMode === 'mono'}
                             onClick={toggleSpacingMode}
-                            className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${scriptConfig.spacingMode === 'mono' ? 'bg-blue-600 text-white shadow' : 'text-slate-500 hover:text-slate-200'}`}
-                            title="Monospaced (Fixed Grid)"
-                        >
-                            <Grid size={14} /> Monospace
-                        </button>
+                            icon={<Grid size={14} />}
+                            label={t('script.spacing_mono')}
+                            title={t('script.spacing_mono_desc')}
+                            position="last"
+                        />
                     </div>
 
-                    <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
-                        <button onClick={() => setDrawMode('free')} className={`p-1.5 rounded ${drawMode === 'free' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title="Freehand"><Spline size={16} /></button>
-                        <button onClick={() => setDrawMode('line')} className={`p-1.5 rounded ${drawMode === 'line' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title="Line"><Minus size={16} /></button>
-                        <button onClick={() => setDrawMode('rect')} className={`p-1.5 rounded ${drawMode === 'rect' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title="Rectangle"><Square size={16} /></button>
-                        <button onClick={() => setDrawMode('circle')} className={`p-1.5 rounded ${drawMode === 'circle' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title="Circle"><Circle size={16} /></button>
-                    </div>
-                    <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-800 rounded px-2 py-1">
-                        <button onClick={performUndo} disabled={undoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title="Undo (Ctrl+Z)"><RotateCcw size={16} /></button>
-                        <button onClick={performRedo} disabled={redoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title="Redo (Ctrl+Y)"><RotateCw size={16} /></button>
-                    </div>
-                    <button onClick={saveGlyph} className={`px-4 py-2 rounded font-bold flex items-center gap-2 shadow-lg transition-all ${isDirty ? 'bg-purple-600 hover:bg-purple-700 scale-105' : 'bg-neutral-800 text-neutral-600'}`}>
-                        <Save size={18} /> {isDirty ? 'Commit Changes' : 'Synced'}
-                    </button>
+                                        <Card className="flex gap-1 p-1">
+                                                {(
+                                                    [
+                                                        { mode: 'free', icon: <Spline size={16} />, title: t('script.tool_freehand_title') },
+                                                        { mode: 'line', icon: <Minus size={16} />, title: t('script.tool_line_title') },
+                                                        { mode: 'rect', icon: <Square size={16} />, title: t('script.tool_rect_title') },
+                                                        { mode: 'circle', icon: <Circle size={16} />, title: t('script.tool_circle_title') }
+                                                    ] as const
+                                                ).map(item => (
+                                                    <CompactButton
+                                                        key={item.mode}
+                                                        onClick={() => setDrawMode(item.mode)}
+                                                        variant={drawMode === item.mode ? 'solid' : 'ghost'}
+                                                        color="var(--accent)"
+                                                        icon={item.icon}
+                                                        label=""
+                                                        className="p-1.5"
+                                                    />
+                                                ))}
+                                        </Card>
+                                        <Card className="flex items-center gap-1 p-1">
+                                                <CompactButton
+                                                        onClick={performUndo}
+                                                        disabled={undoStack.length === 0}
+                                                        variant="ghost"
+                                                        color="var(--text-secondary)"
+                                                        icon={<RotateCcw size={16} />}
+                                                        label=""
+                                                        className="p-1.5"
+                                                />
+                                                <CompactButton
+                                                        onClick={performRedo}
+                                                        disabled={redoStack.length === 0}
+                                                        variant="ghost"
+                                                        color="var(--text-secondary)"
+                                                        icon={<RotateCw size={16} />}
+                                                        label=""
+                                                        className="p-1.5"
+                                                />
+                                        </Card>
+                    <CompactButton
+                        onClick={saveGlyph}
+                        variant="solid"
+                        color={isDirty ? 'var(--accent)' : 'var(--text-secondary)'}
+                        icon={<Save size={14} />}
+                        label={isDirty ? t('script.commit') : t('script.synced')}
+                    />
                 </div>
-            </div>
+            }
+        >
 
-            <div className="flex-1 flex overflow-hidden">
-                <div className={`border-r border-neutral-800 flex flex-col bg-[var(--bg-panel)]/50 transition-all duration-300 ${sidebarCollapsed ? 'w-12' : 'w-72'}`}>
-                    <div className="p-3 border-b border-neutral-800 flex justify-between items-center bg-neutral-950">
-                        {!sidebarCollapsed && <span className="text-xs font-bold text-neutral-500 uppercase">Symbol Map</span>}
-                        <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="p-1 hover:bg-neutral-800 rounded text-neutral-500">{sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}</button>
-                    </div>
+            <div className="flex-1 flex overflow-hidden bg-[var(--background)] text-slate-200">
+                <div className={`border-r border-neutral-800 flex flex-col bg-[var(--surface)]/50 transition-all duration-300 ${sidebarCollapsed ? 'w-12' : 'w-72'}`}>
+                    <Card className="flex items-center justify-between p-3 border-b-0 rounded-none">
+                        {!sidebarCollapsed && <span className="text-xs font-bold uppercase text-neutral-500">{t('script.symbol_map')}</span>}
+                        <CompactButton
+                            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                            variant="ghost"
+                            color="var(--text-secondary)"
+                            icon={sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+                            label=""
+                            className="p-1"
+                        />
+                    </Card>
 
                     {!sidebarCollapsed && (
-                        <div className="p-2 border-b border-neutral-800 bg-black/20 relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600 group-focus-within:text-purple-500 transition-colors" size={14} />
-                            <input
+                        <div className="p-2 border-b border-neutral-800">
+                            <SearchInput
                                 value={sidebarSearch}
-                                onChange={(e) => setSidebarSearch(e.target.value)}
-                                className="w-full bg-neutral-950 border border-neutral-800 rounded pl-8 pr-2 py-1.5 text-xs text-neutral-300 focus:border-purple-500 outline-none transition-all"
-                                placeholder="Find character..."
+                                onChange={setSidebarSearch}
+                                placeholder={t('script.find_placeholder')}
                             />
                         </div>
                     )}
 
-                    <div className="flex-1 overflow-y-auto flex flex-wrap content-start p-2 gap-1 custom-scrollbar">
-                        {Array.from({ length: 94 }, (_, i) => String.fromCharCode(i + 33))
-                            .filter(c => !sidebarSearch || c.toLowerCase().includes(sidebarSearch.toLowerCase()))
-                            .map(char => {
+                    <div className="flex flex-wrap content-start flex-1 gap-1 p-2 overflow-y-auto custom-scrollbar">
+                        {filteredChars.map(char => {
                                 const glyph = scriptConfig.glyphs.find(g => g.char === char);
                                 const hasGlyph = !!glyph;
+                                const active = selectedChar === char;
                                 return (
-                                    <button key={char} onClick={() => setSelectedChar(char)} className={`w-12 h-12 rounded flex items-center justify-center font-mono font-bold text-sm transition-all relative ${selectedChar === char ? 'bg-purple-600 text-white shadow-lg' : 'text-neutral-500 hover:bg-neutral-800'}`}>
-                                        {hasGlyph ? <div className="w-full h-full p-2 flex items-center justify-center overflow-hidden"><ConScriptText text={char} scriptConfig={scriptConfig} /></div> : char}
-                                        {hasGlyph && <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full border-2 border-neutral-950"></span>}
-                                    </button>
+                                    <CompactButton
+                                        key={char}
+                                        onClick={() => setSelectedChar(char)}
+                                        variant={active ? 'solid' : 'ghost'}
+                                        color="var(--accent)"
+                                        icon={
+                                            <div className="relative flex items-center justify-center w-full h-full font-mono text-sm font-bold">
+                                                {hasGlyph ? (
+                                                    <div className="flex items-center justify-center w-full h-full p-2 overflow-hidden">
+                                                        <ConScriptText text={char} scriptConfig={scriptConfig} />
+                                                    </div>
+                                                ) : (
+                                                    char
+                                                )}
+                                                {hasGlyph && <span className="absolute w-2 h-2 border-2 rounded-full top-1 right-1 bg-emerald-400 border-neutral-950"></span>}
+                                            </div>
+                                        }
+                                        label=""
+                                        className="w-12 h-12 p-0"
+                                    />
                                 );
                             })}
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col items-center justify-center p-8 relative bg-[var(--bg-main)] overflow-hidden" onWheel={handleCanvasWheel}>
-                    <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                        <div className="bg-neutral-900/90 backdrop-blur border border-neutral-800 rounded-lg p-3 shadow-2xl flex flex-col gap-4 items-center min-w-[50px]">
-                            <div className="flex flex-col gap-2 items-center">
+                <div className="flex-1 flex flex-col items-center justify-center p-8 relative bg-[var(--background)] overflow-hidden" onWheel={handleCanvasWheel}>
+                    <div className="absolute z-10 flex flex-col gap-2 top-4 left-4">
+                        <Card className="flex flex-col gap-3 items-center min-w-[50px] p-2">
+                            <div className="flex flex-col items-center w-full gap-2">
                                 <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-tighter">Size</span>
-                                <div className="relative h-48 w-6 bg-neutral-800 rounded-full overflow-hidden flex items-end">
-                                    <input
-                                        type="range"
-                                        min="1"
-                                        max="60"
-                                        value={strokeWidth}
-                                        onChange={(e) => {
-                                            const newWidth = Number(e.target.value);
-                                            setStrokeWidth(newWidth);
-                                            // Update layer aktif secara real-time
-                                            if (activeLayerId) {
-                                                setStrokes(prev => prev.map(s => s.id === activeLayerId ? { ...s, strokeWidth: newWidth } : s));
-                                                setIsDirty(true);
-                                            }
-                                        }}
-                                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 w-48 h-6 appearance-none cursor-pointer bg-transparent accent-purple-500 z-10"
-                                    />
-                                    <div className="absolute bottom-0 left-0 w-full bg-purple-600/20 pointer-events-none" style={{ height: `${(strokeWidth / 60) * 100}%` }}></div>
+                                <div className="relative flex items-center justify-center w-1 h-48">
+                                    <div className="absolute w-48 h-1 -rotate-90 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
+                                        <Slider
+                                            value={strokeWidth}
+                                            onChange={handleStrokeWidthChange}
+                                            min={1}
+                                            max={60}
+                                            className="w-full h-1"
+                                        />
+                                    </div>
                                 </div>
-                                <span className="text-[10px] font-mono text-purple-400 font-bold">{strokeWidth}pt</span>
+                                <span className="text-[10px] font-mono font-bold" style={{ color: 'var(--accent)' }}>{strokeWidth}pt</span>
                             </div>
-                            <label className="relative cursor-pointer p-2 hover:bg-neutral-800 rounded flex justify-center border border-neutral-700 group">
-                                <Palette size={20} style={{ color: glyphColor }} className="group-hover:scale-110 transition-transform" />
-                                <input type="color" value={glyphColor} onChange={(e) => {
-                                    const newColor = e.target.value;
-                                    setGlyphColor(newColor);
-                                    if (activeLayerId) {
-                                        setStrokes(prev => prev.map(s => s.id === activeLayerId ? { ...s, color: newColor } : s));
-                                        setIsDirty(true);
-                                    }
-                                }} className="absolute inset-0 opacity-0 cursor-pointer" />
+                            <label className="relative cursor-pointer p-1.5 hover:bg-neutral-800 rounded flex justify-center border border-neutral-700 group">
+                                <Palette size={16} style={{ color: glyphColor }} className="transition-transform group-hover:scale-110" />
+                                <input type="color" value={glyphColor} onChange={(e) => handleColorChange(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer" />
                             </label>
-                        </div>
+                        </Card>
                     </div>
 
-                    <div className="relative w-[400px] h-[400px] bg-neutral-900/40 rounded-xl border border-neutral-800/50 shadow-2xl overflow-hidden cursor-crosshair touch-none select-none transition-transform duration-200" style={{ transform: `scale(${canvasZoom})`, backgroundImage: showGrid ? 'radial-gradient(rgba(148,163,184,0.1) 1px, transparent 1px)' : 'none', backgroundSize: '20px 20px' }}>
+                    <div className="relative w-[400px] h-[400px] rounded-xl shadow-2xl overflow-hidden cursor-crosshair touch-none select-none transition-transform duration-200 border" style={{ transform: `scale(${canvasZoom})`, backgroundColor: 'rgb(from var(--background) r g b / 0.4)', borderColor: 'rgb(from var(--border) r g b / 0.5)', backgroundImage: showGrid ? 'radial-gradient(rgb(from var(--text-secondary) r g b / 0.1) 1px, transparent 1px)' : 'none', backgroundSize: '20px 20px' }}>
                         <svg ref={svgRef} viewBox={`0 0 ${CANVAS_SIZE} ${CANVAS_SIZE}`} className="w-full h-full" onMouseDown={handleStart} onMouseMove={handleMove} onMouseUp={handleEnd} onMouseLeave={handleEnd} onTouchStart={handleStart} onTouchMove={handleMove} onTouchEnd={handleEnd}>
                             {strokes.map((s) => s.visible && (
                                 s.type === 'image' ? (
-                                    <image key={s.id} href={s.imageUrl} x={s.x} y={s.y} width={s.width} height={s.height} opacity={s.opacity} className={activeLayerId === s.id ? 'outline outline-2 outline-purple-500' : ''} />
+                                    <image key={s.id} href={s.imageUrl} x={s.x} y={s.y} width={s.width} height={s.height} opacity={s.opacity} className={activeLayerId === s.id ? 'outline outline-2 outline-[var(--accent)]' : ''} />
                                 ) : (
                                     <path
                                         key={s.id}
@@ -438,7 +513,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                         strokeLinecap={s.cap}
                                         strokeLinejoin="round"
                                         strokeOpacity={s.locked ? 0.3 : 1}
-                                        style={activeLayerId === s.id ? { filter: 'drop-shadow(0px 0px 8px rgba(168, 85, 247, 0.4))' } : {}}
+                                        style={activeLayerId === s.id ? { filter: 'drop-shadow(0px 0px 8px rgb(from var(--accent) r g b / 0.4))' } : {}}
                                     />
                                 )
                             ))}
@@ -447,40 +522,48 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                             {activeShape && drawMode === 'circle' && <circle cx={activeShape.x} cy={activeShape.y} r={Math.sqrt(activeShape.w ** 2 + activeShape.h ** 2)} stroke={glyphColor} strokeWidth={strokeWidth} fill="none" strokeOpacity="0.5" />}
                         </svg>
                     </div>
-                    <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-neutral-900/80 p-2 rounded border border-neutral-800 text-[10px] font-mono text-neutral-500 backdrop-blur">
-                        POS: {Math.round(coords.x)}/{Math.round(coords.y)} | CANVAS ZOOM: {Math.round(canvasZoom * 100)}% | LAYERS: {strokes.length}
+                    <div className="absolute z-10 flex items-center gap-2 bottom-4 left-4">
+                        <StatBadge value={Math.round(coords.x)} label="X POS" />
+                        <StatBadge value={Math.round(coords.y)} label="Y POS" />
+                        <StatBadge value={`${Math.round(canvasZoom * 100)}%`} label="ZOOM" />
+                        <StatBadge value={strokes.length} label="LAYERS" />
                     </div>
                 </div>
 
-                <div className="w-80 border-l border-neutral-800 bg-[var(--bg-panel)]/50 flex flex-col">
-                    <div className="p-3 border-b border-neutral-800 flex items-center justify-between bg-neutral-950">
+                <div className="w-80 border-l border-neutral-800 bg-[var(--surface)]/50 flex flex-col">
+                    <Card className="flex items-center justify-between p-3 border-b-0 rounded-none rounded-b-none">
                         <div className="flex items-center gap-2">
-                            <Layers size={14} className="text-purple-400" />
-                            <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Neural Layer Stack</span>
+                            <Layers size={14} className="text-[var(--accent)]" />
+                            <span className="text-xs font-bold tracking-widest uppercase text-neutral-400">Neural Layer Stack</span>
                         </div>
-                        <button onClick={addNewLayer} className="p-1.5 bg-purple-600 hover:bg-purple-500 rounded text-white shadow-lg transition-all" title="Add Layer"><Plus size={14} /></button>
-                    </div>
-                    <div className="flex-1 overflow-y-auto p-2 space-y-2 custom-scrollbar">
+                        <CompactButton onClick={addNewLayer} variant="solid" color="var(--accent)" icon={<Plus size={14} />} label="" className="p-1" title={t('script.add_layer_title')} />
+                    </Card>
+                    <div className="flex-1 p-2 space-y-2 overflow-y-auto custom-scrollbar">
                         {[...strokes].reverse().map((s, revIdx) => {
                             const actualIdx = strokes.length - 1 - revIdx;
                             const isEditing = editingLayerId === s.id;
                             return (
-                                <div key={s.id} onClick={() => setActiveLayerId(s.id)} className={`group border rounded-lg p-2 flex items-center justify-between transition-all cursor-pointer ${activeLayerId === s.id ? 'bg-purple-900/20 border-purple-500/50 shadow-inner' : 'bg-neutral-950/40 border-neutral-800 hover:border-neutral-600'}`}>
-                                    <div className="flex items-center gap-3 overflow-hidden flex-1">
+                                <div key={s.id} style={{ 
+                                    outline: activeLayerId === s.id ? '2px solid rgb(from var(--accent) r g b / 0.5)' : 'none',
+                                    outlineOffset: activeLayerId === s.id ? '2px' : '0px',
+                                    transition: 'outline 150ms ease'
+                                }}>
+                                    <Card onClick={() => setActiveLayerId(s.id)} className={`p-2 flex items-center justify-between transition-all cursor-pointer`}>
+                                    <div className="flex items-center flex-1 gap-3 overflow-hidden">
                                         <div className="flex flex-col gap-0.5">
-                                            <button disabled={actualIdx === strokes.length - 1} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'up'); }} className="p-0.5 text-neutral-700 hover:text-purple-400 disabled:opacity-10"><ChevronUp size={12} /></button>
-                                            <button disabled={actualIdx === 0} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'down'); }} className="p-0.5 text-neutral-700 hover:text-purple-400 disabled:opacity-10"><ChevronDown size={12} /></button>
+                                            <button disabled={actualIdx === strokes.length - 1} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'up'); }} className="p-0.5 text-neutral-700 disabled:opacity-10" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; }}><ChevronUp size={12} /></button>
+                                            <button disabled={actualIdx === 0} onClick={(e) => { e.stopPropagation(); moveLayer(s.id, 'down'); }} className="p-0.5 text-neutral-700 disabled:opacity-10" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; }}><ChevronDown size={12} /></button>
                                         </div>
-                                        <div className="w-10 h-10 bg-black rounded border border-neutral-800 flex items-center justify-center shrink-0 overflow-hidden relative">
+                                        <div className="relative flex items-center justify-center w-10 h-10 overflow-hidden bg-black border rounded border-neutral-800 shrink-0">
                                             {s.type === 'image' ? (
-                                                <img src={s.imageUrl} className="w-full h-full object-cover opacity-50" />
+                                                <img src={s.imageUrl} className="object-cover w-full h-full opacity-50" />
                                             ) : (
                                                 <svg viewBox={`0 0 ${CANVAS_SIZE} ${CANVAS_SIZE}`} className="w-8 h-8">
                                                     <path d={s.d} stroke={s.color} strokeWidth={s.strokeWidth * 1.5} fill="none" strokeLinecap="round" />
                                                 </svg>
                                             )}
                                         </div>
-                                        <div className="flex flex-col min-w-0 flex-1">
+                                        <div className="flex flex-col flex-1 min-w-0">
                                             {isEditing ? (
                                                 <input
                                                     autoFocus
@@ -489,38 +572,37 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                                     onKeyDown={(e) => e.key === 'Enter' && setEditingLayerId(null)}
                                                     onChange={(e) => renameLayer(s.id, e.target.value)}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="bg-slate-900 border border-purple-500 rounded px-1 py-0.5 text-[10px] text-white outline-none w-full"
+                                                    className="bg-slate-900 border rounded px-1 py-0.5 text-[10px] text-white outline-none w-full" style={{ borderColor: 'var(--accent)', borderWidth: '1px' }}
                                                 />
                                             ) : (
                                                 <div className="flex items-center gap-2 group/label">
-                                                    <span className={`text-[10px] font-bold truncate ${activeLayerId === s.id ? 'text-purple-300' : 'text-neutral-400'}`}>{s.label}</span>
-                                                    <button onClick={(e) => { e.stopPropagation(); setEditingLayerId(s.id); }} className="opacity-0 group-hover/label:opacity-100 text-neutral-600 hover:text-purple-400"><Edit3 size={10} /></button>
+                                                    <span className={`text-[10px] font-bold truncate`} style={{ color: activeLayerId === s.id ? 'var(--accent)' : 'var(--text-secondary)' }}>{s.label}</span>
+                                                    <button onClick={(e) => { e.stopPropagation(); setEditingLayerId(s.id); }} className="opacity-0 group-hover/label:opacity-100 text-neutral-600" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; }}><Edit3 size={10} /></button>
                                                 </div>
                                             )}
                                             <span className="text-[8px] text-neutral-600 uppercase font-mono">{s.type} {s.type !== 'image' && `• ${s.strokeWidth}pt`}</span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-0.5 opacity-40 group-hover:opacity-100 transition-opacity">
-                                        <button onClick={(e) => { e.stopPropagation(); setStrokes(prev => prev.map(l => l.id === s.id ? { ...l, locked: !l.locked } : l)); }} className={`p-1 rounded hover:bg-neutral-800 ${s.locked ? 'text-amber-500' : 'text-neutral-600'}`}>
+                                        <button onClick={(e) => { e.stopPropagation(); toggleLayerLock(s.id); }} className={`p-1 rounded hover:bg-neutral-800 ${s.locked ? 'text-amber-500' : 'text-neutral-600'}`}>
                                             {s.locked ? <Lock size={12} /> : <Unlock size={12} />}
                                         </button>
-                                        <button onClick={(e) => { e.stopPropagation(); setStrokes(prev => prev.map(l => l.id === s.id ? { ...l, visible: !l.visible } : l)); }} className={`p-1.5 rounded hover:bg-neutral-800 ${s.visible ? 'text-neutral-500' : 'text-blue-500'}`}>{s.visible ? <Eye size={12} /> : <EyeOff size={12} />}</button>
+                                        <button onClick={(e) => { e.stopPropagation(); toggleLayerVisibility(s.id); }} className={`p-1.5 rounded hover:bg-neutral-800 ${s.visible ? 'text-neutral-500' : 'text-blue-500'}`}>{s.visible ? <Eye size={12} /> : <EyeOff size={12} />}</button>
                                         <button
                                             disabled={strokes.length <= 1}
-                                            onClick={(e) => { e.stopPropagation(); setStrokes(prev => prev.filter(l => l.id !== s.id)); if (activeLayerId === s.id) setActiveLayerId(null); }}
+                                            onClick={(e) => { e.stopPropagation(); deleteLayer(s.id); }}
                                             className={`p-1.5 rounded hover:bg-red-900/20 ${strokes.length <= 1 ? 'text-neutral-800 cursor-not-allowed' : 'text-neutral-700 hover:text-red-500'}`}
                                         >
                                             <Trash2 size={12} />
                                         </button>
                                     </div>
+                                </Card>
                                 </div>
                             );
                         })}
                     </div>
-                    <div className="p-4 bg-neutral-950 border-t border-neutral-800 space-y-2">
-                        <button onClick={() => fileInputRef.current?.click()} className="w-full py-2 bg-neutral-900 border border-neutral-800 text-neutral-400 text-[10px] font-bold uppercase hover:bg-neutral-800 hover:text-white transition-all flex items-center justify-center gap-2">
-                            <ImageIcon size={12} /> Import Reference Matrix
-                        </button>
+                    <Card className="flex flex-col gap-2 p-4 border-t-0 rounded-none rounded-t-none">
+                        <CompactButton onClick={() => fileInputRef.current?.click()} variant="ghost" color="var(--text-secondary)" icon={<ImageIcon size={12} />} label={t('script.import_reference')} className="justify-center w-full" />
                         <input type="file" ref={fileInputRef} onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
@@ -529,10 +611,10 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                                 reader.readAsDataURL(file);
                             }
                         }} accept="image/*" className="hidden" />
-                    </div>
+                    </Card>
                 </div>
             </div>
-        </div>
+        </ViewLayout>
     );
 };
 

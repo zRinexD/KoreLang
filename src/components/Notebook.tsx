@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { BookOpen, Eraser, Save, Copy, ZoomIn, ZoomOut, Type } from 'lucide-react';
+import { BookOpen, Eraser, Copy, Type } from 'lucide-react';
 import { ConScriptText } from './ConScriptRenderer';
 import { ScriptConfig } from '../types';
+import { useTranslation } from '../i18n';
+import { ViewLayout, CompactButton, StatBadge, Slider } from './ui';
 
 interface NotebookProps {
     scriptConfig?: ScriptConfig;
@@ -11,6 +13,8 @@ interface NotebookProps {
 }
 
 const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, setText }) => {
+    const { t } = useTranslation(); // Add hook
+
     const [fontSize, setFontSize] = useState(24);
     const renderContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -22,84 +26,85 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
     }, [scriptConfig?.direction, text]); // Re-run on text change to keep anchored? Maybe just direction switch is safer to avoid fighting user. Added text to keep it anchored if they are typing.
 
     return (
-        <div className="h-full flex flex-col bg-slate-950">
-            {/* Header */}
-            <div className="p-4 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-900/20 rounded">
-                        <BookOpen className="text-amber-500" size={20} />
-                    </div>
-                    <div>
-                        <h2 className="text-xl font-bold text-slate-100">Notebook Sandbox</h2>
-                        <p className="text-xs text-slate-400">Optical scaling enabled for detailed script inspection.</p>
-                    </div>
+        <ViewLayout
+            icon={BookOpen}
+            title={t('notebook.title')}
+            subtitle={t('notebook.subtitle')}
+            headerChildren={
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded" style={{ backgroundColor: 'var(--surface)' }}>
+                    <Type size={14} style={{ color: 'var(--text-secondary)' }} />
+                    <Slider
+                        value={fontSize}
+                        onChange={setFontSize}
+                        min={12}
+                        max={128}
+                        className="w-24 h-1"
+                    />
+                    <span className="text-[10px] font-mono w-8 text-center" style={{ color: 'var(--text-secondary)' }}>{fontSize}px</span>
                 </div>
-
-                <div className="flex items-center gap-4">
-                    {/* OPTICAL SCALING CONTROLS */}
-                    <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded border border-slate-800 group">
-                        <Type size={14} className="text-slate-500" />
-                        <input
-                            type="range"
-                            min="12"
-                            max="128"
-                            value={fontSize}
-                            onChange={(e) => setFontSize(Number(e.target.value))}
-                            className="w-24 h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                        />
-                        <span className="text-[10px] font-mono text-slate-500 w-8 text-center">{fontSize}px</span>
-                    </div>
-
-                    <div className="flex gap-1 bg-slate-950 p-1 rounded border border-slate-800">
-                        <button onClick={() => setText('')} className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors" title="Clear">
-                            <Eraser size={16} />
-                        </button>
-                        <button onClick={() => navigator.clipboard.writeText(text)} className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors" title="Copy Text">
-                            <Copy size={16} />
-                        </button>
-                    </div>
-                </div>
-            </div>
+            }
+        >
 
             {/* Split View */}
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex h-full w-full overflow-hidden gap-4 p-4">
                 {/* Input Area */}
-                <div className="flex-1 border-r border-slate-800 relative bg-slate-900/30">
+                <div className="flex-1 flex flex-col overflow-hidden rounded border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                    <div className="flex justify-between items-center px-4 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
+                        <h3 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>{t('notebook.input')}</h3>
+                        <div className="flex items-center gap-1">
+                            <CompactButton
+                                onClick={() => setText('')}
+                                variant="ghost"
+                                icon={<Eraser size={14} />}
+                                label=""
+                                title={t('notebook.clear')}
+                            />
+                            <CompactButton
+                                onClick={() => navigator.clipboard.writeText(text)}
+                                variant="ghost"
+                                icon={<Copy size={14} />}
+                                label=""
+                                title={t('notebook.copy')}
+                            />
+                            <StatBadge value={text.length} label="chars" />
+                        </div>
+                    </div>
                     <textarea
                         value={text}
                         onChange={(e) => setText(e.target.value)}
-                        className="w-full h-full bg-transparent p-6 text-slate-300 font-mono text-base leading-relaxed focus:outline-none resize-none placeholder-slate-800"
-                        placeholder="Start drafting your manuscript here..."
+                        className="flex-1 bg-transparent p-4 font-mono text-base leading-relaxed focus:outline-none resize-none overflow-y-auto"
+                        style={{ color: 'var(--text-secondary)', caretColor: 'var(--accent)' }}
+                        placeholder={t('notebook.placeholder')}
                         spellCheck={false}
                     />
-                    <div className="absolute bottom-4 right-4 text-[10px] font-mono text-slate-600 bg-slate-900/80 px-2 py-1 rounded">
-                        {text.length} chars
-                    </div>
                 </div>
 
                 {/* Render Area */}
                 <div
                     ref={renderContainerRef}
-                    className={`flex-1 bg-[#1a1b26] p-8 relative custom-scrollbar ${scriptConfig?.direction === 'ttb' ? 'overflow-x-auto overflow-y-hidden' : 'overflow-y-auto'}`}
+                    className={`flex-1 flex flex-col overflow-hidden rounded border custom-scrollbar ${scriptConfig?.direction === 'ttb' ? 'overflow-x-auto' : ''}`}
+                    style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)' }}
                 >
-                    <div className="absolute top-4 right-4 text-[10px] font-bold text-slate-600 uppercase tracking-widest opacity-50">
-                        Live Neural-Renderer
+                    <div className="flex justify-between items-center px-4 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
+                        <h3 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>{t('notebook.live_renderer')}</h3>
                     </div>
-                    {isScriptMode && scriptConfig ? (
-                        <div
-                            className={`text-purple-200 leading-loose break-words whitespace-pre-wrap transition-all duration-200 h-full ${scriptConfig.direction === 'rtl' ? 'text-right' : 'text-left'}`}
-                            style={{ fontSize: `${fontSize}px`, direction: scriptConfig.direction === 'rtl' ? 'rtl' : 'ltr' }}
-                        >
-                            <ConScriptText text={text} scriptConfig={scriptConfig} />
-                        </div>
-                    ) : (
-                        <div className="text-2xl text-slate-700 leading-loose break-words whitespace-pre-wrap font-serif italic opacity-30 mt-10 text-center">
-                            {text ? "Switch to Script Mode to see your glifos" : "The sandbox is empty..."}
-                        </div>
-                    )}
+                    <div className="flex-1 p-4 overflow-y-auto">
+                        {isScriptMode && scriptConfig ? (
+                            <div
+                                className="leading-loose break-words whitespace-pre-wrap transition-all duration-200"
+                                style={{ fontSize: `${fontSize}px`, direction: scriptConfig.direction === 'rtl' ? 'rtl' : 'ltr', color: 'var(--text-primary)', textAlign: scriptConfig.direction === 'rtl' ? 'right' : 'left' }}
+                            >
+                                <ConScriptText text={text} scriptConfig={scriptConfig} />
+                            </div>
+                        ) : (
+                            <div className="text-2xl leading-loose break-words whitespace-pre-wrap font-serif italic opacity-30 text-center" style={{ color: 'var(--text-secondary)' }}>
+                                {text ? t('notebook.switch_prompt') : t('notebook.empty_sandbox')}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+        </ViewLayout>
     );
 };
 

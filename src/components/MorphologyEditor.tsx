@@ -3,6 +3,7 @@ import { Plus, Trash2, Table, Tag, Box, ArrowRight, Save, Grid, BookDashed, Filt
 import { MorphologyState, MorphParadigm, MorphDimension, InflectionRule, POS_SUGGESTIONS, ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
+import { Card, Section, ViewLayout, CompactButton } from './ui';
 
 interface MorphologyEditorProps {
   data: MorphologyState;
@@ -57,7 +58,7 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
   const addRule = () => {
       if (!activeParadigm) return;
       const newRule: InflectionRule = {
-          coordinates: { name: "New Rule" }, 
+          coordinates: { name: t('morph.new_rule') }, 
           affix: "-",
           isPrefix: false,
           logic: {} // Empty logic by default
@@ -106,15 +107,20 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
       return true;
   };
 
-  return (
-    <div className="flex h-full bg-slate-900 overflow-hidden rounded-xl border border-slate-800">
+    return (
+        <ViewLayout
+            icon={Table}
+            title={t('morph.title')}
+            subtitle={t('morph.subtitle')}
+        >
+            <div className="flex flex-1 overflow-hidden rounded-xl border m-4" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
       {/* Sidebar: Paradigms */}
-      <div className="w-64 border-r border-slate-800 flex flex-col bg-slate-950">
-        <div className="p-4 border-b border-slate-800 flex justify-between items-center">
-             <h3 className="font-bold text-slate-200 flex items-center gap-2">
-                 <Table size={16} className="text-blue-500" /> {t('morph.paradigms')}
+      <div className="w-64 border-r flex flex-col" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--elevated)' }}>
+        <div className="p-4 border-b flex justify-between items-center" style={{ borderColor: 'var(--border)' }}>
+             <h3 className="font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                 <Table size={16} style={{ color: 'var(--accent)' }} /> {t('morph.paradigms')}
              </h3>
-             <button onClick={addParadigm} className="text-blue-500 hover:text-white transition-colors">
+             <button onClick={addParadigm} className="transition-colors" style={{ color: 'var(--accent)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--accent)'}   >
                  <Plus size={18} />
              </button>
         </div>
@@ -124,13 +130,16 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                     <button
                         onClick={() => setActiveParadigmId(p.id)}
                         className={`flex-1 text-left px-3 py-2 rounded-l text-sm font-medium transition-all ${
-                            activeParadigmId === p.id ? 'bg-blue-900/30 text-blue-400 border-l-2 border-blue-500' : 'text-slate-400 hover:bg-slate-900'
+                            activeParadigmId === p.id ? 'border-l-2' : ''
                         }`}
+                        style={activeParadigmId === p.id ? { backgroundColor: 'rgb(from var(--accent) r g b / 0.2)', color: 'var(--accent)', borderColor: 'var(--accent)' } : { color: 'var(--text-secondary)' }}
+                        onMouseEnter={(e) => { if (activeParadigmId !== p.id) e.currentTarget.style.backgroundColor = 'var(--surface)'; }}
+                        onMouseLeave={(e) => { if (activeParadigmId !== p.id) e.currentTarget.style.backgroundColor = ''; }}
                     >
                         {p.name}
-                        <div className="text-[10px] text-slate-600 uppercase mt-0.5">{getPosLabel(p.pos)}</div>
+                        <div className="text-[10px] uppercase mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{getPosLabel(p.pos)}</div>
                     </button>
-                     <button onClick={() => deleteParadigm(p.id)} className="px-2 bg-slate-900 hover:bg-red-900/30 hover:text-red-400 text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                     <button onClick={() => deleteParadigm(p.id)} className="px-2 hover:bg-red-900/30 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: 'var(--elevated)' }}>
                         <Trash2 size={12} />
                     </button>
                 </div>
@@ -139,24 +148,26 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
       </div>
 
       {/* Main Editor */}
-      <div className="flex-1 flex flex-col bg-slate-900">
+      <div className="flex-1 flex flex-col" style={{ backgroundColor: 'var(--surface)' }}>
           {activeParadigm ? (
               <>
                 {/* Paradigm Config Header */}
-                <div className="p-6 border-b border-slate-800 bg-slate-900">
+                <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
                     <div className="flex justify-between items-start mb-4">
                         <div className="space-y-2">
                             <input 
                                 value={activeParadigm.name}
                                 onChange={(e) => updateParadigm(activeParadigm.id, { name: e.target.value })}
-                                className="bg-transparent text-2xl font-bold text-white border-none focus:ring-0 p-0 placeholder-slate-600 w-full"
+                                className="bg-transparent text-2xl font-bold border-none focus:ring-0 p-0 w-full placeholder-slate-500"
+                                style={{ color: 'var(--text-primary)' }}
                             />
                              <div className="flex items-center gap-2">
-                                <span className="text-slate-500 text-sm">{t('grammar.applies_to')}:</span>
+                                <span className="text-sm" style={{ color: 'var(--text-tertiary)' }}>{t('grammar.applies_to')}:</span>
                                 <select
                                     value={activeParadigm.pos}
                                     onChange={(e) => updateParadigm(activeParadigm.id, { pos: e.target.value })}
-                                    className="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 outline-none w-auto min-w-[120px]"
+                                    className="rounded px-2 py-1 text-xs outline-none w-auto min-w-[120px]"
+                                    style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', border: '1px solid', color: 'var(--text-secondary)' }}
                                 >
                                     {POS_SUGGESTIONS.map(p => <option key={p} value={p}>{getPosLabel(p)}</option>)}
                                 </select>
@@ -165,19 +176,21 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                         
                         {/* Root Tester */}
                         <div className="flex flex-col gap-2 items-end">
-                            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Sandbox Preview</div>
-                            <div className="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                            <div className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>Sandbox Preview</div>
+                            <div className="flex items-center gap-2 p-2 rounded border" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
                                 <input 
                                     value={testRoot}
                                     onChange={(e) => setTestRoot(e.target.value)}
-                                    placeholder="Root"
-                                    className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-sm text-amber-400 font-mono w-24 focus:outline-none focus:border-amber-500"
+                                    placeholder={t('morph.root_placeholder')}
+                                    className="rounded px-2 py-1 text-sm font-mono w-24 focus:outline-none"
+                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--accent)', border: '1px solid', color: 'var(--accent)' }}
                                 />
-                                <span className="text-slate-600">+</span>
+                                <span style={{ color: 'var(--text-tertiary)' }}>+</span>
                                 <select 
                                     value={testPos}
                                     onChange={(e) => setTestPos(e.target.value)}
-                                    className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 outline-none w-24"
+                                    className="rounded px-2 py-1 text-xs outline-none w-24"
+                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', border: '1px solid', color: 'var(--text-secondary)' }}
                                 >
                                     {POS_SUGGESTIONS.map(p => <option key={p} value={p}>{getPosLabel(p)}</option>)}
                                 </select>
@@ -189,24 +202,28 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                 {/* Simplified Rules List */}
                 <div className="flex-1 overflow-auto p-6">
                     <div className="flex justify-between items-center mb-4">
-                        <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider">{t('grammar.morph_rules')}</h4>
-                        <button onClick={addRule} className="text-xs flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded transition-colors">
-                            <Plus size={12} /> {t('grammar.add_rule')}
-                        </button>
+                        <h4 className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>{t('grammar.morph_rules')}</h4>
+                        <CompactButton
+                            onClick={addRule}
+                            variant="solid"
+                            color="var(--accent)"
+                            icon={<Plus size={14} />}
+                            label={t('morphology.add_rule')}
+                        />
                     </div>
 
-                    <div className="bg-slate-950 border border-slate-800 rounded-lg overflow-hidden">
+                    <div className="rounded-lg overflow-hidden border" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-slate-800 bg-slate-900/50">
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-500 uppercase w-[25%]">{t('grammar.rule_name')}</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-500 uppercase w-[20%]">{t('grammar.affix_pattern')}</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-slate-500 uppercase w-[30%]">Conditions (Logic)</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold text-emerald-500 uppercase w-[20%]">{t('grammar.preview')}</th>
+                                <tr className="border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
+                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[25%]" style={{ color: 'var(--text-secondary)' }}>{t('grammar.rule_name')}</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[20%]" style={{ color: 'var(--text-secondary)' }}>{t('grammar.affix_pattern')}</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[30%]" style={{ color: 'var(--text-secondary)' }}>Conditions (Logic)</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[20%]" style={{ color: 'var(--accent)' }}>{t('grammar.preview')}</th>
                                     <th className="w-[5%]"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-800">
+                            <tbody className="divide-y" style={{ borderColor: 'var(--border)' }}>
                                 {activeParadigm.rules.map((rule, idx) => {
                                     // Calculate Preview
                                     const cleanAffix = rule.affix.replace('-', '');
@@ -218,59 +235,63 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                                     const result = isApplicable 
                                         ? (
                                             isScriptMode 
-                                            ? <ConScriptText text={resultStr} scriptConfig={scriptConfig} className="text-lg text-purple-300" />
-                                            : <span className="text-emerald-400">{resultStr}</span>
+                                            ? <span style={{ color: 'var(--accent)' }}><ConScriptText text={resultStr} scriptConfig={scriptConfig} className="text-lg" /></span>
+                                            : <span style={{ color: 'var(--accent)' }}>{resultStr}</span>
                                         )
-                                        : <span className="text-slate-600 italic line-through decoration-slate-700 decoration-2">{testRoot}</span>;
+                                        : <span style={{ color: 'var(--text-tertiary)', textDecoration: 'line-through' }}>{testRoot}</span>;
 
                                     return (
-                                        <tr key={idx} className="group hover:bg-slate-900 transition-colors">
+                                        <tr key={idx} className="hover:opacity-80 transition-opacity" style={{ backgroundColor: 'var(--elevated)' }}>
                                             <td className="p-3 align-top">
                                                 <input 
                                                     value={rule.coordinates.name || ''}
                                                     onChange={(e) => updateRule(idx, 'name', e.target.value)}
-                                                    placeholder="e.g. Plural"
-                                                    className="w-full bg-transparent border-none focus:ring-0 text-slate-200 text-sm font-medium placeholder-slate-600"
+                                                    placeholder={t('morph.plural_placeholder')}
+                                                    className="w-full bg-transparent border-none focus:ring-0 text-sm font-medium placeholder-slate-500"
+                                                    style={{ color: 'var(--text-primary)' }}
                                                 />
                                             </td>
                                             <td className="p-3 align-top">
                                                 <input 
                                                     value={rule.affix}
                                                     onChange={(e) => updateRule(idx, 'affix', e.target.value)}
-                                                    placeholder="-s or un-"
-                                                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-amber-400 font-mono text-sm focus:border-amber-500 focus:outline-none"
+                                                    placeholder={t('morph.affix_placeholder')}
+                                                    className="w-full rounded px-2 py-1 text-sm font-mono focus:outline-none"
+                                                    style={{ backgroundColor: 'var(--surface)', border: '1px solid', borderColor: 'var(--border)', color: 'var(--accent)' }}
                                                 />
                                             </td>
                                             <td className="p-3 align-top">
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex items-center gap-2">
-                                                        <Tag size={12} className="text-slate-500" />
+                                                        <Tag size={12} style={{ color: 'var(--text-tertiary)' }} />
                                                         <select 
                                                             value={rule.logic?.pos || ''}
                                                             onChange={(e) => updateRule(idx, 'logicPos', e.target.value)}
-                                                            className="bg-slate-900 border border-slate-700 rounded px-1 py-0.5 text-xs text-slate-300 w-full outline-none"
+                                                            className="rounded px-1 py-0.5 text-xs w-full outline-none"
+                                                            style={{ backgroundColor: 'var(--surface)', border: '1px solid', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
                                                         >
                                                             <option value="">Any POS</option>
                                                             {POS_SUGGESTIONS.map(p => <option key={p} value={p}>{getPosLabel(p)}</option>)}
                                                         </select>
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <Filter size={12} className="text-slate-500" />
+                                                        <Filter size={12} style={{ color: 'var(--text-tertiary)' }} />
                                                         <input 
                                                             value={rule.logic?.regex || ''}
                                                             onChange={(e) => updateRule(idx, 'logicRegex', e.target.value)}
-                                                            placeholder="Regex (e.g. [aeiou]$)"
-                                                            className="bg-slate-900 border border-slate-700 rounded px-1 py-0.5 text-xs text-blue-300 w-full outline-none font-mono placeholder-slate-600"
+                                                            placeholder={t('morph.regex_placeholder')}
+                                                            className="rounded px-1 py-0.5 text-xs w-full outline-none font-mono placeholder-slate-500"
+                                                            style={{ backgroundColor: 'var(--surface)', border: '1px solid', borderColor: 'var(--border)', color: 'var(--accent)' }}
                                                         />
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="p-3 align-top">
                                                 <span className="font-serif">{result}</span>
-                                                {!isApplicable && <div className="text-[10px] text-red-400 mt-1">Condition Mismatch</div>}
+                                                {!isApplicable && <div className="text-[10px] mt-1" style={{ color: 'var(--error)' }}>Condition Mismatch</div>}
                                             </td>
                                             <td className="p-3 text-right align-top">
-                                                <button onClick={() => removeRule(idx)} className="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button onClick={() => removeRule(idx)} className="opacity-0 hover:opacity-100 transition-opacity" style={{ color: 'var(--error)' }}>
                                                     <Trash2 size={16} />
                                                 </button>
                                             </td>
@@ -279,9 +300,9 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                                 })}
                                 {activeParadigm.rules.length === 0 && (
                                     <tr>
-                                        <td colSpan={5} className="p-8 text-center text-slate-600">
-                                            <BookDashed size={24} className="mx-auto mb-2 opacity-50" />
-                                            {t('grammar.no_morph_rules')}
+                                        <td colSpan={5} className="p-8 text-center">
+                                            <BookDashed size={24} className="mx-auto mb-2 opacity-50" style={{ color: 'var(--text-tertiary)' }} />
+                                            <span style={{ color: 'var(--text-tertiary)' }}>{t('grammar.no_morph_rules')}</span>
                                         </td>
                                     </tr>
                                 )}
@@ -289,20 +310,21 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                         </table>
                     </div>
                     
-                    <div className="mt-4 p-3 bg-blue-900/10 border border-blue-900/30 rounded text-xs text-blue-300 flex gap-2">
+                    <div className="mt-4 p-3 rounded text-xs flex gap-2 border" style={{ backgroundColor: 'rgb(from var(--accent) r g b / 0.1)', borderColor: 'rgb(from var(--accent) r g b / 0.3)', color: 'var(--accent)' }}>
                         <span className="font-bold">Pro Tip:</span> 
                         Use Regex conditions to create complex morphophonology. E.g., apply a suffix only if the root ends in a vowel (<code>[aeiou]$</code>).
                     </div>
                 </div>
               </>
           ) : (
-              <div className="flex flex-col items-center justify-center h-full text-slate-600">
+              <div className="flex flex-col items-center justify-center h-full" style={{ color: 'var(--text-tertiary)' }}>
                   <Table size={48} className="mb-4 opacity-20" />
                   <p>Select or Create a Paradigm to edit.</p>
               </div>
           )}
       </div>
-    </div>
+            </div>
+        </ViewLayout>
   );
 };
 

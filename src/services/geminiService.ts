@@ -90,7 +90,7 @@ const safeParsePhonologyConfig = (text: string): PhonologyConfig => {
         const parsed = safeParseJSON(text);
 
         // Ensure all PhonologyConfig fields are present with default values if missing or malformed
-        // Also normalize consonant/vowel array entries so each item is a Phoneme object
+        // Also normalize consonant/vowel array entries so each item is a phoneme instance (PhonemeModel)
         const normalizePhonemeArray = (arr: any[], defaultType: 'consonant' | 'vowel') => {
             if (!Array.isArray(arr)) return [] as any[];
             return arr.map(item => {
@@ -278,7 +278,7 @@ const parseFreeformPhonology = (text: string): PhonologyConfig => {
 
     const syllableStructure = sylMatch ? (sylMatch[2] || sylMatch[1]) : (text.match(/\b(CV[CV]*)\b/)?.[0] || '');
 
-    // Build phoneme entries
+    // Build phoneme entries (PhonemeModel)
     const vowelPhonemes: any[] = (vowels.length ? vowels : []).map(s => ({ symbol: s.replace(/\/.+?\//g, '').trim(), type: 'vowel' }));
     const consonantPhonemes: any[] = (consonants.length ? consonants : []).map(s => ({ symbol: s.replace(/\/.+?\//g, '').trim(), type: 'consonant' }));
 
@@ -388,8 +388,8 @@ export const generateWords = async (
         }
 
         if (phonology) {
-            const cons = phonology.consonants.map(p => p.symbol).join(', ');
-            const vows = phonology.vowels.map(p => p.symbol).join(', ');
+            const cons = phonology.consonants.map(p => p.phoneme.symbol).join(', ');
+            const vows = phonology.vowels.map(p => p.phoneme.symbol).join(', ');
             const syl = phonology.syllableStructure || 'Free';
             globalRulesPrompt += `\nPHONOLOGY RULES:
             - Consonants available: ${cons}
