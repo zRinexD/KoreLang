@@ -68,13 +68,24 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
     const rowLabel = (key: string) => t(`phonology.${isVowels ? 'height' : 'manner'}.${key}`);
 
     // Nouvelle logique : on utilise l'enum PhonemeType comme source de vérité
+    // Nouvelle logique : si l'inventaire est vide, on affiche uniquement des +
+    const hasAnyPhoneme = useMemo(() => {
+        for (let r of rows) {
+            for (let c of columns) {
+                if (getPhonemes(r, c).length > 0) return true;
+            }
+        }
+        return false;
+    }, [rows, columns, getPhonemes]);
+
     const gridData = useMemo(() => {
         return rows.map(row =>
             columns.map(col => {
-                return getPhonemesForCell(row, col, isVowels);
+                // Si aucun phonème n'a été ajouté, on force une case vide (pour le +)
+                return hasAnyPhoneme ? getPhonemes(row, col) : [];
             })
         );
-    }, [rows, columns, isVowels]);
+    }, [rows, columns, isVowels, getPhonemes, hasAnyPhoneme]);
 
     // Composant réutilisable pour une case hachurée
     const HatchCell: React.FC = () => (
@@ -142,14 +153,14 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
                                     onClick={() => setAddModal({ open: true, row, col })}
                                 >
                                     <div className="flex justify-center gap-1 items-center min-h-[20px]">
-                                        {phonemes.length > 0 ? (
+                                        {phonemes.length > 0 && hasAnyPhoneme ? (
                                             phonemes.map((p, idx) => {
                                                 // S'assurer que p est bien un PhonemeInstance
                                                 const phonemeInstance: PhonemeInstance = (p as any).phoneme && (p as any).type
                                                     ? (p as unknown as PhonemeInstance)
                                                     : {
                                                         id: (p as any).id || `${(p as any).symbol || p}-${row}-${col}`,
-                                                        phoneme: p as PhonemeType,
+                                                        phoneme: (typeof p === 'string' ? p : (p as any).phoneme) as PhonemeType,
                                                         type: isVowels ? 'vowel' : 'consonant',
                                                     };
                                                 return (
