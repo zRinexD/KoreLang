@@ -106,45 +106,64 @@
     {"id": "sd0100", "word": "aranarth", "ipa": "a.ra.ˈnarθ", "pos": "Noun", "definition": "royaume", "etymology": ""}
   ],
   "grammar": "Langue à mutations consonantiques. Ordre fréquent VSO. Pluriel par i-affection. Mutation initiale selon le contexte grammatical.",
+  "morphology": {
+    "dimensions": [],
+    "paradigms": []
+  },
   "phonology": {
     "name": "Sindarin Classique",
-    "syllableStructure": "(C)V(C)",
     "description": "Phonologie reconstruite à partir des écrits de Tolkien",
-    "phonemes": [
-      { "id": "p", "phoneme": "VoicelessBilabialPlosive", "type": "consonant", "symbol": "p", "manner": "plosive", "place": "bilabial", "features": { "voiced": false }, "examples": ["pâd", "post"] },
-      { "id": "b", "phoneme": "VoicedBilabialPlosive", "type": "consonant", "symbol": "b", "manner": "plosive", "place": "bilabial", "features": { "voiced": true }, "examples": ["barad", "bad"] },
-      { "id": "t", "phoneme": "VoicelessAlveolarPlosive", "type": "consonant", "symbol": "t", "manner": "plosive", "place": "alveolar", "features": { "voiced": false }, "examples": ["tâd", "tol"] },
-      { "id": "d", "phoneme": "VoicedAlveolarPlosive", "type": "consonant", "symbol": "d", "manner": "plosive", "place": "alveolar", "features": { "voiced": true }, "examples": ["dag", "dûn"] },
-      { "id": "k", "phoneme": "VoicelessVelarPlosive", "type": "consonant", "symbol": "k", "manner": "plosive", "place": "velar", "features": { "voiced": false }, "examples": ["car", "caen"] },
-      { "id": "g", "phoneme": "VoicedVelarPlosive", "type": "consonant", "symbol": "g", "manner": "plosive", "place": "velar", "features": { "voiced": true }, "examples": ["galadh", "galad"] },
-      { "id": "m", "phoneme": "VoicedBilabialNasal", "type": "consonant", "symbol": "m", "manner": "nasal", "place": "bilabial", "features": { "voiced": true }, "examples": ["mîr", "mal"] },
-      { "id": "n", "phoneme": "VoicedAlveolarNasal", "type": "consonant", "symbol": "n", "manner": "nasal", "place": "alveolar", "features": { "voiced": true }, "examples": ["nîn", "nar"] },
-      { "id": "ŋ", "phoneme": "VoicedVelarNasal", "type": "consonant", "symbol": "ŋ", "manner": "nasal", "place": "velar", "features": { "voiced": true }, "examples": ["ang", "ungol"] },
-      { "id": "f", "phoneme": "VoicelessLabiodentalFricative", "type": "consonant", "symbol": "f", "manner": "fricative", "place": "labiodental", "features": { "voiced": false }, "examples": ["faen", "fael"] },
-      { "id": "v", "phoneme": "VoicedLabiodentalFricative", "type": "consonant", "symbol": "v", "manner": "fricative", "place": "labiodental", "features": { "voiced": true }, "examples": ["valar"] },
-      { "id": "θ", "phoneme": "VoicelessDentalFricative", "type": "consonant", "symbol": "θ", "manner": "fricative", "place": "dental", "features": { "voiced": false }, "examples": ["rath", "math"] },
-      { "id": "ð", "phoneme": "VoicedDentalFricative", "type": "consonant", "symbol": "ð", "manner": "fricative", "place": "dental", "features": { "voiced": true }, "examples": [] },
-      { "id": "s", "phoneme": "VoicelessAlveolarFricative", "type": "consonant", "symbol": "s", "manner": "fricative", "place": "alveolar", "features": { "voiced": false }, "examples": ["sail", "sûl"] },
-      { "id": "z", "phoneme": "VoicedAlveolarFricative", "type": "consonant", "symbol": "z", "manner": "fricative", "place": "alveolar", "features": { "voiced": true }, "examples": [] },
-      { "id": "ʃ", "phoneme": "VoicelessPostalveolarFricative", "type": "consonant", "symbol": "ʃ", "manner": "fricative", "place": "postalveolar", "features": { "voiced": false }, "examples": [] },
-      { "id": "χ", "phoneme": "VoicelessVelarFricative", "type": "consonant", "symbol": "χ", "manner": "fricative", "place": "velar", "features": { "voiced": false }, "examples": ["achad", "achar"] },
-      { "id": "h", "phoneme": "VoicelessGlottalFricative", "type": "consonant", "symbol": "h", "manner": "fricative", "place": "glottal", "features": { "voiced": false }, "examples": ["hîr", "hall"] },
-      { "id": "l", "phoneme": "VoicedAlveolarLateralApproximant", "type": "consonant", "symbol": "l", "manner": "lateral-approximant", "place": "alveolar", "features": { "voiced": true }, "examples": ["lind", "lûth"] },
-      { "id": "r", "phoneme": "VoicedAlveolarApproximant", "type": "consonant", "symbol": "r", "manner": "approximant", "place": "alveolar", "features": { "voiced": true }, "examples": ["rain", "rûn"] },
-      { "id": "j", "phoneme": "VoicedPalatalApproximant", "type": "consonant", "symbol": "j", "manner": "approximant", "place": "palatal", "features": { "voiced": true }, "examples": [] },
-      { "id": "w", "phoneme": "VoicedLabioVelarApproximant", "type": "consonant", "symbol": "w", "manner": "approximant", "place": "labial-velar", "features": { "voiced": true }, "examples": [] },
-      { "id": "a", "phoneme": "OpenCentralVowel", "type": "vowel", "symbol": "a", "height": "open", "backness": "central", "features": { "rounded": false }, "examples": ["adar", "aran", "alag"] },
-      { "id": "e", "phoneme": "CloseMidFrontVowel", "type": "vowel", "symbol": "e", "height": "close-mid", "backness": "front", "features": { "rounded": false }, "examples": ["edhel", "eryn"] },
-      { "id": "i", "phoneme": "CloseFrontVowel", "type": "vowel", "symbol": "i", "height": "close", "backness": "front", "features": { "rounded": false }, "examples": ["iâ", "iel"] },
-      { "id": "o", "phoneme": "CloseMidBackVowel", "type": "vowel", "symbol": "o", "height": "close-mid", "backness": "back", "features": { "rounded": true }, "examples": ["orod", "ost"] },
-      { "id": "u", "phoneme": "CloseBackVowel", "type": "vowel", "symbol": "u", "height": "close", "backness": "back", "features": { "rounded": true }, "examples": ["ur", "ûn"] },
-      { "id": "y", "phoneme": "CloseFrontRoundedVowel", "type": "vowel", "symbol": "y", "height": "close", "backness": "front", "features": { "rounded": true }, "examples": [] }
-    ]
+    "consonants": [
+      { "id": "p-bilabial-plosive", "phoneme": "VoicelessBilabialPlosive", "type": "consonant", "manner": "plosive", "place": "bilabial" },
+      { "id": "b-bilabial-plosive", "phoneme": "VoicedBilabialPlosive", "type": "consonant", "manner": "plosive", "place": "bilabial" },
+      { "id": "t-alveolar-plosive", "phoneme": "VoicelessAlveolarPlosive", "type": "consonant", "manner": "plosive", "place": "alveolar" },
+      { "id": "d-alveolar-plosive", "phoneme": "VoicedAlveolarPlosive", "type": "consonant", "manner": "plosive", "place": "alveolar" },
+      { "id": "k-velar-plosive", "phoneme": "VoicelessVelarPlosive", "type": "consonant", "manner": "plosive", "place": "velar" },
+      { "id": "g-velar-plosive", "phoneme": "VoicedVelarPlosive", "type": "consonant", "manner": "plosive", "place": "velar" },
+      { "id": "m-bilabial-nasal", "phoneme": "VoicedBilabialNasal", "type": "consonant", "manner": "nasal", "place": "bilabial" },
+      { "id": "n-alveolar-nasal", "phoneme": "VoicedAlveolarNasal", "type": "consonant", "manner": "nasal", "place": "alveolar" },
+      { "id": "ŋ-velar-nasal", "phoneme": "VoicedVelarNasal", "type": "consonant", "manner": "nasal", "place": "velar" },
+      { "id": "f-labiodental-fricative", "phoneme": "VoicelessLabiodentalFricative", "type": "consonant", "manner": "fricative", "place": "labiodental" },
+      { "id": "v-labiodental-fricative", "phoneme": "VoicedLabiodentalFricative", "type": "consonant", "manner": "fricative", "place": "labiodental" },
+      { "id": "θ-dental-fricative", "phoneme": "VoicelessDentalFricative", "type": "consonant", "manner": "fricative", "place": "dental" },
+      { "id": "ð-dental-fricative", "phoneme": "VoicedDentalFricative", "type": "consonant", "manner": "fricative", "place": "dental" },
+      { "id": "s-alveolar-fricative", "phoneme": "VoicelessAlveolarFricative", "type": "consonant", "manner": "fricative", "place": "alveolar" },
+      { "id": "z-alveolar-fricative", "phoneme": "VoicedAlveolarFricative", "type": "consonant", "manner": "fricative", "place": "alveolar" },
+      { "id": "ʃ-postalveolar-fricative", "phoneme": "VoicelessPostalveolarFricative", "type": "consonant", "manner": "fricative", "place": "postalveolar" },
+      { "id": "χ-velar-fricative", "phoneme": "VoicelessVelarFricative", "type": "consonant", "manner": "fricative", "place": "velar" },
+      { "id": "h-glottal-fricative", "phoneme": "VoicelessGlottalFricative", "type": "consonant", "manner": "fricative", "place": "glottal" },
+      { "id": "l-alveolar-lateral-approximant", "phoneme": "AlveolarLateralApproximant", "type": "consonant", "manner": "lateral-approximant", "place": "alveolar" },
+      { "id": "r-alveolar-approximant", "phoneme": "AlveolarApproximant", "type": "consonant", "manner": "approximant", "place": "alveolar" },
+      { "id": "j-palatal-approximant", "phoneme": "PalatalApproximant", "type": "consonant", "manner": "approximant", "place": "palatal" },
+      { "id": "w-labial-velar-approximant", "phoneme": "LabialVelarApproximant", "type": "consonant", "manner": "approximant", "place": "labial-velar" }
+    ],
+    "vowels": [
+      { "id": "a-open-front", "phoneme": "OpenFrontUnroundedVowel", "type": "vowel", "height": "open", "backness": "front" },
+      { "id": "e-close-mid-front", "phoneme": "CloseMidFrontUnroundedVowel", "type": "vowel", "height": "close-mid", "backness": "front" },
+      { "id": "i-close-front", "phoneme": "CloseFrontUnroundedVowel", "type": "vowel", "height": "close", "backness": "front" },
+      { "id": "o-close-mid-back", "phoneme": "CloseMidBackRoundedVowel", "type": "vowel", "height": "close-mid", "backness": "back" },
+      { "id": "u-close-back", "phoneme": "CloseBackRoundedVowel", "type": "vowel", "height": "close", "backness": "back" },
+      { "id": "y-close-front", "phoneme": "CloseFrontRoundedVowel", "type": "vowel", "height": "close", "backness": "front" }
+    ],
+    "syllableStructure": "(C)V(C)"
   },
+  "evolutionRules": [],
   "constraints": {
     "allowDuplicates": false,
-    "caseSensitive": true
+    "caseSensitive": true,
+    "bannedSequences": [],
+    "allowedGraphemes": "",
+    "phonotacticStructure": "",
+    "mustStartWith": [],
+    "mustEndWith": []
   },
+  "scriptConfig": {
+    "name": "Standard Script",
+    "direction": "ltr",
+    "glyphs": [],
+    "spacingMode": "proportional"
+  },
+  "notebook": "",
   "notes": {
     "source": "Ambar-Eldaron v2.0 - Dictionnaire Sindarin-Français complet",
     "phoneticSystem": "IPA (International Phonetic Alphabet)",
