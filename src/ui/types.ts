@@ -2,6 +2,7 @@ export type UIModal =
   | "about"
   | "whatsNew"
   | "wizard"
+  | "newProject"
   | "settings"
   | "constraints";
 

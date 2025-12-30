@@ -10,6 +10,7 @@ import { useShortcuts } from "./hooks/useShorcuts";
 import { ProjectView } from "./components/ProjectView";
 import { Modals } from "./components/Modals";
 import { Footer } from "./components/Footer";
+import NewProjectModal from "./components/NewProjectModal";
 
 import { ViewState } from "./types";
 
@@ -58,9 +59,8 @@ const AppContent: React.FC = () => {
           new CustomEvent("console-shortcut", { detail: { action: "minimize" } })
         );
       },
-      newProject: (payload) => {
-        // Si la commande vient de la console ou d'un bouton, on utilise le handler métier
-        project.handlers.newProject(payload);
+      newProject: () => {
+        open("newProject");
       },
       openProject: project.handlers.openProject,
       loadProject: (payload) => {
@@ -178,6 +178,7 @@ const AppContent: React.FC = () => {
         </main>
       </div>
       <Modals modals={modals} settings={project.settings} updateSettings={project.updateSettings} />
+      <NewProjectModal />
       <Footer project={project} currentView={project.currentView as ViewState} />
     </div>
   );
