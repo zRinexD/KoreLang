@@ -26,7 +26,7 @@
     "help_about": "Разработано zRinexD (github.com/zRinexD)",
     "help_clear": "Очищает историю терминала.",
     "help_fix": "Исправляет слова, нарушающие правила проекта.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "Лексикон соответствует текущим фонотактическим правилам.",
     "processing_error": "Ошибка обработки ИИ команды.",
     "proposals_review": "Предложения созданы. Проверьте таблицу:",

@@ -26,7 +26,7 @@
     "help_about": "Fejlesztette: zRinexD (github.com/zRinexD)",
     "help_clear": "Konzol előzmények törlése.",
     "help_fix": "A szabálysértő szavak javítása.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "A lexikon megfelel a jelenlegi fonotaktikai szabályoknak.",
     "processing_error": "Hiba az AI parancs feldolgozása során.",
     "proposals_review": "Javaslatok elkészültek. Áttekintés:",

@@ -26,7 +26,7 @@
     "help_about": "開発：zRinexD (github.com/zRinexD)",
     "help_clear": "コンソールの履歴を消去します。",
     "help_fix": "プロジェクトの規則に違反する単語を修正します。",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "語彙目録は現在の音節構造規則に適合しています。",
     "processing_error": "AIコマンドの処理中にエラーが発生しました。",
     "proposals_review": "提案が生成されました。作業用テーブルを確認してください：",

@@ -26,7 +26,7 @@
     "help_about": "ডেভেলপ করেছেন zRinexD (github.com/zRinexD)",
     "help_clear": "টার্মিনাল হিস্টোরি মুছুন।",
     "help_fix": "প্রজেক্টের নিয়ম লঙঘন করা শব্দগুলো ঠিক করুন।",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "অভিধানটি বর্তমান ধ্বনিনির্মাণ কৌশল মেনে চলছে।",
     "processing_error": "AI কমান্ড প্রসেস করতে ত্রুটি হয়েছে।",
     "proposals_review": "প্রস্তাবনা তৈরি হয়েছে। অনুগ্রহ করে স্টেজিং টেবিল চেক করুন:",

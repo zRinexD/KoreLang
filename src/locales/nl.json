@@ -26,7 +26,7 @@
     "help_about": "Ontwikkeld door zRinexD (github.com/zRinexD)",
     "help_clear": "Consolegeschiedenis wissen.",
     "help_fix": "Repareer woorden die de projectregels schenden.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "Lexicon voldoet aan de huidige fonotactische regels.",
     "processing_error": "Fout bij verwerken AI-commando.",
     "proposals_review": "Voorstellen gegenereerd. Bekijk de tabel:",

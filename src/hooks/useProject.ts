@@ -110,7 +110,7 @@ export const useProject = () => {
   // Auto-save project to localStorage (skip on initial load)
   useEffect(() => {
     if (!isInitialLoadComplete) return;
-    
+
     const projectData: ProjectData = {
       version: "1.1",
       name: projectName,
@@ -189,23 +189,26 @@ export const useProject = () => {
       };
       input.click();
     },
-    openSettings: () => {},
+    openSettings: () => { },
     openProjectSettings: () => setCurrentView("DASHBOARD"),
     openConstraints: () => setCurrentView("DASHBOARD"),
-    openConsole: () => {},
-    zoomIn: () => {},
-    zoomOut: () => {},
-    onToggleSidebar: () => {},
-    toggleScriptMode: () => {},
-    openAbout: () => {},
+    openConsole: () => { },
+    zoomIn: () => { },
+    zoomOut: () => { },
+    onToggleSidebar: () => { },
+    toggleScriptMode: () => { },
+    openAbout: () => { },
   };
 
   const states = {
     // Project metadata
     projectName,
+    setProjectName,
     projectAuthor,
+    setProjectAuthor,
     projectDescription,
-    
+    setProjectDescription,
+
     // Project data
     lexicon,
     setLexicon,
@@ -223,7 +226,7 @@ export const useProject = () => {
     setScriptConfig,
     notebook,
     setNotebook,
-    
+
     // UI settings for ProjectView
     enableAI: settings.enableAI,
     showLineNumbers: settings.showLineNumbers,

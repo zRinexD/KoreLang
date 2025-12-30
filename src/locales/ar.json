@@ -26,7 +26,7 @@
     "help_about": "تطوير zRinexD (github.com/zRinexD)",
     "help_clear": "مسح سجل لوحة التحكم.",
     "help_fix": "إصلاح الكلمات التي تنتهك قواعد المشروع.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "المفردات مطابقة لقواعد الأصوات الحالية.",
     "processing_error": "خطأ في معالجة أمر AI.",
     "proposals_review": "تم إنشاء المقترحات. يرجى مراجعة جدول المرحلة:",
@@ -458,7 +458,7 @@
     "button": "حسناً، فهمت!",
     "f1_desc": "تمت الآن ترجمة جميع اللغات البالغ عددها 46 لغة بشكل أكثر دقة وتم تدويلها بالكامل.",
     "f1_title": "ترجمات أفضل",
-    "title": "ما الجديد في v1.1.1"
+    "title": "ما الجديد في v1.2.1"
   },
   "wizard": {
     "author": "المؤلف",

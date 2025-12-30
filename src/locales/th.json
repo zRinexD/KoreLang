@@ -26,7 +26,7 @@
     "help_about": "พัฒนาโดย zRinexD (github.com/zRinexD)",
     "help_clear": "ล้างประวัติคอนโซล",
     "help_fix": "แก้ไขคำศัพท์ที่ละเมิดกฎของโปรเจกต์",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "คลังคำศัพท์เป็นไปตามกฎโครงสร้างเสียงปัจจุบัน",
     "processing_error": "เกิดข้อผิดพลาดในการประมวลผลคำสั่ง AI",
     "proposals_review": "สร้างข้อเสนอแล้ว โปรดตรวจสอบรายการด้านล่าง:",

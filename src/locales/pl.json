@@ -26,7 +26,7 @@
     "help_about": "Stworzone przez zRinexD (github.com/zRinexD)",
     "help_clear": "Czyści historię terminala.",
     "help_fix": "Naprawia słowa naruszające zasady projektu.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "Leksykon jest zgodny z obecnymi zasadami fonotaktycznymi.",
     "processing_error": "Błąd podczas przetwarzania komendy SI.",
     "proposals_review": "Wygenerowano propozycje. Przejrzyj tabelę roboczą:",

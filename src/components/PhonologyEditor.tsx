@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Wand2, RefreshCw, Volume2, Info, LayoutGrid, EyeOff, ShieldAlert, Plus, Trash2, X, Check, Eye, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 import { generatePhonology, isApiKeySet } from '../services/geminiService';
 import { PhonologyConfig, PhonemeInstance, PhonemeModel } from '../types';
@@ -24,12 +24,12 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
 
   const { phonology, setData } = props;
   // Utility: get phonemes for a consonant cell
-  const getConsonantPhonemes = (manner: string, place: string) =>
-    phonology.consonants.filter(p => p.manner === manner && p.place === place);
+  const getConsonantPhonemes = useCallback((manner: string, place: string) =>
+    phonology.consonants.filter(p => p.manner === manner && p.place === place), [phonology.consonants]);
 
   // Utility: get phonemes for a vowel cell
-  const getVowelPhonemes = (height: string, backness: string) =>
-    phonology.vowels.filter(p => p.height === height && p.backness === backness);
+  const getVowelPhonemes = useCallback((height: string, backness: string) =>
+    phonology.vowels.filter(p => p.height === height && p.backness === backness), [phonology.vowels]);
 
   // Remove a phoneme instance
   const handleRemove = (instance: PhonemeInstance, isVowel: boolean) => {
@@ -67,8 +67,34 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
     }
   };
 
+  // Replace a phoneme instance
+  const handleReplacePhoneme = (instance: PhonemeInstance, newModel: PhonemeModel) => {
+    const isVowel = instance.type === 'vowel';
+    if (isVowel) {
+      const updatedVowels = phonology.vowels.map(p => {
+        if (p.id === instance.id) {
+          return { ...p, phoneme: newModel };
+        }
+        return p;
+      });
+      setData({ ...phonology, vowels: updatedVowels });
+    } else {
+      const updatedConsonants = phonology.consonants.map(p => {
+        if (p.id === instance.id) {
+          return { ...p, phoneme: newModel };
+        }
+        return p;
+      });
+      setData({ ...phonology, consonants: updatedConsonants });
+    }
+  };
+
   // Render a phoneme instance (symbol)
-  const renderPhoneme = (p: PhonemeInstance) => <span>{p.phoneme.symbol}</span>;
+  const renderPhoneme = (p: PhonemeInstance) => (
+    <span title={p.phoneme.name} className="cursor-help">
+      {p.phoneme.symbol}
+    </span>
+  );
 
   return (
     <div style={{ padding: 32 }}>
@@ -88,6 +114,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
             renderPhoneme={renderPhoneme}
             phonemeModels={PHONEME_MODELS.filter(p => p.category === 'consonant')}
             onAddPhoneme={handleAddPhoneme}
+            onReplacePhoneme={handleReplacePhoneme}
           />
         </div>
         <div style={{ flex: 1 }}>
@@ -104,6 +131,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
             renderPhoneme={renderPhoneme}
             phonemeModels={PHONEME_MODELS.filter(p => p.category === 'vowel')}
             onAddPhoneme={handleAddPhoneme}
+            onReplacePhoneme={handleReplacePhoneme}
           />
         </div>
       </div>

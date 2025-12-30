@@ -25,7 +25,7 @@
     "help_about": "Entwickelt von zRinexD (github.com/zRinexD)",
     "help_clear": "Löscht den Terminal-Verlauf.",
     "help_fix": "Repariert Wörter, die gegen die Projektregeln verstoßen.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "Das Lexikon erfüllt die aktuellen phonotaktischen Regeln.",
     "placeholder": "Befehl hier eingeben...",
     "processing_error": "Fehler beim Verarbeiten des KI-Befehls.",
@@ -486,7 +486,7 @@
     "button": "Verstanden!",
     "f1_desc": "Alle 46 Sprachen sind nun genauer übersetzt und vollständig internationalisiert.",
     "f1_title": "Bessere Übersetzungen",
-    "title": "Was ist neu in v1.1.1"
+    "title": "Was ist neu in v1.2.1"
   },
   "wizard": {
     "author": "Autor",

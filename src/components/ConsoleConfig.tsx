@@ -29,7 +29,7 @@ interface LogItemProps {
 
 const LogItem = memo(({ log, author, terminalHeader, onDoubleClick }: LogItemProps) => {
   const isTerminalHeader = log.content.includes("██╗") || log.content.includes("KoreLang");
-  
+
   const getTextColor = () => {
     switch (log.type) {
       case "error": return "text-red-500";
@@ -53,7 +53,7 @@ const LogItem = memo(({ log, author, terminalHeader, onDoubleClick }: LogItemPro
 
     const cats = ['lexicon', 'project', 'sb', 'console'];
     const firstWord = log.content.split(' ')[0].toLowerCase();
-    
+
     if (cats.includes(firstWord)) {
       return (
         <>
@@ -62,7 +62,7 @@ const LogItem = memo(({ log, author, terminalHeader, onDoubleClick }: LogItemPro
         </>
       );
     }
-    
+
     return log.content;
   };
 
@@ -71,12 +71,12 @@ const LogItem = memo(({ log, author, terminalHeader, onDoubleClick }: LogItemPro
       className={`flex flex-col cursor-text ${getTextColor()}`}
       onDoubleClick={onDoubleClick}
     >
-      <div className="flex gap-3 leading-relaxed">
+      <div className="flex gap-2 leading-tight">
         <span className={isTerminalHeader ? "whitespace-pre text-blue-400 font-bold leading-none" : ""} style={isTerminalHeader ? { whiteSpace: 'pre' } : {}}>
           {renderContent()}
         </span>
       </div>
-      {log.component && <div className="mt-2 mb-4">{log.component}</div>}
+      {log.component && <div className="my-0.5">{log.component}</div>}
     </div>
   );
 });
@@ -149,7 +149,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
   // Compute single inline suggestion (next completion to add)
   const computeInlineSuggestion = (raw: string): string => {
     if (!raw.trim()) return ""; // No suggestion if empty
-    
+
     const trimmed = raw.trim();
     const tokens = trimmed.split(/\s+/);
     const first = tokens[0].toLowerCase();
@@ -200,7 +200,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
     const category = COMMAND_CATEGORIES[first as keyof typeof COMMAND_CATEGORIES];
     if (category) {
       const second = tokens[1]?.toLowerCase();
-      
+
       // Suggest first matching subcommand
       if (tokens.length === 2) {
         const matches = category.commands.filter(c => c.cmd.startsWith(second || ""));
@@ -322,19 +322,19 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
     try {
       const serializable = history.map(h => ({ type: h.type, content: h.content, timestamp: h.timestamp }));
       sessionStorage.setItem("korelang.console.history", JSON.stringify(serializable));
-    } catch {}
+    } catch { }
   }, [history]);
 
   useEffect(() => {
     try {
       sessionStorage.setItem("korelang.console.input", input);
-    } catch {}
+    } catch { }
   }, [input]);
 
   useEffect(() => {
     try {
       sessionStorage.setItem("korelang.console.cmdHistory", JSON.stringify(commandHistory));
-    } catch {}
+    } catch { }
   }, [commandHistory]);
 
   const handleCommand = (cmdStr: string) => {
@@ -361,7 +361,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
     if (cmd === "help") {
       const categoryArg = args.findIndex(arg => arg === "-cat");
       const category = categoryArg !== -1 ? args[categoryArg + 1]?.toLowerCase() : null;
-      
+
       if (category && COMMAND_CATEGORIES[category as keyof typeof COMMAND_CATEGORIES]) {
         const cat = COMMAND_CATEGORIES[category as keyof typeof COMMAND_CATEGORIES];
         addLog("output", "");
@@ -414,7 +414,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
     if (cmd === "cd") {
       const section = args[0]?.toLowerCase();
       const validSections = ["dashboard", "lexicon", "phonology", "grammar", "morphology", "genevolve", "genword", "script", "notebook", "console"];
-      
+
       // Map user input to ViewState
       const viewMap: Record<string, string> = {
         "dashboard": "DASHBOARD",
@@ -492,7 +492,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
           const name = params["-n"] || "Untitled Project";
           const author = params["-user"] || "Anonymous";
           const description = params["-desc"] || "";
-          
+
           executeCommand("newProject", { name, author, description });
           log.success(`Creating project: "${name}"`);
           log.info(`Author: ${author}`);
@@ -504,13 +504,13 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
             log.info("Usage: project --open -path <file_path>");
             return;
           }
-          
+
           // Clean path: remove quotes and trim whitespace
           path = path.replace(/^["']|["']$/g, "").trim();
-          
+
           // Extract filename from path
           const fileName = path.split(/[\\\/]/).pop() || "project.json";
-          
+
           // Open file picker to browse for the file
           const input = document.createElement("input");
           input.type = "file";
@@ -536,7 +536,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
         } else if (subCmd === "--export") {
           let fileName = params["-name"];
           const path = params["-path"];
-          
+
           // Extract filename from path if provided
           if (!fileName && path) {
             // Remove quotes and trim
@@ -547,12 +547,12 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
               fileName = extracted;
             }
           }
-          
+
           // Default filename
           fileName = fileName || "project.json";
-          
+
           executeCommand("exportProject", { fileName });
-          
+
           // Add a small delay to ensure export command completes
           setTimeout(() => {
             // The export command should trigger a download via the normal download mechanism
@@ -635,7 +635,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--inputfield)] font-mono text-sm relative">
+    <div className="h-full flex flex-col bg-[var(--inputfield)] font-mono text-xs relative">
       {/* Header */}
       <div className="p-2 border-b border-white/5 bg-[var(--inputfield)] flex justify-between items-center text-xs text-[var(--text-2)]">
         <span className="flex items-center gap-2">
@@ -648,7 +648,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
       </div>
 
       {/* Terminal history */}
-      <div className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar" onClick={() => inputRef.current?.focus()}>
+      <div className="flex-1 p-4 space-y-0.5 overflow-y-auto custom-scrollbar" onClick={() => inputRef.current?.focus()}>
         {history.map((log, i) => (
           <LogItem
             key={i}
@@ -688,12 +688,12 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
                 const trimmed = input.trim();
                 const tokens = trimmed.split(/\s+/);
                 const last = tokens[tokens.length - 1];
-                
+
                 // Find how much of the suggestion is already typed
                 const suggestion = inlineSuggestion;
                 const alreadyTyped = last ? suggestion.substring(0, last.length) : "";
                 const toAdd = suggestion.substring(alreadyTyped.length);
-                
+
                 if (toAdd) {
                   setInput(input + toAdd);
                 } else {
@@ -738,12 +738,12 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
             className="bg-transparent border-none outline-none text-[var(--text-1)] w-full relative z-10"
             placeholder={t("console.placeholder") || "Enter command..."}
             autoComplete="off"
-            style={{ 
+            style={{
               backgroundColor: "transparent",
               position: "relative",
             }}
           />
-          
+
           {/* Suggestion affichée en transparent derrière le curseur */}
           {inlineSuggestion && input.trim() && (
             <div

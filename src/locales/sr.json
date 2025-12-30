@@ -26,7 +26,7 @@
     "help_about": "Развио zRinexD (github.com/zRinexD)",
     "help_clear": "Чисти историју терминала.",
     "help_fix": "Поправља речи које крше правила пројекта.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "Лексикон је у складу са тренутним фонотактичким правилима.",
     "processing_error": "Грешка приликом обраде АИ команде.",
     "proposals_review": "Предлози генерисани. Прегледајте табелу:",

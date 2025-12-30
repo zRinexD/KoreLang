@@ -26,7 +26,7 @@
     "help_about": "由 zRinexD 開發 (github.com/zRinexD)",
     "help_clear": "清除終端歷史記錄。",
     "help_fix": "修復違反專案規則的單詞。",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "詞典符合目前的音位結合規則。",
     "processing_error": "處理 AI 命令時出錯。",
     "proposals_review": "已生成提案。請檢查暫存表：",

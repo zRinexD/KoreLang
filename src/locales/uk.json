@@ -26,7 +26,7 @@
     "help_about": "Розроблено zRinexD (github.com/zRinexD)",
     "help_clear": "Очистити історію консолі.",
     "help_fix": "Виправити слова, що порушують правила проекту.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "Лексикон відповідає поточним фонотактичним правилам.",
     "processing_error": "Помилка під час обробки команди AI.",
     "proposals_review": "Пропозиції згенеровані. Будь ласка, перегляньте таблицю:",

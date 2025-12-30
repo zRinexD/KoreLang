@@ -26,7 +26,7 @@
     "help_about": "Utvecklad av zRinexD (github.com/zRinexD)",
     "help_clear": "Rensa konsolhistoriken.",
     "help_fix": "Fixa ord som bryter mot projektets regler.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "Lexikonet följer aktuella fonotaktikregler.",
     "processing_error": "Fel vid bearbetning av AI-kommando.",
     "proposals_review": "Förslag har genererats. Granska staging-tabellen:",

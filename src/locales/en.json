@@ -18,7 +18,7 @@
     "help_about": "Developed by zRinexD (github.com/zRinexD)",
     "help_clear": "Clears the terminal history.",
     "help_fix": "Repairs words that violate the project rules.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "The lexicon complies with the current phonotactic rules.",
     "placeholder": "Enter command here...",
     "processing_error": "Error processing AI command.",
@@ -336,7 +336,9 @@
     "vowel_back": "Back",
     "vowel_central": "Central",
     "vowel_front": "Front",
-    "vowels": "Vowels"
+    "vowels": "Vowels",
+    "no_phoneme_found": "No phoneme found for this cell.",
+    "add_phoneme": "Add Phoneme"
   },
   "script": {
     "add_layer": "Add Layer",
@@ -479,7 +481,7 @@
     "button": "Got it!",
     "f1_desc": "All 46 languages are now more accurately translated and fully internationalized.",
     "f1_title": "Better Translations",
-    "title": "What's new in v1.1.1"
+    "title": "What's new in v1.2.1"
   },
   "wizard": {
     "author": "Author",

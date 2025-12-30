@@ -26,7 +26,7 @@
     "help_about": "Desenvolvido por zRinexD (github.com/zRinexD)",
     "help_clear": "Limpa o histórico do terminal.",
     "help_fix": "Repara palavras que violam as regras do projeto.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "O léxico está em conformidade com as regras fonotáticas atuais.",
     "processing_error": "Erro ao processar o comando de IA.",
     "proposals_review": "Propostas geradas. Revise a tabela de preparação:",

@@ -31,7 +31,7 @@ const AppContent: React.FC = () => {
   const { open } = useUI();
   const executeCommand = useCommandExecutor();
   const registerCommands = useCommandRegister();
-  
+
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isScriptMode, setIsScriptMode] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(80);
@@ -140,7 +140,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-[var(--background)]">
-      <MenuBar 
+      <MenuBar
         newProject={() => executeCommand("newProject")}
         openProject={() => executeCommand("openProject")}
         exportProject={() => executeCommand("exportProject")}
@@ -153,15 +153,15 @@ const AppContent: React.FC = () => {
         toggleScriptMode={() => executeCommand("toggleScriptMode")}
         onToggleSidebar={() => executeCommand("toggleSidebar")}
         openAbout={() => executeCommand("openModal", { modal: "about" })}
-        settings={project.settings} 
-        isScriptMode={isScriptMode} 
+        settings={project.settings}
+        isScriptMode={isScriptMode}
       />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar ref={sidebarRef} {...project.sidebarProps} />
         <main className="flex flex-col flex-1 overflow-hidden">
           <div className="flex-1 min-h-0 overflow-hidden" style={{ zoom: zoomLevel / 100 }}>
-            <ProjectView 
-              currentView={project.currentView as ViewState} 
+            <ProjectView
+              currentView={project.currentView as ViewState}
               {...project.states}
               isScriptMode={isScriptMode}
               setCurrentView={project.setCurrentView}
@@ -173,11 +173,17 @@ const AppContent: React.FC = () => {
               loadingAI={project.settings.enableAI}
               onClose={() => setIsConsoleOpen(false)}
               currentView={project.currentView as ViewState}
+              author={project.projectAuthor}
             />
           )}
         </main>
       </div>
-      <Modals modals={modals} settings={project.settings} updateSettings={project.updateSettings} />
+      <Modals
+        modals={modals}
+        settings={project.settings}
+        updateSettings={project.updateSettings}
+        projectStates={project.states}
+      />
       <Footer project={project} currentView={project.currentView as ViewState} />
     </div>
   );

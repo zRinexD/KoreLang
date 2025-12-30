@@ -15,9 +15,10 @@ interface ModalsProps {
   };
   settings: AppSettings;
   updateSettings: (settings: AppSettings) => void;
+  projectStates: any; // Passed from App's useProject
 }
 
-export const Modals: React.FC<ModalsProps> = ({ modals, settings, updateSettings }) => {
+export const Modals: React.FC<ModalsProps> = ({ modals, settings, updateSettings, projectStates }) => {
   useEffect(() => {
     const keys: UIModal[] = ["settings", "constraints", "wizard", "about", "whatsNew"];
     const onKeyDown = (e: KeyboardEvent) => {
@@ -35,7 +36,7 @@ export const Modals: React.FC<ModalsProps> = ({ modals, settings, updateSettings
     <>
       <SettingsModal settings={settings} updateSettings={updateSettings} />
       <ConstraintsModal />
-      <ProjectWizard />
+      <ProjectWizard {...projectStates} />
       <AboutModal />
       <WhatsNewModal />
     </>

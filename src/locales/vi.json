@@ -26,7 +26,7 @@
     "help_about": "Phát triển bởi zRinexD (github.com/zRinexD)",
     "help_clear": "Xóa lịch sử bảng lệnh.",
     "help_fix": "Sửa các từ vi phạm quy tắc dự án.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "Từ vựng tuân thủ các quy tắc âm vị học hiện tại.",
     "processing_error": "Lỗi khi xử lý lệnh AI.",
     "proposals_review": "Các đề xuất đã được tạo. Vui lòng xem lại bảng chờ:",

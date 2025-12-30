@@ -26,7 +26,7 @@
     "help_about": "제작: zRinexD (github.com/zRinexD)",
     "help_clear": "터미널 기록을 지웁니다.",
     "help_fix": "프로젝트 규칙을 위반한 단어를 수정합니다.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "어휘집이 현재의 음소 배열 규칙을 준수합니다.",
     "processing_error": "AI 명령 처리 중 오류 발생.",
     "proposals_review": "제안이 생성되었습니다. 작업 테이블을 검토하세요.",

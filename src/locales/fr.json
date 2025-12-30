@@ -25,7 +25,7 @@
     "help_about": "Développé par zRinexD (github.com/zRinexD)",
     "help_clear": "Efface l'historique du terminal.",
     "help_fix": "Répare les mots qui violent les règles du projet.",
-    "kernel_version": "KoreLang kernel_v1.1.1_stable",
+    "kernel_version": "KoreLang kernel_v1.2.1_stable",
     "no_violations": "Le lexique respecte les règles phonotactiques actuelles.",
     "placeholder": "Entrez la commande ici...",
     "processing_error": "Erreur lors du traitement de la commande IA.",
@@ -486,7 +486,7 @@
     "button": "Compris !",
     "f1_desc": "Les 46 langues sont désormais traduites avec plus de précision et entièrement internationalisées.",
     "f1_title": "Meilleures traductions",
-    "title": "Nouveautés dans v1.1.1"
+    "title": "Nouveautés dans v1.2.1"
   },
   "wizard": {
     "author": "Auteur",
