@@ -1,52 +1,45 @@
 
 import React, { useMemo, useState } from 'react';
 import { X, Plus } from 'lucide-react';
+
 import { PhonemeInstance, PhonemeModel, Manner, Place, Height, Backness } from '../types';
 import { Card, Section } from './ui';
 import AddPhonemeModal from './AddPhonemeModal';
 import { useTranslation } from '../i18n';
+import * as PhonemeCategories from '../phonemeCategories';
 
 const MANNERS = Object.values(Manner);
 const PLACES = Object.values(Place);
 const HEIGHTS = Object.values(Height);
 const BACKNESS = Object.values(Backness);
 
-const impossibleVowelCells: Record<string, Record<string, boolean>> = {
-    'close':      { front: false, central: false, back: false },
-    'near-close': { front: false, central: true,  back: false },
-    'close-mid':  { front: false, central: false, back: false },
-    'mid':        { front: true,  central: false, back: true  },
-    'open-mid':   { front: false, central: false, back: false },
-    'near-open':  { front: false, central: false, back: true  },
-    'open':       { front: false, central: true,  back: false },
-};
 
-const impossibleConsonantCells: Record<string, Record<string, boolean>> = {
-    'plosive': {
-        bilabial: false, labiodental: true,  dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: false, velar: false, uvular: false, pharyngeal: true,  glottal: false
-    },
-    'nasal': {
-        bilabial: false, labiodental: false, dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: false, velar: false, uvular: false, pharyngeal: true,  glottal: true
-    },
-    'trill': {
-        bilabial: false, labiodental: true,  dental: true,  alveolar: false, postalveolar: true,  retroflex: true,  palatal: true,  velar: true,  uvular: false, pharyngeal: true,  glottal: true
-    },
-    'tap': {
-        bilabial: true,  labiodental: false, dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: true,  velar: true,  uvular: true,  pharyngeal: true,  glottal: true
-    },
-    'fricative': {
-        bilabial: false, labiodental: false, dental: false, alveolar: false, postalveolar: false, retroflex: false, palatal: false, velar: false, uvular: false, pharyngeal: false, glottal: false
-    },
-    'lateral-fricative': {
-        bilabial: true,  labiodental: true,  dental: true,  alveolar: false, postalveolar: true,  retroflex: true,  palatal: true,  velar: true,  uvular: true,  pharyngeal: true,  glottal: true
-    },
-    'approximant': {
-        bilabial: true,  labiodental: false, dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: false, velar: false, uvular: true,  pharyngeal: true,  glottal: true
-    },
-    'lateral-approximant': {
-        bilabial: true,  labiodental: true,  dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: false, velar: false, uvular: true,  pharyngeal: true,  glottal: true
-    },
-};
+// Utilitaire pour savoir si une case (row, col) est possible selon les catégories
+function isCellPossible(row: string, col: string, isVowel: boolean): boolean {
+  // On mappe les clés enum vers les clés de PhonemeCategories
+  function getCategoryKey(val: any): string {
+    if (!val) return '';
+    switch (val) {
+      case 'nasal': return 'nasals';
+      case 'plosive': return 'plosive';
+      case 'trill': return 'trill';
+      case 'tap': return 'tapOrFlap';
+      case 'fricative': return 'fricative';
+      case 'lateral-fricative': return 'lateralFricative';
+      case 'approximant': return 'approximant';
+      case 'lateral-approximant': return 'lateralApproximant';
+      default: return val;
+    }
+  }
+  const rowKey = getCategoryKey(row);
+  const colKey = getCategoryKey(col);
+  if (!rowKey || !colKey) return false;
+  const rowList = (PhonemeCategories as any)[rowKey] || [];
+  const colList = (PhonemeCategories as any)[colKey] || [];
+  // Intersection
+  const intersection = rowList.filter((p: string) => colList.includes(p));
+  return intersection.length > 0;
+}
 
 export type PhonemeGridProps = {
     title: string;
@@ -165,10 +158,8 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
                         </th>
                         {columns.map((col, colIdx) => {
                             const phonemes = gridData[rowIdx][colIdx];
-                            const isImpossible = isVowels
-                                ? impossibleVowelCells[rows[rowIdx]]?.[columns[colIdx]]
-                                : impossibleConsonantCells[rows[rowIdx]]?.[columns[colIdx]];
-                            if (isImpossible) {
+                            const impossible = !isCellPossible(rows[rowIdx], columns[colIdx], isVowels);
+                            if (impossible) {
                                 return <HatchCell key={`${row}-${col}`} />;
                             }
                             return (
