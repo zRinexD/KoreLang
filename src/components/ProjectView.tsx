@@ -18,7 +18,11 @@ import {
 
 // Les props sont désormais inutiles, tout passe par le contexte
 
-export const ProjectView: React.FC = () => {
+interface ProjectViewProps {
+  isScriptMode?: boolean;
+}
+
+export const ProjectView: React.FC<ProjectViewProps> = ({ isScriptMode = false }) => {
   const {
     currentView,
     projectName,
@@ -45,9 +49,7 @@ export const ProjectView: React.FC = () => {
   // Pour l’UI, on prend les settings du projet
   const enableAI = settings?.enableAI ?? false;
   const showLineNumbers = settings?.showLineNumbers ?? true;
-  // isScriptMode peut rester local ou venir d’un prop/context selon votre logique
-  // Ici, on le laisse à false par défaut
-  const isScriptMode = false;
+  // isScriptMode is now passed as a prop from App
   const [genWordState, setGenWordState] = useState<any>(null);
   const [draftEntry, setDraftEntry] = useState<Partial<LexiconEntry> | null>(
     null
