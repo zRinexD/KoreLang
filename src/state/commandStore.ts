@@ -11,6 +11,7 @@ export type CommandId =
   | "minimizeConsole"
   | "newProject"
   | "openProject"
+  | "openProjectWizard"
   | "loadProject"
   | "exportProject"
   | "openModal"
