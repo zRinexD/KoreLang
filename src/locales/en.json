@@ -262,6 +262,7 @@
   },
   "phonology": {
     "add_consonant": "Add Consonant",
+    "add_phoneme": "Add phoneme",
     "add_vowel": "Add Vowel",
     "ai_disabled_desc": "Please configure your API key in settings to enable AI features.",
     "ai_disabled_title": "AI Generation Disabled",
@@ -302,6 +303,7 @@
       "tap": "Tap",
       "trill": "Trill"
     },
+    "no_registered_phoneme": "No phoneme registered.",
     "place": {
       "alveolar": "Alveolar",
       "bilabial": "Bilabial",
@@ -315,6 +317,7 @@
       "uvular": "Uvular",
       "velar": "Velar"
     },
+    "registered_phonemes": "Registered phonemes",
     "replace_confirm": "This will REPLACE your current phonology. Are you sure?",
     "replace_warning": "Review the sounds above. If you apply this generation, your current phonology will be **replaced**.",
     "rounded": "Rounded",

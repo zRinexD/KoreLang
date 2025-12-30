@@ -269,6 +269,7 @@
   },
   "phonology": {
     "add_consonant": "Ajouter une consonne",
+    "add_phoneme": "",
     "add_vowel": "Ajouter une voyelle",
     "ai_disabled_desc": "Veuillez configurer votre clé API dans les paramètres pour activer les fonctionnalités IA.",
     "ai_disabled_title": "Génération IA désactivée",
@@ -309,6 +310,7 @@
       "tap": "Battue",
       "trill": "Roulée"
     },
+    "no_registered_phoneme": "",
     "place": {
       "alveolar": "Alvéolaire",
       "bilabial": "Bilabiale",
@@ -322,6 +324,7 @@
       "uvular": "Uvulaire",
       "velar": "Vélaire"
     },
+    "registered_phonemes": "",
     "replace_confirm": "Ceci REMPLACERA votre phonologie actuelle. Êtes-vous sûr ?",
     "replace_warning": "Examinez les sons ci-dessus. Si vous appliquez cette génération, votre phonologie actuelle sera **remplacée**.",
     "rounded": "Arrondi",

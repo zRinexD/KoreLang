@@ -8,9 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "localisation:update": "i18next-scanner --config i18next-scanner.config.cjs",
-    "locales:normalize": "node scripts/normalize_locales.cjs",
     "localisation:normalize": "node scripts/normalize_locales.cjs",
-    "locales:translate-missing": "node scripts/translate_missing_locales.mjs"
+    "localisation:translate-missing": "node scripts/translate_missing_locales.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
