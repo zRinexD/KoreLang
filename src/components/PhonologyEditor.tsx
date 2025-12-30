@@ -5,7 +5,7 @@ import { generatePhonology, isApiKeySet } from '../services/geminiService';
 import { PhonologyConfig, PhonemeInstance, PhonemeModel } from '../types';
 
 import { useTranslation } from '../i18n';
-import { Card, Section, ViewLayout, FormField, ActionButton, CompactButton, Modal, SearchInput, StatBadge, CIcon, VIcon } from './ui';
+import { Card, Section, ViewLayout, ViewHeader, FormField, ActionButton, CompactButton, Modal, SearchInput, StatBadge, CIcon, VIcon } from './ui';
 import PhonemeGrid from './PhonemeGrid';
 
 
@@ -60,12 +60,15 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
   const renderPhoneme = (p: PhonemeInstance) => <span>{PhonemeDataService.getIPA(p.phoneme)}</span>;
 
   return (
-    <div style={{ padding: 32 }}>
-      <h2>Phonology Inventory</h2>
-      <div style={{ display: 'flex', gap: 32 }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontWeight: 600, fontSize: 16, marginRight: 8 }}>Consonants</span>
+    <ViewLayout
+      icon={Volume2}
+      title="Phonology"
+      subtitle="Manage your phoneme inventory and grid."
+    >
+      <div className="flex gap-8 p-8">
+        <div className="flex-1">
+          <div className="flex items-center mb-2">
+            <span className="font-semibold text-base mr-2">Consonants</span>
             {/* Add button for consonants (opens modal via grid) */}
           </div>
           <PhonemeGrid
@@ -75,13 +78,12 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
             getPhonemes={getConsonantPhonemes}
             onRemove={p => handleRemove(p, false)}
             renderPhoneme={renderPhoneme}
-            // plus de phonemeModels
             onAddPhoneme={handleAddPhoneme}
           />
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontWeight: 600, fontSize: 16, marginRight: 8 }}>Vowels</span>
+        <div className="flex-1">
+          <div className="flex items-center mb-2">
+            <span className="font-semibold text-base mr-2">Vowels</span>
             {/* Add button for vowels (opens modal via grid) */}
           </div>
           <PhonemeGrid
@@ -91,12 +93,11 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
             getPhonemes={getVowelPhonemes}
             onRemove={p => handleRemove(p, true)}
             renderPhoneme={renderPhoneme}
-            // plus de phonemeModels
             onAddPhoneme={handleAddPhoneme}
           />
         </div>
       </div>
-    </div>
+    </ViewLayout>
   );
 };
 
