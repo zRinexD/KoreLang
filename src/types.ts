@@ -1,4 +1,41 @@
-// Instance d'un phonème dans l'inventaire (référence au modèle + position + diacritiques)
+// Enum centralisés pour la phonologie
+export enum Manner {
+  Plosive = 'plosive',
+  Nasal = 'nasal',
+  Trill = 'trill',
+  Tap = 'tap',
+  Fricative = 'fricative',
+  LateralFricative = 'lateral-fricative',
+  Approximant = 'approximant',
+  LateralApproximant = 'lateral-approximant',
+}
+export enum Place {
+  Bilabial = 'bilabial',
+  Labiodental = 'labiodental',
+  Dental = 'dental',
+  Alveolar = 'alveolar',
+  Postalveolar = 'postalveolar',
+  Retroflex = 'retroflex',
+  Palatal = 'palatal',
+  Velar = 'velar',
+  Uvular = 'uvular',
+  Pharyngeal = 'pharyngeal',
+  Glottal = 'glottal',
+}
+export enum Height {
+  Close = 'close',
+  NearClose = 'near-close',
+  CloseMid = 'close-mid',
+  Mid = 'mid',
+  OpenMid = 'open-mid',
+  NearOpen = 'near-open',
+  Open = 'open',
+}
+export enum Backness {
+  Front = 'front',
+  Central = 'central',
+  Back = 'back',
+}
 export interface PhonemeInstance {
   id: string; // identifiant unique de l'instance (ex: uuid ou concat symbol+cell)
   phoneme: PhonemeModel; // référence au modèle métier
@@ -12,7 +49,6 @@ export interface PhonemeInstance {
   diacritics?: string[];
   features?: Record<string, string | boolean | number>;
 }
-// Nouvelle base pour la sérialisation des phonèmes (modèle extensible)
 export interface PhonemeModel {
   /** Identifiant unique du phonème (ex: "p", "b", "a") */
   id: string;
@@ -36,7 +72,6 @@ export interface PhonemeInventory {
   /** Métadonnées optionnelles (ex: version, auteur, etc.) */
   metadata?: Record<string, any>;
 }
-// Enum de tous les phonèmes (inspiré de Phoneme.cs)
 export enum PhonemeType {
   // Consonants
   VoicedBilabialNasal = "VoicedBilabialNasal",
@@ -171,7 +206,6 @@ export enum PhonemeType {
   VoicedLabioVelarApproximant = "VoicedLabioVelarApproximant"
 }
 
-// Diacritic/Phoneme modification enums (inspirés de Diacritic.cs)
 export enum ArticulationPlaceModification {
   Dental = "Dental",
   Apical = "Apical",

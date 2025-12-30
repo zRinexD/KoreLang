@@ -3,19 +3,20 @@ import { Modal } from "./ui";
 import { useTranslation } from "../i18n";
 import { PhonemeModel } from "../types";
 
+import { Manner, Place, Height, Backness } from "../types";
 interface AddPhonemeModalProps {
   isOpen: boolean;
-  isConsonant: boolean;
   onClose: () => void;
-  place: string;
-  manner: string;
+  place: Place | Backness | null;
+  manner: Manner | Height | null;
   phonemes: PhonemeModel[];
   onSelect: (phoneme: PhonemeModel) => void;
 }
 
+import * as PhonemeCategories from "../phonemeCategories";
+
 const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   isOpen,
-  isConsonant,
   onClose,
   place,
   manner,
@@ -24,14 +25,43 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const availablePhonemes = [
-    { id: "dummy1", symbol: "d", name: "Dummy 1" },
-    { id: "dummy2", symbol: "d2", name: "Dummy 2" },
-    { id: "dummy3", symbol: "d3", name: "Dummy 3" },
-  ];
+  // Déterminer la liste à utiliser selon place/manner
+  // (exemple simple, à adapter selon structure réelle)
+  let availablePhonemes: any[] = [];
+  // Correction : map enums to correct property names in PhonemeCategories
+  function getCategoryKey(val: any): string {
+    if (!val) return '';
+    // exceptions pour les noms de catégories
+    switch (val) {
+      case 'nasal': return 'nasals';
+      case 'plosive': return 'plosive';
+      case 'trill': return 'trill';
+      case 'tap': return 'tapOrFlap';
+      case 'fricative': return 'fricative';
+      case 'lateral-fricative': return 'lateralFricative';
+      case 'approximant': return 'approximant';
+      case 'lateral-approximant': return 'lateralApproximant';
+      default: return val;
+    }
+  }
+
+  const placeKey = getCategoryKey(place);
+  const mannerKey = getCategoryKey(manner);
+  if (placeKey && (PhonemeCategories as any)[placeKey]) {
+    // consonnes par place
+    availablePhonemes = (PhonemeCategories as any)[placeKey].filter((p: string) => {
+      if (mannerKey && (PhonemeCategories as any)[mannerKey]) {
+        return (PhonemeCategories as any)[mannerKey].includes(p);
+      }
+      return true;
+    }).map((id: string) => ({ id, symbol: id, name: id }));
+  } else if (mannerKey && (PhonemeCategories as any)[mannerKey]) {
+    // voyelles par manner (hauteur)
+    availablePhonemes = (PhonemeCategories as any)[mannerKey].map((id: string) => ({ id, symbol: id, name: id }));
+  }
 
   const [selectedPhonemeId, setSelectedPhonemeId] = React.useState<string>(
-    availablePhonemes[0]?.id
+    availablePhonemes[0]?.id || ""
   );
 
   return (
@@ -43,7 +73,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
       icon={null}
     >
       <div className="mb-4 text-center text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
-        {`${place} / ${manner}`}
+        {place && manner ? `${t(`phonology.place.${place}`) || place} / ${t(`phonology.manner.${manner}`) || manner}` : ''}
       </div>
       <div className="flex flex-col items-center gap-2">
         <select

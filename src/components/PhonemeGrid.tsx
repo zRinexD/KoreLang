@@ -1,15 +1,15 @@
+
 import React, { useMemo, useState } from 'react';
 import { X, Plus } from 'lucide-react';
-import { PhonemeInstance, PhonemeModel } from '../types';
+import { PhonemeInstance, PhonemeModel, Manner, Place, Height, Backness } from '../types';
 import { Card, Section } from './ui';
 import AddPhonemeModal from './AddPhonemeModal';
 import { useTranslation } from '../i18n';
 
-
-const MANNERS = ['plosive', 'nasal', 'trill', 'tap', 'fricative', 'lateral-fricative', 'approximant', 'lateral-approximant'];
-const PLACES = ['bilabial', 'labiodental', 'dental', 'alveolar', 'postalveolar', 'retroflex', 'palatal', 'velar', 'uvular', 'pharyngeal', 'glottal'];
-const HEIGHTS = ['close', 'near-close', 'close-mid', 'mid', 'open-mid', 'near-open', 'open'];
-const BACKNESS = ['front', 'central', 'back'];
+const MANNERS = Object.values(Manner);
+const PLACES = Object.values(Place);
+const HEIGHTS = Object.values(Height);
+const BACKNESS = Object.values(Backness);
 
 const impossibleVowelCells: Record<string, Record<string, boolean>> = {
     'close':      { front: false, central: false, back: false },
@@ -66,10 +66,11 @@ export type PhonemeGridProps = {
 };
 
 
+// ...
 interface AddPhonemeModalState {
     open: boolean;
-    row: string | null;
-    col: string | null;
+    row: Manner | Height | null;
+    col: Place | Backness | null;
 }
 
 export type PhonemeGridWithModelsProps = PhonemeGridProps & {
@@ -213,15 +214,16 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
         <AddPhonemeModal
                 isOpen={addModal.open}
                 onClose={() => setAddModal({ open: false, row: null, col: null })}
-                place={addModal.col || ''}
-                manner={addModal.row || ''}
+                place={addModal.col }
+                manner={addModal.row}
                 phonemes={phonemeModels}
                 onSelect={(phoneme) => {
                     if (addModal.row && addModal.col) {
                         onAddPhoneme(phoneme, addModal.row, addModal.col, isVowels);
                     }
                     setAddModal({ open: false, row: null, col: null });
-                } } isConsonant={!isVowels}        />
+                }}
+        />
 
         {legend ? (
             <div className="mt-2 text-[10px] text-center shrink-0" style={{ color: 'var(--text-tertiary)' }}>
