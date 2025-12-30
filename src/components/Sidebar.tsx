@@ -12,6 +12,7 @@ import {
 import { ViewState } from "../types";
 import { useTranslation } from "../i18n";
 import { CompactButton } from "./ui";
+import { useCommandExecutor } from "../state/commandStore";
 
 export interface SidebarHandle {
   toggle: () => void;
@@ -25,7 +26,8 @@ interface SidebarProps {
 }
 
 const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
-  ({ currentView, setView }, ref) => {
+  ({ currentView }, ref) => {
+      const executeCommand = useCommandExecutor();
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(true);
 
@@ -55,7 +57,7 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
       return (
         <li key={item.id}>
           <button
-            onClick={() => setView(item.id as ViewState)}
+            onClick={() => executeCommand("navigateTo", { view: item.id })}
             className={`flex items-center rounded-sm text-sm font-medium transition-all w-full
               ${
                 isActive
