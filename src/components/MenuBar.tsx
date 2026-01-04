@@ -26,10 +26,6 @@ interface MenuItem {
 
 interface MenuSeparator {
   type: "separator";
-  label?: never;
-  icon?: never;
-  action?: never;
-  shortcut?: never;
 }
 
 type MenuEntry = MenuItem | MenuSeparator;
@@ -247,7 +243,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
                       return (
                         <div
                           key={idx}
-                          className="h-px mx-2 my-1"
+                          className="my-1 h-[1px] w-full"
                           style={{ backgroundColor: "var(--divider)" }}
                         />
                       );
