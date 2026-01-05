@@ -123,6 +123,13 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
         { cmd: "--search", args: "-q <term>", desc: "Search lexicon" },
       ]
     },
+    phoneme: {
+      name: "Phoneme Management",
+      commands: [
+        { cmd: "--add", args: "-b <base> -v <isVowel> [-m <manner>] [-p <place>] [-h <height>] [-bk <backness>] [-d <diacritics>] [-s <suprasegmentals>] [-tl <toneLevel>] [-tc <toneContour>]", desc: "Add phoneme to inventory" },
+        { cmd: "--delete", args: "-id <phonemeHash>", desc: "Delete a phoneme by hash" },
+      ]
+    },
     sb: {
       name: "Sidebar Control",
       commands: [
@@ -599,6 +606,53 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
           }
           executeCommand("searchLexicon", { query });
           log.success(`Searching for: "${query}"`);
+        }
+      } else if (cmd === "phoneme") {
+        if (subCmd === "--add") {
+          const basePhoneme = params["-b"];
+          const isVowelStr = params["-v"];
+          
+          if (!basePhoneme || !isVowelStr) {
+            log.error("Missing required flags: -b <base> -v <true|false>");
+            log.info("Example: phoneme --add -b VoicelessAlveolarPlosive -v false -m plosive -p alveolar -d Aspirated");
+            return;
+          }
+          
+          const isVowel = isVowelStr === "true";
+          const manner = params["-m"];
+          const place = params["-p"];
+          const height = params["-h"];
+          const backness = params["-bk"];
+          const diacritics = params["-d"] ? params["-d"].split(",") : [];
+          const suprasegmentals = params["-s"] ? params["-s"].split(",") : [];
+          const toneLevel = params["-tl"];
+          const toneContour = params["-tc"];
+          
+          // Build payload
+          const payload = {
+            basePhoneme,
+            isVowel,
+            manner,
+            place,
+            height,
+            backness,
+            diacritics,
+            suprasegmentals,
+            toneLevel,
+            toneContour,
+            flags: 0n, // Will be computed by modal/handler
+          };
+          
+          executeCommand("addPhoneme", payload);
+          log.success(`Phoneme add request sent: ${basePhoneme}`);
+        } else if (subCmd === "--delete") {
+          const phonemeHash = params["-id"];
+          if (!phonemeHash) {
+            log.error("Specify phoneme hash: phoneme --delete -id <phonemeHash>");
+            return;
+          }
+          executeCommand("deletePhoneme", { phonemeHash });
+          log.success(`Phoneme deletion request for: ${phonemeHash}`);
         }
       } else if (cmd === "sb") {
         if (subCmd === "--t") {

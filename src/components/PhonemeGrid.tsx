@@ -323,6 +323,7 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
               PhonemeDataService.getIPA(p.phoneme) ||
               p.phoneme,
             name: p.phoneme,
+            instance: p,
           }));
         })()}
         onAddPhoneme={(instance, row, col, isVowel) => onAddPhoneme(instance, row, col, isVowel)}

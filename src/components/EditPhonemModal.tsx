@@ -18,6 +18,11 @@ interface EditPhonemModalProps {
   isOpen: boolean;
   onClose: () => void;
   availablePhonemes: PhonemeType[];
+  editingId?: string;
+  initialState?: {
+    basePhoneme: PhonemeType;
+    flags: bigint;
+  };
   onAdd?: (payload: {
     id: string;
     phoneme: string;
@@ -29,6 +34,17 @@ interface EditPhonemModalProps {
     toneLevel: string | null;
     toneContour: string | null;
   }) => void;
+  onUpdate?: (payload: {
+    id: string;
+    phoneme: string;
+    symbol: string;
+    name: string;
+    flags: bigint;
+    diacritics: string[];
+    suprasegmentals: string[];
+    toneLevel: string | null;
+    toneContour: string | null;
+  }, originalId: string) => void;
 }
 
 type TabKey = "diacritics" | "suprasegmentals" | "tone" | "allophones";
@@ -201,7 +217,7 @@ const OptionButton: React.FC<{
   );
 };
 
-const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, availablePhonemes, onAdd }) => {
+const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, availablePhonemes, onAdd, onUpdate, editingId, initialState }) => {
   const [activeHeader, setActiveHeader] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("diacritics");
   
@@ -531,6 +547,95 @@ const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, avai
     onAdd(buildComposite());
   };
 
+  const handleUpdate = () => {
+    if (!activeHeader || !onUpdate || !editingId) return;
+    onUpdate(buildComposite(), editingId);
+  };
+
+  // Initialize state from initialState when editing
+  useEffect(() => {
+    if (!isOpen || !initialState) return;
+
+    setActiveHeader(initialState.basePhoneme);
+
+    // Build reverse mapping from flags to values
+    const flagToValue = new Map<bigint, string>();
+    Object.entries(valueToFlag).forEach(([val, flag]) => {
+      flagToValue.set(BigInt(flag), val);
+    });
+
+    const nextDiacritics: Record<string, string | null> = {
+      articulationPlace: null,
+      secondaryArticulation: null,
+      roundness: null,
+      tonguePosition: null,
+      phonation: null,
+      tongueHeight: null,
+      tongueRoot: null,
+      release: null,
+      syllabicity: null,
+    };
+    const nextCombDiacritics = new Set<string>();
+    const nextSupra: Record<string, string | null> = {
+      length: null,
+      stress: null,
+      breaks: null,
+    };
+    const nextCombSupra = new Set<string>();
+    let nextToneLevel: string | null = null;
+    let nextToneContour: string | null = null;
+
+    // Map diacritic categories
+    const diacriticCategoryByValue: Record<string, string> = {};
+    Object.entries(diacriticCategories).forEach(([catKey, cat]) => {
+      cat.options.forEach((opt) => {
+        diacriticCategoryByValue[opt.value] = catKey;
+      });
+    });
+
+    // Map suprasegmental categories
+    const suprasegmentalCategoryByValue: Record<string, string> = {};
+    Object.entries(suprasegmentalCategories).forEach(([catKey, cat]) => {
+      cat.options.forEach((opt) => {
+        suprasegmentalCategoryByValue[opt.value] = catKey;
+      });
+    });
+
+    const combinableDiacriticValues = new Set(combinableDiacritics.map((o) => o.value));
+    const combinableSuprasegmentalValues = new Set(combinableSuprasegmentals.map((o) => o.value));
+    const toneLevelValues = new Set(toneLevelOptions.map((o) => o.value));
+    const toneContourValues = new Set(toneContourOptions.map((o) => o.value));
+
+    // Decode flags into selections
+    Object.values(valueToFlag).forEach((flagVal) => {
+      const flag = BigInt(flagVal);
+      if ((initialState.flags & flag) !== flag) return;
+      const value = flagToValue.get(flag);
+      if (!value) return;
+
+      if (diacriticCategoryByValue[value]) {
+        nextDiacritics[diacriticCategoryByValue[value]] = value;
+      } else if (combinableDiacriticValues.has(value)) {
+        nextCombDiacritics.add(value);
+      } else if (suprasegmentalCategoryByValue[value]) {
+        nextSupra[suprasegmentalCategoryByValue[value]] = value;
+      } else if (combinableSuprasegmentalValues.has(value)) {
+        nextCombSupra.add(value);
+      } else if (toneLevelValues.has(value) && !nextToneLevel) {
+        nextToneLevel = value;
+      } else if (toneContourValues.has(value) && !nextToneContour) {
+        nextToneContour = value;
+      }
+    });
+
+    setDiacriticSelections(nextDiacritics);
+    setCombinableDiacriticsSet(nextCombDiacritics);
+    setSuprasegmentalSelections(nextSupra);
+    setCombinableSuprasegmentalsSet(nextCombSupra);
+    setToneLevel(nextToneLevel);
+    setToneContour(nextToneContour);
+  }, [isOpen, initialState]);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -550,7 +655,15 @@ const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, avai
             onClick={handleAddAsNew}
             disabled={!activeHeader}
           />
-          <CompactButton variant="ghost" icon={<span>✕</span>} label="Close" onClick={onClose} />
+          {onUpdate && editingId && (
+            <CompactButton
+              variant="solid"
+              icon={<span>⟳</span>}
+              label="Update"
+              onClick={handleUpdate}
+              disabled={!activeHeader}
+            />
+          )}
         </div>
       }
     >
@@ -559,7 +672,6 @@ const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, avai
           <SelectPhonemeButton
             symbol={displayIPA}
             name={computePhonemeName()}
-            onIconClick={() => {}}
             hideMoreButton
           />
         </div>

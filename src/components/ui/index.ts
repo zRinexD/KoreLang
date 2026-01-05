@@ -15,3 +15,5 @@ export { SearchInput } from './SearchInput';
 export { Slider } from './Slider';
 export { MonoToggle } from './MonoToggle';
 export { CIcon, VIcon } from './LetterIcons';
+export { ContextMenu } from './ContextMenu';
+export type { ContextMenuItem } from './ContextMenu';

@@ -1,11 +1,12 @@
 import { PhonemeDataService } from "../services/PhonemeDataService";
 import React from "react";
 import { Check, X, Trash, Volume2 } from "lucide-react";
-import { PhonologyConfig, PhonemeInstance, PhonemeModel } from "../types";
+import { PhonologyConfig, PhonemeInstance, PhonemeModel, PhonemeType } from "../types";
 
 import { ViewLayout, StatBadge, CIcon, VIcon, CompactButton, Modal } from "./ui";
 import PhonemeGrid from "./PhonemeGrid";
 import { useTranslation } from "../i18n";
+import { useCommandRegister } from "../state/commandStore";
 
 interface PhonologyEditorProps {
   phonology: PhonologyConfig;
@@ -17,6 +18,97 @@ interface PhonologyEditorProps {
 const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
   const { phonology, setData } = props;
   const [showClearModal, setShowClearModal] = React.useState(false);
+  const register = useCommandRegister();
+  const { t } = useTranslation();
+
+  // Register phoneme commands
+  React.useEffect(() => {
+    register({
+      addPhoneme: (payload) => {
+        if (!payload) return;
+        const {
+          basePhoneme,
+          flags,
+          isVowel,
+          manner,
+          place,
+          height,
+          backness,
+          diacritics = [],
+          suprasegmentals = [],
+          toneLevel,
+          toneContour,
+        } = payload;
+
+        if (!basePhoneme) return;
+
+        // Compute ID from base + flags
+        const flagsBigInt = typeof flags === "string" ? BigInt(flags) : flags || 0n;
+        const combined = `${basePhoneme}|${flagsBigInt.toString()}`;
+        const encode = (input: string) => {
+          try {
+            return btoa(unescape(encodeURIComponent(input)));
+          } catch {
+            return Array.from(input)
+              .map((c) => c.charCodeAt(0).toString(16).padStart(2, "0"))
+              .join("");
+          }
+        };
+        const hash = encode(combined);
+        const id = `${basePhoneme}#${hash}`;
+
+        const displaySymbol = PhonemeDataService.buildPhonemSymbol(id) || "";
+
+        const instance: PhonemeInstance = {
+          id,
+          phoneme: basePhoneme as PhonemeType,
+          type: isVowel ? "vowel" : "consonant",
+          manner: !isVowel ? manner : undefined,
+          place: !isVowel ? place : undefined,
+          height: isVowel ? height : undefined,
+          backness: isVowel ? backness : undefined,
+          diacritics: [...diacritics, ...suprasegmentals].concat(
+            [toneLevel, toneContour].filter(Boolean) as string[]
+          ),
+          features: {
+            displaySymbol,
+            flags: flagsBigInt.toString(),
+          },
+        };
+
+        handleAddPhoneme(
+          instance,
+          (isVowel ? height : manner) || "",
+          (isVowel ? backness : place) || "",
+          !!isVowel
+        );
+
+        // Log to console (output will be visible in console view)
+        console.log(`Phoneme added: ${displaySymbol || basePhoneme} (${id})`);
+      },
+      deletePhoneme: (payload) => {
+        if (!payload?.phonemeHash) return;
+        const hash = payload.phonemeHash;
+        
+        // Find phoneme by hash in consonants or vowels
+        const consonantMatch = phonology.consonants.find((p) => p.id === hash);
+        const vowelMatch = phonology.vowels.find((p) => p.id === hash);
+        
+        if (consonantMatch) {
+          handleRemove(consonantMatch, false);
+          const symbol = PhonemeDataService.buildPhonemSymbol(hash) || hash;
+          console.log(`Phoneme deleted: ${symbol}`);
+        } else if (vowelMatch) {
+          handleRemove(vowelMatch, true);
+          const symbol = PhonemeDataService.buildPhonemSymbol(hash) || hash;
+          console.log(`Phoneme deleted: ${symbol}`);
+        } else {
+          console.error(`Phoneme not found: ${hash}`);
+        }
+      },
+    });
+  }, [register, phonology]);
+
   const getConsonantPhonemes = React.useCallback(
     (manner: string, place: string) =>
       phonology.consonants.filter(
@@ -69,13 +161,13 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
   // Render a phoneme instance (symbol)
   const renderPhoneme = (p: PhonemeInstance) => {
     const symbol =
+      p.features?.displaySymbol ||
       PhonemeDataService.buildPhonemSymbol(p.id) ||
       PhonemeDataService.getIPA(p.phoneme) ||
       (typeof p.phoneme === "string" ? p.phoneme : "");
     return <span>{symbol}</span>;
   };
 
-  const { t } =useTranslation();
   return (
     <ViewLayout
       icon={Volume2}

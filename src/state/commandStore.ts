@@ -26,7 +26,10 @@ export type CommandId =
   | "navigateTo"
   | "addLexiconEntry"
   | "deleteLexiconEntry"
-  | "searchLexicon";
+  | "searchLexicon"
+  | "addPhoneme"
+  | "updatePhoneme"
+  | "deletePhoneme";
 
 export type CommandPayload = {
   modal?: UIModal | string;
@@ -52,6 +55,20 @@ export type CommandPayload = {
   fileName?: string;
   path?: string;
   data?: any;
+  // Phoneme-related
+  phonemeId?: string;
+  phonemeHash?: string;
+  basePhoneme?: string;
+  flags?: bigint | string;
+  isVowel?: boolean;
+  manner?: string;
+  place?: string;
+  height?: string;
+  backness?: string;
+  diacritics?: string[];
+  suprasegmentals?: string[];
+  toneLevel?: string | null;
+  toneContour?: string | null;
 };
 
 export type CommandHandlers = Partial<

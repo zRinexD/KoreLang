@@ -15,7 +15,12 @@ interface AddPhonemeModalProps {
   place: Place | Backness | null;
   manner: Manner | Height | null;
   onRemove?: (phonemeId: string) => void;
-  existingPhonemes?: { id: string; symbol: string; name: string }[];
+  existingPhonemes?: {
+    id: string;
+    symbol: string;
+    name: string;
+    instance?: PhonemeInstance;
+  }[];
   onAddPhoneme: (
     phoneme: PhonemeInstance,
     row: string,
@@ -34,21 +39,41 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   manner,
   existingPhonemes = [],
   onAddPhoneme,
+  onRemove,
 }) => {
   const { t } = useTranslation();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [pendingPhonemes, setPendingPhonemes] = useState<PhonemeType[]>([]);
+  const [editingPhoneme, setEditingPhoneme] = useState<{
+    id: string;
+    instance: PhonemeInstance;
+  } | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
       setIsEditOpen(false);
       setPendingPhonemes([]);
+      setEditingPhoneme(null);
     }
   }, [isOpen]);
 
-  const onOpenEditPhonemeModal = (phonemeId: string) => {};
+  const onOpenEditPhonemeModal = (phonemeId: string) => {
+    const existing = existingPhonemes.find((p) => p.id === phonemeId);
+    if (!existing?.instance) return;
+    
+    setEditingPhoneme({ id: phonemeId, instance: existing.instance });
+    setPendingPhonemes([existing.instance.phoneme as PhonemeType]);
+    setIsEditOpen(true);
+  };
+
+  const onDeletePhoneme = (phonemeId: string) => {
+    if (onRemove) {
+      onRemove(phonemeId);
+    }
+  };
 
   const onOpenEditPhoneme = (availablePhonemes: PhonemeType[]) => {
+    setEditingPhoneme(null);
     setPendingPhonemes(availablePhonemes);
     setIsEditOpen(true);
   };
@@ -97,7 +122,8 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
               key={ph.id}
               symbol={ph.symbol}
               name={t(`phonology.${ph.name}`)}
-              onIconClick={() => onOpenEditPhonemeModal(ph.id)}
+              onEdit={() => onOpenEditPhonemeModal(ph.id)}
+              onDelete={() => onDeletePhoneme(ph.id)}
             />
           ))
         ) : (
@@ -108,8 +134,24 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
       </div>
       <EditPhonemModal
         isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
+        onClose={() => {
+          setIsEditOpen(false);
+          setEditingPhoneme(null);
+        }}
         availablePhonemes={pendingPhonemes}
+        editingId={editingPhoneme?.id}
+        initialState={(() => {
+          if (!editingPhoneme) return undefined;
+          const inst = editingPhoneme.instance;
+          const parsed = PhonemeDataService.parsePhonemeHash(inst.id);
+          const flagsFromFeatures = inst.features?.flags
+            ? BigInt(inst.features.flags as string)
+            : null;
+          return {
+            basePhoneme: (parsed?.phoneme || inst.phoneme) as PhonemeType,
+            flags: flagsFromFeatures ?? parsed?.flags ?? 0n,
+          };
+        })()}
         onAdd={(payload) => {
           if (!place || !manner) return;
           const isVowel =
@@ -117,7 +159,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
             Object.values(Height).includes(manner as Height);
 
           const displaySymbol =
-            PhonemeDataService.buildPhonemSymbol(payload.id) || payload.symbol;
+            payload.symbol || PhonemeDataService.buildPhonemSymbol(payload.id) || payload.phoneme;
 
           const instance: PhonemeInstance = {
             id: payload.id,
@@ -138,6 +180,43 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
 
           onAddPhoneme(instance, manner as string, place as string, isVowel);
           setIsEditOpen(false);
+          onClose();
+        }}
+        onUpdate={(payload, originalId) => {
+          if (!place || !manner || !editingPhoneme) return;
+          const isVowel =
+            typeof manner === "string" &&
+            Object.values(Height).includes(manner as Height);
+
+          const displaySymbol =
+            payload.symbol || PhonemeDataService.buildPhonemSymbol(payload.id) || payload.phoneme;
+
+          const instance: PhonemeInstance = {
+            id: payload.id,
+            phoneme: payload.phoneme as PhonemeType,
+            type: isVowel ? "vowel" : "consonant",
+            manner: !isVowel ? (manner as string) : undefined,
+            place: !isVowel ? (place as string) : undefined,
+            height: isVowel ? (manner as string) : undefined,
+            backness: isVowel ? (place as string) : undefined,
+            diacritics: [...payload.diacritics, ...payload.suprasegmentals].concat(
+              [payload.toneLevel, payload.toneContour].filter(Boolean) as string[]
+            ),
+            features: {
+              displaySymbol,
+              flags: payload.flags.toString(),
+            },
+          };
+
+          // Delete old instance
+          if (onRemove && originalId) {
+            onRemove(originalId);
+          }
+
+          // Add updated instance
+          onAddPhoneme(instance, manner as string, place as string, isVowel);
+          setIsEditOpen(false);
+          setEditingPhoneme(null);
           onClose();
         }}
       />
