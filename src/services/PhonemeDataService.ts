@@ -1,4 +1,4 @@
-import { PhonemeType } from "../types";
+import { PhonemeType, PhoneticModification } from "../types";
 
 export class PhonemeDataService {
   // Métadonnées pour chaque phonème (catégorie, manner, place, height, backness, etc.)
@@ -458,5 +458,200 @@ export class PhonemeDataService {
 
   static getRarity(phoneme: PhonemeType): number | undefined {
     return this.phonemeToRarity[phoneme];
+  }
+
+  private static readonly flagToSymbol = new Map<bigint, string>([
+    [PhoneticModification.Dental, "̪"],
+    [PhoneticModification.Apical, "̺"],
+    [PhoneticModification.Laminal, "̻"],
+    [PhoneticModification.Linguolabial, "̼"],
+    [PhoneticModification.Labialized, "ʷ"],
+    [PhoneticModification.Palatalized, "ʲ"],
+    [PhoneticModification.Velarized, "ˠ"],
+    [PhoneticModification.Pharyngealized, "ˤ"],
+    [PhoneticModification.Glottalized, "ˀ"],
+    [PhoneticModification.MoreRounded, "̹"],
+    [PhoneticModification.LessRounded, "̜"],
+    [PhoneticModification.Advanced, "̟"],
+    [PhoneticModification.Retracted, "̠"],
+    [PhoneticModification.Centralized, "̈"],
+    [PhoneticModification.MidCentralized, "̽"],
+    [PhoneticModification.Voiceless, "̥"],
+    [PhoneticModification.Voiced, "̬"],
+    [PhoneticModification.BreathyVoiced, "̤"],
+    [PhoneticModification.CreakyVoiced, "̰"],
+    [PhoneticModification.Raised, "̝"],
+    [PhoneticModification.Lowered, "̞"],
+    [PhoneticModification.AdvancedTongueRoot, "̘"],
+    [PhoneticModification.RetractedTongueRoot, "̙"],
+    [PhoneticModification.NasalRelease, "ⁿ"],
+    [PhoneticModification.LateralRelease, "ˡ"],
+    [PhoneticModification.NoAudibleRelease, "̚"],
+    [PhoneticModification.Syllabic, "̩"],
+    [PhoneticModification.NonSyllabic, "̯"],
+    [PhoneticModification.Aspirated, "ʰ"],
+    [PhoneticModification.Nasalized, "̃"],
+    [PhoneticModification.PrimaryStress, "ˈ"],
+    [PhoneticModification.SecondaryStress, "ˌ"],
+    [PhoneticModification.Long, "ː"],
+    [PhoneticModification.HalfLong, "ˑ"],
+    [PhoneticModification.ExtraShort, "̆"],
+    [PhoneticModification.Linking, "‿"],
+    [PhoneticModification.MinorGroup, "|"],
+    [PhoneticModification.MajorGroup, "‖"],
+    [PhoneticModification.SyllableBreak, "."],
+    [PhoneticModification.ToneExtraHigh, "˥"],
+    [PhoneticModification.ToneHigh, "˦"],
+    [PhoneticModification.ToneMid, "˧"],
+    [PhoneticModification.ToneLow, "˨"],
+    [PhoneticModification.ToneExtraLow, "˩"],
+    [PhoneticModification.ToneRising, "˩˥"],
+    [PhoneticModification.ToneFalling, "˥˩"],
+    [PhoneticModification.ToneHighFalling, "˥˧˩"],
+    [PhoneticModification.ToneLowRising, "˩˨˧"],
+    [PhoneticModification.ToneRisingFalling, "˧˥˧"],
+    [PhoneticModification.ToneFallingRising, "˥˩˦"],
+  ]);
+
+  private static readonly diacriticOrder: bigint[] = [
+    PhoneticModification.Dental,
+    PhoneticModification.Apical,
+    PhoneticModification.Laminal,
+    PhoneticModification.Linguolabial,
+    PhoneticModification.Labialized,
+    PhoneticModification.Palatalized,
+    PhoneticModification.Velarized,
+    PhoneticModification.Pharyngealized,
+    PhoneticModification.Glottalized,
+    PhoneticModification.MoreRounded,
+    PhoneticModification.LessRounded,
+    PhoneticModification.Advanced,
+    PhoneticModification.Retracted,
+    PhoneticModification.Centralized,
+    PhoneticModification.MidCentralized,
+    PhoneticModification.Voiceless,
+    PhoneticModification.Voiced,
+    PhoneticModification.BreathyVoiced,
+    PhoneticModification.CreakyVoiced,
+    PhoneticModification.Raised,
+    PhoneticModification.Lowered,
+    PhoneticModification.AdvancedTongueRoot,
+    PhoneticModification.RetractedTongueRoot,
+    PhoneticModification.NasalRelease,
+    PhoneticModification.LateralRelease,
+    PhoneticModification.NoAudibleRelease,
+    PhoneticModification.Syllabic,
+    PhoneticModification.NonSyllabic,
+    PhoneticModification.Aspirated,
+    PhoneticModification.Nasalized,
+  ];
+
+  private static readonly suprasegmentalOrder: bigint[] = [
+    PhoneticModification.Long,
+    PhoneticModification.HalfLong,
+    PhoneticModification.ExtraShort,
+    PhoneticModification.PrimaryStress,
+    PhoneticModification.SecondaryStress,
+    PhoneticModification.MinorGroup,
+    PhoneticModification.MajorGroup,
+    PhoneticModification.SyllableBreak,
+    PhoneticModification.Linking,
+  ];
+
+  private static readonly toneLevelOrder: bigint[] = [
+    PhoneticModification.ToneExtraHigh,
+    PhoneticModification.ToneHigh,
+    PhoneticModification.ToneMid,
+    PhoneticModification.ToneLow,
+    PhoneticModification.ToneExtraLow,
+  ];
+
+  private static readonly toneContourOrder: bigint[] = [
+    PhoneticModification.ToneRising,
+    PhoneticModification.ToneFalling,
+    PhoneticModification.ToneHighFalling,
+    PhoneticModification.ToneLowRising,
+    PhoneticModification.ToneRisingFalling,
+    PhoneticModification.ToneFallingRising,
+  ];
+
+  private static decodeBase64(input: string): string | null {
+    try {
+      if (typeof atob === "function") {
+        // Preserve UTF-8 characters
+        const decoded = atob(input);
+        return decodeURIComponent(
+          decoded
+            .split("")
+            .map((c) => `%${c.charCodeAt(0).toString(16).padStart(2, "0")}`)
+            .join("")
+        );
+      }
+      // Node/browserless fallback
+      if (typeof (globalThis as unknown as { Buffer?: any }).Buffer !== "undefined") {
+        const buf = (globalThis as unknown as { Buffer: any }).Buffer;
+        return buf.from(input, "base64").toString("utf-8");
+      }
+      return null;
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  private static decodeHex(input: string): string | null {
+    if (input.length % 2 !== 0 || /[^0-9a-f]/i.test(input)) return null;
+    try {
+      let out = "";
+      for (let i = 0; i < input.length; i += 2) {
+        out += String.fromCharCode(parseInt(input.slice(i, i + 2), 16));
+      }
+      return out;
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  private static decodeHashPayload(encoded: string, fallbackBase: string): { base: string; flags: bigint } | null {
+    const base64 = this.decodeBase64(encoded);
+    const raw = base64 ?? this.decodeHex(encoded);
+    if (!raw) return null;
+    const [base, rawFlags] = raw.split("|");
+    const baseId = base || fallbackBase;
+    try {
+      const flags = BigInt(rawFlags ?? "0");
+      return { base: baseId, flags };
+    } catch (_err) {
+      return { base: baseId, flags: 0n };
+    }
+  }
+
+  private static collectSymbols(flags: bigint, order: bigint[]): string {
+    const symbols: string[] = [];
+    order.forEach((flag) => {
+      if ((flags & flag) === flag) {
+        const sym = this.flagToSymbol.get(flag);
+        if (sym) symbols.push(sym);
+      }
+    });
+    return symbols.join("");
+  }
+
+  static buildPhonemSymbol(hash: string): string | undefined {
+    if (!hash || !hash.includes("#")) return undefined;
+    const [basePart, encoded] = hash.split("#");
+    if (!encoded) return undefined;
+
+    const decoded = this.decodeHashPayload(encoded, basePart);
+    const basePhoneme = decoded?.base || basePart;
+    const flags = decoded?.flags ?? 0n;
+
+    const baseSymbol = this.getIPA(basePhoneme as PhonemeType) || basePhoneme;
+    const diacritics = this.collectSymbols(flags, this.diacriticOrder);
+    const suprasegmentals = this.collectSymbols(flags, this.suprasegmentalOrder);
+    const toneLevel = this.collectSymbols(flags, this.toneLevelOrder);
+    const toneContour = this.collectSymbols(flags, this.toneContourOrder);
+
+    const combined = `${baseSymbol}${diacritics}${suprasegmentals}${toneLevel}${toneContour}`;
+    return combined || undefined;
   }
 }

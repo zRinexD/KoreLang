@@ -261,6 +261,7 @@
     "title": "Notebook Sandbox"
   },
   "phonology": {
+    "VoicelessBilabialPlosive": "voiceless bilabial plosive",
     "add_consonant": "Add Consonant",
     "add_phoneme": "Add phoneme",
     "add_vowel": "Add Vowel",

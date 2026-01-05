@@ -10,6 +10,7 @@ interface ModalProps {
   footer?: ReactNode;
   maxWidth?: string;
   showCloseButton?: boolean;
+  hideFooter?: boolean;
 }
 
 /**
@@ -27,7 +28,8 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   footer,
   maxWidth = 'max-w-lg',
-  showCloseButton = true
+  showCloseButton = true,
+  hideFooter = true,
 }) => {
   if (!isOpen) return null;
 
@@ -66,7 +68,7 @@ export const Modal: React.FC<ModalProps> = ({
           {children}
         </div>
         
-        {footer && (
+        {footer && !hideFooter && (
           <div 
             className="flex items-center justify-end gap-3 px-6 py-4 border-t shrink-0" 
             style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}

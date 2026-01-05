@@ -67,9 +67,13 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
   };
 
   // Render a phoneme instance (symbol)
-  const renderPhoneme = (p: PhonemeInstance) => (
-    <span>{PhonemeDataService.getIPA(p.phoneme)}</span>
-  );
+  const renderPhoneme = (p: PhonemeInstance) => {
+    const symbol =
+      PhonemeDataService.buildPhonemSymbol(p.id) ||
+      PhonemeDataService.getIPA(p.phoneme) ||
+      (typeof p.phoneme === "string" ? p.phoneme : "");
+    return <span>{symbol}</span>;
+  };
 
   const { t } =useTranslation();
   return (

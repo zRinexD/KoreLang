@@ -1,49 +1,46 @@
 import React from "react";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { MoreVertical } from "lucide-react";
+import { useTranslation } from "../i18n";
 
 interface SelectPhonemeButtonProps {
   symbol: string;
   name: string;
-  icon?: 'plus' | 'trash';
   onIconClick: () => void;
-  // onClick?: () => void; // Pour usage futur (ex: diacritiques)
+  hideMoreButton?: boolean;
 }
 
 const SelectPhonemeButton: React.FC<SelectPhonemeButtonProps> = ({
   symbol,
   name,
-  icon,
   onIconClick,
+  hideMoreButton = false,
 }) => {
+  const { t } = useTranslation();
   return (
     <div
-      className="relative flex flex-col items-center justify-center p-1 border-2 border-[var(--border)] w-15 h-15 bg-[var(--surface)]"
-      style={{ width: 100, height: 60 }}
+    className="relative w-24 h-28 flex flex-col items-center justify-center border-4 border-[var(--border)] rounded-lg"
+    title={t("common.listen")}
     >
-      {icon === 'plus' && (
+      {!hideMoreButton && (
         <button
-          type="button"
-          className="absolute top-0 right-0 flex items-center justify-center hover:text-[var(--accent-strong)] transition-colors"
-          style={{ zIndex: 2, width: 24, height: 24, padding: 0, margin: 0, background: 'none' }}
-          onClick={e => { e.stopPropagation(); onIconClick(); }}
-          title="Ajouter"
+          className="absolute top-2 right-1 hover:text-[var(--accent)]"
+          onClick={(e) => {
+            e.stopPropagation();
+            onIconClick();
+          }}
         >
-          <PlusCircle size={20} color="var(--accent)" />
+          <MoreVertical size={16} />
         </button>
       )}
-      {icon === 'trash' && (
-        <button
-          type="button"
-          className="absolute top-0 right-0 bg-transparent rounded-full flex items-center justify-center hover:bg-[var(--error-bg)] transition-colors"
-          style={{ zIndex: 2, width: 22, height: 22, padding: 0, margin: 0 }}
-          onClick={e => { e.stopPropagation(); onIconClick(); }}
-          title="Supprimer"
-        >
-          <Trash2 size={16} style={{ color: 'var(--error)' }} />
-        </button>
-      )}
-      <span className="mb-1 font-serif text-xl font-bold">{symbol}</span>
-      <span className="text-[8px] uppercase text-center font-normal" style={{ color: 'var(--text-tertiary)' }}>{name.replace(/([A-Z])/g, ' $1').trim()}</span>
+
+      <div className="font-serif text-xl font-bold ">{symbol}</div>
+      
+      <div
+        className="text-[8px] uppercase text-center font-normal p-1 mt-1"
+        style={{ color: "var(--text-tertiary)" }}
+      >
+        {name}
+      </div>
     </div>
   );
 };

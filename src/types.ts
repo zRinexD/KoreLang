@@ -263,6 +263,83 @@ export enum SyllabicRoleModification {
   None = "None"
 }
 
+export const PhoneticModification = {
+  // Articulation place
+  Dental: 1n << 0n,
+  Apical: 1n << 1n,
+  Laminal: 1n << 2n,
+  Linguolabial: 1n << 3n,
+
+  // Secondary articulation
+  Labialized: 1n << 4n,
+  Palatalized: 1n << 5n,
+  Velarized: 1n << 6n,
+  Pharyngealized: 1n << 7n,
+  Glottalized: 1n << 8n,
+
+  // Roundness
+  MoreRounded: 1n << 9n,
+  LessRounded: 1n << 10n,
+
+  // Tongue position
+  Advanced: 1n << 11n,
+  Retracted: 1n << 12n,
+  Centralized: 1n << 13n,
+  MidCentralized: 1n << 14n,
+
+  // Phonation
+  Voiceless: 1n << 15n,
+  Voiced: 1n << 16n,
+  BreathyVoiced: 1n << 17n,
+  CreakyVoiced: 1n << 18n,
+
+  // Oronasal process
+  Aspirated: 1n << 19n,
+  Nasalized: 1n << 20n,
+  NasalRelease: 1n << 21n,
+  LateralRelease: 1n << 22n,
+  NoAudibleRelease: 1n << 23n,
+
+  // Tongue root position
+  AdvancedTongueRoot: 1n << 24n,
+  RetractedTongueRoot: 1n << 25n,
+  Raised: 1n << 26n,
+  Lowered: 1n << 27n,
+
+  // Syllabic role
+  Syllabic: 1n << 28n,
+  NonSyllabic: 1n << 29n,
+
+  // Suprasegmentals
+  PrimaryStress: 1n << 30n,
+  SecondaryStress: 1n << 31n,
+  Long: 1n << 32n,
+  HalfLong: 1n << 33n,
+  ExtraShort: 1n << 34n,
+  Linking: 1n << 35n,
+  MinorGroup: 1n << 36n,
+  MajorGroup: 1n << 37n,
+  SyllableBreak: 1n << 38n,
+
+  // Tone level
+  ToneExtraHigh: 1n << 39n,
+  ToneHigh: 1n << 40n,
+  ToneMid: 1n << 41n,
+  ToneLow: 1n << 42n,
+  ToneExtraLow: 1n << 43n,
+
+  // Tone contour
+  ToneRising: 1n << 44n,
+  ToneFalling: 1n << 45n,
+  ToneHighFalling: 1n << 46n,
+  ToneLowRising: 1n << 47n,
+  ToneRisingFalling: 1n << 48n,
+  ToneFallingRising: 1n << 49n,
+} as const;
+
+export type PhoneticModification =
+  typeof PhoneticModification[keyof typeof PhoneticModification];
+
 import React from 'react';
 
 export const POS_SUGGESTIONS = [
