@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Modal, ToggleButton, CompactButton, Tabs } from "./ui";
+import { Modal, ToggleButton, CompactButton, Tabs, PhonemeCarousel } from "./ui";
 import SelectPhonemeButton from "./SelectPhonemeButton";
 import {
   ArticulationPlaceModification,
@@ -668,30 +668,12 @@ const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, avai
       }
     >
       <div className="sticky top-0 z-10 pb-3" style={{ backgroundColor: "var(--surface)" }}>
-        <div className="flex justify-center mb-3">
-          <SelectPhonemeButton
-            symbol={displayIPA}
-            name={computePhonemeName()}
-            hideMoreButton
-          />
-        </div>
-        <div className="flex gap-1 overflow-hidden border rounded-lg" style={{ borderColor: "var(--border)" }}>
-          {headerOptions.length > 0 ? (
-            headerOptions.map((opt, idx) => (
-              <ToggleButton
-                key={opt.id}
-                isActive={activeHeader === opt.id}
-                onClick={() => setActiveHeader(opt.id)}
-                label={`${opt.symbol} ${opt.label}`}
-                position={idx === 0 ? "first" : idx === headerOptions.length - 1 ? "last" : "middle"}
-              />
-            ))
-          ) : (
-            <span className="px-3 py-2 text-xs" style={{ color: "var(--text-tertiary)" }}>
-              No phonemes available
-            </span>
-          )}
-        </div>
+        <PhonemeCarousel
+          items={headerOptions}
+          activeId={activeHeader}
+          onSelect={(id) => setActiveHeader(id)}
+          displaySymbol={displayIPA}
+        />
         <div className="mt-3">
           <Tabs
             items={tabOrder}

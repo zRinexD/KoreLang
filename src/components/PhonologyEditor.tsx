@@ -158,6 +158,22 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
     }
   };
 
+  const handleReplacePhoneme = (
+    newInstance: PhonemeInstance,
+    _row: string,
+    _col: string,
+    isVowel: boolean,
+    originalId: string
+  ) => {
+    if (isVowel) {
+      const filtered = phonology.vowels.filter((p) => p.id !== originalId);
+      setData({ ...phonology, vowels: [...filtered, newInstance] });
+    } else {
+      const filtered = phonology.consonants.filter((p) => p.id !== originalId);
+      setData({ ...phonology, consonants: [...filtered, newInstance] });
+    }
+  };
+
   // Render a phoneme instance (symbol)
   const renderPhoneme = (p: PhonemeInstance) => {
     const symbol =
@@ -230,6 +246,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
             onRemove={(p) => handleRemove(p, false)}
             renderPhoneme={renderPhoneme}
             onAddPhoneme={handleAddPhoneme}
+            onReplacePhoneme={handleReplacePhoneme}
           />
         </div>
         <div className="flex-1">
@@ -241,6 +258,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = (props) => {
             onRemove={(p) => handleRemove(p, true)}
             renderPhoneme={renderPhoneme}
             onAddPhoneme={handleAddPhoneme}
+            onReplacePhoneme={handleReplacePhoneme}
           />
         </div>
       </div>

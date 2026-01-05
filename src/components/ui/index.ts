@@ -17,3 +17,4 @@ export { MonoToggle } from './MonoToggle';
 export { CIcon, VIcon } from './LetterIcons';
 export { ContextMenu } from './ContextMenu';
 export type { ContextMenuItem } from './ContextMenu';
+export { default as PhonemeCarousel } from './PhonemeCarousel';

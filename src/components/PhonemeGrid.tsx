@@ -55,6 +55,13 @@ export type PhonemeGridWithModelsProps = PhonemeGridProps & {
     col: string,
     isVowel: boolean
   ) => void;
+  onReplacePhoneme?: (
+    phoneme: PhonemeInstance,
+    row: string,
+    col: string,
+    isVowel: boolean,
+    originalId: string
+  ) => void;
 };
 
 const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
@@ -68,6 +75,7 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
   legend,
   unclassified,
   onAddPhoneme,
+  onReplacePhoneme,
 }) => {
   // État pour la modal d'ajout de phonème
   const [addModal, setAddModal] = useState<AddPhonemeModalState>({
@@ -313,6 +321,9 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
         onClose={() => setAddModal({ open: false, row: null, col: null })}
         place={addModal.col}
         manner={addModal.row}
+        onReplacePhoneme={(instance, row, col, isVowel, originalId) =>
+          onReplacePhoneme?.(instance, row, col, isVowel, originalId)
+        }
         existingPhonemes={(() => {
           if (!addModal.row || !addModal.col) return [];
           const phonemes = getPhonemes(addModal.row, addModal.col);
@@ -327,15 +338,8 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
           }));
         })()}
         onAddPhoneme={(instance, row, col, isVowel) => onAddPhoneme(instance, row, col, isVowel)}
-        onRemove={(phonemeId) => {
-          if (addModal.row && addModal.col) {
-            // On doit retrouver l'instance complète pour la suppression
-            const phonemes = getPhonemes(addModal.row, addModal.col);
-            const instance = phonemes.find((p) => p.id === phonemeId);
-            if (instance) {
-              onRemove(instance);
-            }
-          }
+        onRemove={(phoneme) => {
+          onRemove(phoneme);
         }}
       />
 

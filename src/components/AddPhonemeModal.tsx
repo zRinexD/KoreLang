@@ -14,7 +14,14 @@ interface AddPhonemeModalProps {
   onClose: () => void;
   place: Place | Backness | null;
   manner: Manner | Height | null;
-  onRemove?: (phonemeId: string) => void;
+  onRemove?: (phoneme: PhonemeInstance) => void;
+  onReplacePhoneme?: (
+    newInstance: PhonemeInstance,
+    row: string,
+    col: string,
+    isVowel: boolean,
+    originalId: string
+  ) => void;
   existingPhonemes?: {
     id: string;
     symbol: string;
@@ -40,6 +47,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   existingPhonemes = [],
   onAddPhoneme,
   onRemove,
+  onReplacePhoneme,
 }) => {
   const { t } = useTranslation();
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -67,8 +75,10 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   };
 
   const onDeletePhoneme = (phonemeId: string) => {
-    if (onRemove) {
-      onRemove(phonemeId);
+    if (!onRemove) return;
+    const existing = existingPhonemes.find((p) => p.id === phonemeId);
+    if (existing?.instance) {
+      onRemove(existing.instance);
     }
   };
 
@@ -208,13 +218,17 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
             },
           };
 
-          // Delete old instance
-          if (onRemove && originalId) {
-            onRemove(originalId);
+          // Use replace callback when available to avoid stale state updates
+          if (onReplacePhoneme) {
+            onReplacePhoneme(instance, manner as string, place as string, isVowel, originalId);
+          } else {
+            // Fallback: delete then add
+            if (onRemove && editingPhoneme?.instance) {
+              onRemove(editingPhoneme.instance);
+            }
+            onAddPhoneme(instance, manner as string, place as string, isVowel);
           }
 
-          // Add updated instance
-          onAddPhoneme(instance, manner as string, place as string, isVowel);
           setIsEditOpen(false);
           setEditingPhoneme(null);
           onClose();
