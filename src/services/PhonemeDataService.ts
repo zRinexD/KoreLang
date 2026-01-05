@@ -625,6 +625,14 @@ export class PhonemeDataService {
     }
   }
 
+  static parsePhonemeHash(hash: string): { phoneme: string; flags: bigint } | undefined {
+    if (!hash.includes("#")) return undefined;
+    const [basePart, encoded] = hash.split("#");
+    const decoded = this.decodeHashPayload(encoded, basePart);
+    if (!decoded) return undefined;
+    return { phoneme: decoded.base, flags: decoded.flags };
+  }
+
   private static collectSymbols(flags: bigint, order: bigint[]): string {
     const symbols: string[] = [];
     order.forEach((flag) => {
