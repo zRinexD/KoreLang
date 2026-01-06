@@ -150,6 +150,7 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
         }}
         availablePhonemes={pendingPhonemes}
         editingId={editingPhoneme?.id}
+        existingPhonemeIds={existingPhonemes.map(p => p.id)}
         initialState={(() => {
           if (!editingPhoneme) return undefined;
           const inst = editingPhoneme.instance;

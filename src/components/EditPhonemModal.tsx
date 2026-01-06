@@ -19,6 +19,7 @@ interface EditPhonemModalProps {
   onClose: () => void;
   availablePhonemes: PhonemeType[];
   editingId?: string;
+  existingPhonemeIds?: string[];
   initialState?: {
     basePhoneme: PhonemeType;
     flags: bigint;
@@ -217,7 +218,7 @@ const OptionButton: React.FC<{
   );
 };
 
-const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, availablePhonemes, onAdd, onUpdate, editingId, initialState }) => {
+const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, availablePhonemes, onAdd, onUpdate, editingId, existingPhonemeIds = [], initialState }) => {
   const [activeHeader, setActiveHeader] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("diacritics");
   
@@ -488,6 +489,23 @@ const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, avai
 
   const displayIPA = `${activePhonemeSymbol}${diacriticSymbols}${suprasegmentalSymbols}${toneLevelSymbol}${toneContourSymbol}` || "—";
 
+  // Check if computed ID already exists
+  const computedId = computePhonemeId();
+  
+  // For "Update": allow if ID is the same as the original being edited
+  const isIdDuplicateForUpdate = useMemo(() => {
+    if (!computedId) return false;
+    // If editing, allow the same ID as the original
+    if (editingId && computedId === editingId) return false;
+    return existingPhonemeIds.includes(computedId);
+  }, [computedId, editingId, existingPhonemeIds]);
+
+  // For "Add as new": never allow if ID exists anywhere
+  const isIdDuplicateForAdd = useMemo(() => {
+    if (!computedId) return false;
+    return existingPhonemeIds.includes(computedId);
+  }, [computedId, existingPhonemeIds]);
+
   const allophoneOptions: Option[] = useMemo(() => {
     return availablePhonemes.map((pt) => ({
       value: pt,
@@ -645,15 +663,16 @@ const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, avai
       hideFooter={false}
       footer={
         <div className="flex items-center justify-end w-full gap-3">
-          <div className="flex-1 text-xs" style={{ color: "var(--text-tertiary)" }}>
+          <div className="flex-1 text-xs" style={{ color: (isIdDuplicateForAdd || isIdDuplicateForUpdate) ? "var(--error)" : "var(--text-tertiary)" }}>
             ID: {computePhonemeId() || "—"}
+            {(isIdDuplicateForAdd || isIdDuplicateForUpdate) && <span className="ml-2">(déjà existant)</span>}
           </div>
           <CompactButton
             variant="outline"
             icon={<span>＋</span>}
             label="Add as new"
             onClick={handleAddAsNew}
-            disabled={!activeHeader}
+            disabled={!activeHeader || isIdDuplicateForAdd}
           />
           {onUpdate && editingId && (
             <CompactButton
@@ -661,7 +680,7 @@ const EditPhonemModal: React.FC<EditPhonemModalProps> = ({ isOpen, onClose, avai
               icon={<span>⟳</span>}
               label="Update"
               onClick={handleUpdate}
-              disabled={!activeHeader}
+              disabled={!activeHeader || isIdDuplicateForUpdate}
             />
           )}
         </div>

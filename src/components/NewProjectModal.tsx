@@ -43,6 +43,7 @@ const NewProjectModal: React.FC = () => {
       title={t('wizard.create_title')}
       icon={<Box size={20} />}
       maxWidth="max-w-lg"
+      hideFooter={false}
       footer={
         <>
           <CompactButton
