@@ -9,7 +9,10 @@
     "confirm": "Êtes-vous sûr de vouloir supprimer cet élément ?",
     "copied": "Copié !",
     "delete": "Supprimer",
-    "save": "Enregistrer"
+    "edit": "",
+    "listen": "",
+    "save": "Enregistrer",
+    "validate": ""
   },
   "console": {
     "ai_applied": "IA appliquée : {{count}} mots modifiés.",
@@ -489,6 +492,7 @@
     "button": "Compris !",
     "f1_desc": "Les 46 langues sont désormais traduites avec plus de précision et entièrement internationalisées.",
     "f1_title": "Meilleures traductions",
+    "subtitle": "",
     "title": "Nouveautés dans v1.1.1"
   },
   "wizard": {

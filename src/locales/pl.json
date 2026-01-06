@@ -9,7 +9,10 @@
     "confirm": "confirm",
     "copied": "copied",
     "delete": "delete",
-    "save": "save"
+    "edit": "",
+    "listen": "",
+    "save": "save",
+    "validate": ""
   },
   "console": {
     "ai_applied": "Zastosowano SI: zmieniono {{count}} słów.",
@@ -489,6 +492,7 @@
     "button": "button",
     "f1_desc": "f1_desc",
     "f1_title": "f1_title",
+    "subtitle": "",
     "title": "title"
   },
   "wizard": {

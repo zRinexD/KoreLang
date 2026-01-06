@@ -9,7 +9,10 @@
     "confirm": "이 항목을 정말 삭제하시겠습니까?",
     "copied": "복사되었습니다!",
     "delete": "삭제",
-    "save": "저장"
+    "edit": "",
+    "listen": "",
+    "save": "저장",
+    "validate": ""
   },
   "console": {
     "ai_applied": "AI 적용됨: {{count}}개의 단어가 수정되었습니다.",
@@ -489,6 +492,7 @@
     "button": "button",
     "f1_desc": "f1_desc",
     "f1_title": "f1_title",
+    "subtitle": "",
     "title": "title"
   },
   "wizard": {

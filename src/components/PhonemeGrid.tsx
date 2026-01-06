@@ -31,6 +31,7 @@ export type PhonemeGridProps = {
   getPhonemes: (row: string, col: string) => PhonemeInstance[];
   onRemove: (phoneme: PhonemeInstance) => void;
   renderPhoneme: (phoneme: PhonemeInstance) => React.ReactNode;
+  allophonyRules?: any[]; // Allophony rules from phonology config
   minWidth?: number;
   legend?: React.ReactNode;
   unclassified?: {
@@ -39,6 +40,7 @@ export type PhonemeGridProps = {
     position?: "top" | "bottom";
     renderItem?: (phoneme: PhonemeInstance, index: number) => React.ReactNode;
   };
+  allInventoryIds?: string[];
 };
 
 // ...
@@ -71,11 +73,13 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
   getPhonemes,
   onRemove,
   renderPhoneme,
+  allophonyRules = [],
   minWidth = 600,
   legend,
   unclassified,
   onAddPhoneme,
   onReplacePhoneme,
+  allInventoryIds = [],
 }) => {
   // État pour la modal d'ajout de phonème
   const [addModal, setAddModal] = useState<AddPhonemeModalState>({
@@ -318,9 +322,11 @@ const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
       {/* Nouvelle modal d'ajout de phonème */}
       <AddPhonemeModal
         isOpen={addModal.open}
-        onClose={() => setAddModal({ open: false, row: null, col: null })}
+        onCancel={() => setAddModal({ open: false, row: null, col: null })}
         place={addModal.col}
         manner={addModal.row}
+        allophonyRules={allophonyRules}
+          allInventoryIds={allInventoryIds}
         onReplacePhoneme={(instance, row, col, isVowel, originalId) =>
           onReplacePhoneme?.(instance, row, col, isVowel, originalId)
         }

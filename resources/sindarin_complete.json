@@ -108,212 +108,366 @@
   "grammar": "Langue à mutations consonantiques. Ordre fréquent VSO. Pluriel par i-affection. Mutation initiale selon le contexte grammatical.",
   "phonology": {
     "name": "Sindarin Classique",
-    "syllableStructure": "(C)V(C)",
     "description": "Phonologie reconstruite à partir des écrits de Tolkien",
     "consonants": [
       {
+        "id": "VoicelessBilabialPlosive#Vm9pY2VsZXNzQmlsYWJpYWxQbG9zaXZlfDA=",
+        "phoneme": "VoicelessBilabialPlosive",
+        "type": "consonant",
         "symbol": "p",
         "place": "bilabial",
         "manner": "plosive",
         "voiced": false,
-        "examples": ["pâd", "post"]
+        "examples": ["pâd", "post"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedBilabialPlosive#Vm9pY2VkQmlsYWJpYWxQbG9zaXZlfDA=",
+        "phoneme": "VoicedBilabialPlosive",
+        "type": "consonant",
         "symbol": "b",
         "place": "bilabial",
         "manner": "plosive",
         "voiced": true,
-        "examples": ["barad", "bad"]
+        "examples": ["barad", "bad"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicelessAlveolarPlosive#Vm9pY2VsZXNzQWx2ZW9sYXJQbG9zaXZlfDA=",
+        "phoneme": "VoicelessAlveolarPlosive",
+        "type": "consonant",
         "symbol": "t",
         "place": "alveolar",
         "manner": "plosive",
         "voiced": false,
-        "examples": ["tâd", "tol"]
+        "examples": ["tâd", "tol"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedAlveolarPlosive#Vm9pY2VkQWx2ZW9sYXJQbG9zaXZlfDA=",
+        "phoneme": "VoicedAlveolarPlosive",
+        "type": "consonant",
         "symbol": "d",
         "place": "alveolar",
         "manner": "plosive",
         "voiced": true,
-        "examples": ["dag", "dûn"]
+        "examples": ["dag", "dûn"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicelessVelarPlosive#Vm9pY2VsZXNzVmVsYXJQbG9zaXZlfDA=",
+        "phoneme": "VoicelessVelarPlosive",
+        "type": "consonant",
         "symbol": "k",
         "place": "velar",
         "manner": "plosive",
         "voiced": false,
-        "examples": ["car", "caen"]
+        "examples": ["car", "caen"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedVelarPlosive#Vm9pY2VkVmVsYXJQbG9zaXZlfDA=",
+        "phoneme": "VoicedVelarPlosive",
+        "type": "consonant",
         "symbol": "g",
         "place": "velar",
         "manner": "plosive",
         "voiced": true,
-        "examples": ["galadh", "galad"]
+        "examples": ["galadh", "galad"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedBilabialNasal#Vm9pY2VkQmlsYWJpYWxOYXNhbHww",
+        "phoneme": "VoicedBilabialNasal",
+        "type": "consonant",
         "symbol": "m",
         "place": "bilabial",
         "manner": "nasal",
         "voiced": true,
-        "examples": ["mîr", "mal"]
+        "examples": ["mîr", "mal"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedAlveolarNasal#Vm9pY2VkQWx2ZW9sYXJOYXNhbHww",
+        "phoneme": "VoicedAlveolarNasal",
+        "type": "consonant",
         "symbol": "n",
         "place": "alveolar",
         "manner": "nasal",
         "voiced": true,
-        "examples": ["nîn", "nar"]
+        "examples": ["nîn", "nar"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedVelarNasal#Vm9pY2VkVmVsYXJOYXNhbHww",
+        "phoneme": "VoicedVelarNasal",
+        "type": "consonant",
         "symbol": "ŋ",
         "place": "velar",
         "manner": "nasal",
         "voiced": true,
-        "examples": ["ang", "ungol"]
+        "examples": ["ang", "ungol"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicelessLabiodentalFricative#Vm9pY2VsZXNzTGFiaW9kZW50YWxGcmljYXRpdmV8MA==",
+        "phoneme": "VoicelessLabiodentalFricative",
+        "type": "consonant",
         "symbol": "f",
         "place": "labiodental",
         "manner": "fricative",
         "voiced": false,
-        "examples": ["faen", "fael"]
+        "examples": ["faen", "fael"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedLabiodentalFricative#Vm9pY2VkTGFiaW9kZW50YWxGcmljYXRpdmV8MA==",
+        "phoneme": "VoicedLabiodentalFricative",
+        "type": "consonant",
         "symbol": "v",
         "place": "labiodental",
         "manner": "fricative",
         "voiced": true,
-        "examples": ["valar"]
+        "examples": ["valar"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicelessDentalFricative#Vm9pY2VsZXNzRGVudGFsRnJpY2F0aXZlfDA=",
+        "phoneme": "VoicelessDentalFricative",
+        "type": "consonant",
         "symbol": "θ",
         "place": "dental",
         "manner": "fricative",
         "voiced": false,
-        "examples": ["rath", "math"]
+        "examples": ["rath", "math"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedDentalFricative#Vm9pY2VkRGVudGFsRnJpY2F0aXZlfDA=",
+        "phoneme": "VoicedDentalFricative",
+        "type": "consonant",
         "symbol": "ð",
         "place": "dental",
         "manner": "fricative",
         "voiced": true,
-        "examples": [""]
+        "examples": [],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicelessAlveolarFricative#Vm9pY2VsZXNzQWx2ZW9sYXJGcmljYXRpdmV8MA==",
+        "phoneme": "VoicelessAlveolarFricative",
+        "type": "consonant",
         "symbol": "s",
         "place": "alveolar",
         "manner": "fricative",
         "voiced": false,
-        "examples": ["sail", "sûl"]
+        "examples": ["sail", "sûl"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedAlveolarFricative#Vm9pY2VkQWx2ZW9sYXJGcmljYXRpdmV8MA==",
+        "phoneme": "VoicedAlveolarFricative",
+        "type": "consonant",
         "symbol": "z",
         "place": "alveolar",
         "manner": "fricative",
         "voiced": true,
-        "examples": [""]
+        "examples": [],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicelessPostalveolarFricative#Vm9pY2VsZXNzUG9zdGFsdmVvbGFyRnJpY2F0aXZlfDA=",
+        "phoneme": "VoicelessPostalveolarFricative",
+        "type": "consonant",
         "symbol": "ʃ",
         "place": "postalveolar",
         "manner": "fricative",
         "voiced": false,
-        "examples": [""]
+        "examples": [],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicelessVelarFricative#Vm9pY2VsZXNzVmVsYXJGcmljYXRpdmV8MA=",
+        "phoneme": "VoicelessVelarFricative",
+        "type": "consonant",
         "symbol": "χ",
         "place": "velar",
         "manner": "fricative",
         "voiced": false,
-        "examples": ["achad", "achar"]
+        "examples": ["achad", "achar"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicelessGlottalFricative#Vm9pY2VsZXNzR2xvdHRhbEZyaWNhdGl2ZXww",
+        "phoneme": "VoicelessGlottalFricative",
+        "type": "consonant",
         "symbol": "h",
         "place": "glottal",
         "manner": "fricative",
         "voiced": false,
-        "examples": ["hîr", "hall"]
+        "examples": ["hîr", "hall"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedAlveolarLateralApproximant#Vm9pY2VkQWx2ZW9sYXJMYXRlcmFsQXBwcm94aW1hbnR8MA==",
+        "phoneme": "VoicedAlveolarLateralApproximant",
+        "type": "consonant",
         "symbol": "l",
         "place": "alveolar",
         "manner": "lateral-approximant",
         "voiced": true,
-        "examples": ["lind", "lûth"]
+        "examples": ["lind", "lûth"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedAlveolarApproximant#Vm9pY2VkQWx2ZW9sYXJBcHByb3hpbWFudHww",
+        "phoneme": "VoicedAlveolarApproximant",
+        "type": "consonant",
         "symbol": "r",
         "place": "alveolar",
         "manner": "approximant",
         "voiced": true,
-        "examples": ["rain", "rûn"]
+        "examples": ["rain", "rûn"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedPalatalApproximant#Vm9pY2VkUGFsYXRhbEFwcHJveGltYW50fDA=",
+        "phoneme": "VoicedPalatalApproximant",
+        "type": "consonant",
         "symbol": "j",
         "place": "palatal",
         "manner": "approximant",
         "voiced": true,
-        "examples": [""]
+        "examples": [],
+        "features": { "flags": "0" }
       },
       {
+        "id": "VoicedLabioVelarApproximant#Vm9pY2VkTGFiaW9WZWxhckFwcHJveGltYW50fDA=",
+        "phoneme": "VoicedLabioVelarApproximant",
+        "type": "consonant",
         "symbol": "w",
         "place": "labial-velar",
         "manner": "approximant",
         "voiced": true,
-        "examples": [""]
+        "examples": [],
+        "features": { "flags": "0" }
       }
     ],
     "vowels": [
       {
+        "id": "OpenFrontUnroundedVowel#T3BlbkZyb250VW5yb3VuZGVkVm93ZWx8MA==",
+        "phoneme": "OpenFrontUnroundedVowel",
+        "type": "vowel",
         "symbol": "a",
         "height": "open",
         "backness": "central",
         "rounded": false,
-        "examples": ["adar", "aran", "alag"]
+        "examples": ["adar", "aran", "alag"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "CloseMidFrontUnroundedVowel#Q2xvc2VNaWRGcm9udFVucm91bmRlZFZvd2VsfDA=",
+        "phoneme": "CloseMidFrontUnroundedVowel",
+        "type": "vowel",
         "symbol": "e",
         "height": "close-mid",
         "backness": "front",
         "rounded": false,
-        "examples": ["edhel", "eryn"]
+        "examples": ["edhel", "eryn"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "CloseFrontUnroundedVowel#Q2xvc2VGcm9udFVucm91bmRlZFZvd2VsfDA=",
+        "phoneme": "CloseFrontUnroundedVowel",
+        "type": "vowel",
         "symbol": "i",
         "height": "close",
         "backness": "front",
         "rounded": false,
-        "examples": ["iâ", "iel"]
+        "examples": ["iâ", "iel"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "OpenMidBackRoundedVowel#T3Blbk1pZEJhY2tSb3VuZGVkVm93ZWx8MA==",
+        "phoneme": "OpenMidBackRoundedVowel",
+        "type": "vowel",
         "symbol": "o",
-        "height": "close-mid",
+        "height": "open-mid",
         "backness": "back",
         "rounded": true,
-        "examples": ["orod", "ost"]
+        "examples": ["orod", "ost"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "CloseBackRoundedVowel#Q2xvc2VCYWNrUm91bmRlZFZvd2VsfDA=",
+        "phoneme": "CloseBackRoundedVowel",
+        "type": "vowel",
         "symbol": "u",
         "height": "close",
         "backness": "back",
         "rounded": true,
-        "examples": ["ur", "ûn"]
+        "examples": ["ur", "ûn"],
+        "features": { "flags": "0" }
       },
       {
+        "id": "CloseFrontRoundedVowel#Q2xvc2VGcm9udFJvdW5kZWRWb3dlbHww",
+        "phoneme": "CloseFrontRoundedVowel",
+        "type": "vowel",
         "symbol": "y",
         "height": "close",
         "backness": "front",
         "rounded": true,
-        "examples": [""]
+        "examples": [],
+        "features": { "flags": "0" }
+      }
+    ],
+    "syllableStructure": "(C)V(C)",
+    "bannedCombinations": [],
+    "allophonyRules": [
+      {
+        "id": "alph001",
+        "name": "Voiceless stops become voiced intervocalically",
+        "description": "Voiceless plosives become voiced between vowels",
+        "rule": "[-continuant, -voice] → [+voice] / [+syllabic]_[+syllabic]"
+      },
+      {
+        "id": "alph002",
+        "name": "Nasals assimilate in place to following stops",
+        "description": "Nasals take the place of articulation of a following stop",
+        "rule": "[+nasal] → [+labial] / _[+labial, -continuant]"
+      },
+      {
+        "id": "alph003",
+        "name": "Lateral becomes velarized before consonants",
+        "description": "The lateral approximant becomes velarized before consonants",
+        "rule": "[+lateral, +sonorant] → [+back] / _[+consonantal]"
+      },
+      {
+        "id": "alph004",
+        "name": "Fricatives devoice word-finally",
+        "description": "Voiced fricatives become voiceless at the end of words",
+        "rule": "[+continuant, -sonorant, +voice] → [-voice] / _#"
+      },
+      {
+        "id": "alph005",
+        "name": "Stops are aspirated word-initially",
+        "description": "Voiceless stops receive aspiration at the beginning of words",
+        "rule": "[-continuant, -voice, -sonorant] → [+spread glottis] / #_"
       }
     ]
   },
+  "evolutionRules": []{lrmn}] → [Vi{lrmn}]" }|Vɸ{θ}] → [Vi{θ}|Vu{θ}]" }u|jui] → [ȳ|jui]" }|u{mnŋ}] → [o|uC{uw}|u{mnŋ}]" }m] → [{nŋ}w]" }] → [V̄{nw}]" }] → [-Sø]" }-] → [h-|{l̥r̥}-]" }] → [V{bdg}]" }ɣV] → [{lrð}iV]" }|-uCu|-Sī] → [-Sø|-uCu|-Sĭ]" }+C] → [Cø+C]" }] → [ui]" }Sθ] → [{θð}Ss]" }] → [\-{mp|nt|ŋk|lt}]" }{fθxs}{lr}] → [ø{fθxs}{lr}]" }·{fθxsmnŋl}\-] → [\-ø·{fθxsmnŋl}\-]" }] → [ø{mnŋ}]" }{vðɣ}\-] → [\-{mnŋ}{bdg}\-]" }\-] → [\-{mm|nn|ŋg|l̥l̥}\-]" }] → [Vθ{lr}]" }] → [m+{mb}]" }] → [\-SS{l|n|s}]" }m|m{mbp}] → [Vv|{lr}v|m{mbp}]" }v] → [\-{ae|oe}w]" }] → [\-u]" }] → [\-Co{lr}]" }] → [s{bg}]" }{hx}] → [{fθ}]" }
+    ]
+  },
+  "evolutionRules": [],
   "constraints": {
     "allowDuplicates": false,
-    "caseSensitive": true
+    "caseSensitive": true,
+    "bannedSequences": [],
+    "allowedGraphemes": "",
+    "phonotacticStructure": "",
+    "mustStartWith": [],
+    "mustEndWith": []
   },
   "notes": {
     "source": "Ambar-Eldaron v2.0 - Dictionnaire Sindarin-Français complet",

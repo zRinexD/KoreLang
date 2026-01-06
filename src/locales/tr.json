@@ -9,7 +9,10 @@
     "confirm": "Bu öğeyi silmek istediğinizden emin misiniz?",
     "copied": "Kopyalandı!",
     "delete": "Sil",
-    "save": "Kaydet"
+    "edit": "",
+    "listen": "",
+    "save": "Kaydet",
+    "validate": ""
   },
   "console": {
     "ai_applied": "AI Uygulandı: {{count}} kelime değiştirildi.",
@@ -489,6 +492,7 @@
     "button": "button",
     "f1_desc": "f1_desc",
     "f1_title": "f1_title",
+    "subtitle": "",
     "title": "title"
   },
   "wizard": {

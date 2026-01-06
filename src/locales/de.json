@@ -9,7 +9,10 @@
     "confirm": "Sind Sie sicher, dass Sie dieses Element löschen möchten?",
     "copied": "Kopiert!",
     "delete": "Löschen",
-    "save": "Speichern"
+    "edit": "Bearbeiten",
+    "listen": "Anhören",
+    "save": "Speichern",
+    "validate": "Validieren "
   },
   "console": {
     "ai_applied": "KI angewendet: {{count}} Wörter geändert.",
@@ -269,7 +272,7 @@
   },
   "phonology": {
     "add_consonant": "Konsonant hinzufügen",
-    "add_phoneme": "",
+    "add_phoneme": "Phonem hinzufügen",
     "add_vowel": "Vokal hinzufügen",
     "ai_disabled_desc": "Bitte konfigurieren Sie Ihren API-Schlüssel in den Einstellungen, um KI-Funktionen zu aktivieren.",
     "ai_disabled_title": "KI-Generierung deaktiviert",
@@ -310,7 +313,7 @@
       "tap": "Tap",
       "trill": "Trill"
     },
-    "no_registered_phoneme": "",
+    "no_registered_phoneme": "Keine registrierten Phoneme",
     "place": {
       "alveolar": "Alveolar",
       "bilabial": "Bilabial",
@@ -324,7 +327,7 @@
       "uvular": "Uvular",
       "velar": "Velar"
     },
-    "registered_phonemes": "",
+    "registered_phonemes": "Registrierte Phoneme",
     "replace_confirm": "Dies wird Ihre aktuelle Phonologie ERSETZEN. Sind Sie sicher?",
     "replace_warning": "Überprüfen Sie die obigen Laute. Wenn Sie diese Generierung anwenden, wird Ihre aktuelle Phonologie **ersetzt**.",
     "rounded": "Gerundet",
@@ -489,6 +492,7 @@
     "button": "Verstanden!",
     "f1_desc": "Alle 46 Sprachen sind nun genauer übersetzt und vollständig internationalisiert.",
     "f1_title": "Bessere Übersetzungen",
+    "subtitle": "Entdecken Sie die neuesten Funktionen und Verbesserungen in Korelang v1.1.1.",
     "title": "Was ist neu in v1.1.1"
   },
   "wizard": {

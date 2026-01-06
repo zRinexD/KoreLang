@@ -1,7 +1,7 @@
 import React from 'react';
 import { Github, ExternalLink } from 'lucide-react';
 import { useUI } from '../ui/UIContext';
-import { Modal } from './ui';
+import { ModalBase } from './ui';
 
 const AboutModal: React.FC = () => {
     const ui = useUI();
@@ -9,7 +9,7 @@ const AboutModal: React.FC = () => {
     if (!ui.isOpen('about')) return null;
 
     return (
-        <Modal
+        <ModalBase
             isOpen={ui.isOpen('about')}
             onClose={() => ui.close('about')}
             title="About KoreLang"
@@ -56,7 +56,7 @@ const AboutModal: React.FC = () => {
                     v1.1.1_stable • 2025
                 </p>
             </div>
-        </Modal>
+        </ModalBase>
     );
 };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CompactButton, Modal } from "./ui";
+import { CompactButton, ModalBase } from "./ui";
 import { useTranslation } from "../i18n";
 import { PhonemeType } from "../types";
 import { PlusCircle } from "lucide-react";
@@ -11,9 +11,10 @@ import SelectPhonemeButton from "./SelectPhonemeButton";
 import EditPhonemModal from "./EditPhonemModal";
 interface AddPhonemeModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onCancel: () => void;
   place: Place | Backness | null;
   manner: Manner | Height | null;
+  allophonyRules?: any[]; // Allophony rules from phonology config
   onRemove?: (phoneme: PhonemeInstance) => void;
   onReplacePhoneme?: (
     newInstance: PhonemeInstance,
@@ -34,6 +35,7 @@ interface AddPhonemeModalProps {
     col: string,
     isVowel: boolean
   ) => void;
+  allInventoryIds?: string[];
 }
 
 import { PhonemeDataService } from "../services/PhonemeDataService";
@@ -41,13 +43,15 @@ import { getPhonemesForCell } from "../services/phonemeGridUtils";
 
 const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   isOpen,
-  onClose,
+  onCancel,
   place,
   manner,
+  allophonyRules = [],
   existingPhonemes = [],
   onAddPhoneme,
   onRemove,
   onReplacePhoneme,
+  allInventoryIds = [],
 }) => {
   const { t } = useTranslation();
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -104,9 +108,9 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
   }
 
   return (
-    <Modal
+    <ModalBase
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={onCancel}
       title={`${place} ${manner}`}
       maxWidth="max-w-md"
       icon={null}
@@ -144,13 +148,16 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
       </div>
       <EditPhonemModal
         isOpen={isEditOpen}
-        onClose={() => {
+        onCancel={() => {
           setIsEditOpen(false);
           setEditingPhoneme(null);
         }}
         availablePhonemes={pendingPhonemes}
+        allophonyRules={allophonyRules}
         editingId={editingPhoneme?.id}
-        existingPhonemeIds={existingPhonemes.map(p => p.id)}
+        existingPhonemeIds={allInventoryIds}
+        manner={manner as string}
+        place={place as string}
         initialState={(() => {
           if (!editingPhoneme) return undefined;
           const inst = editingPhoneme.instance;
@@ -189,9 +196,12 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
             },
           };
 
+          // Compute and store feature vector
+          instance.features!.featureVector = PhonemeDataService.computeFeatureVector(instance);
+
           onAddPhoneme(instance, manner as string, place as string, isVowel);
           setIsEditOpen(false);
-          onClose();
+          onCancel();
         }}
         onUpdate={(payload, originalId) => {
           if (!place || !manner || !editingPhoneme) return;
@@ -219,6 +229,9 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
             },
           };
 
+          // Compute and store feature vector
+          instance.features!.featureVector = PhonemeDataService.computeFeatureVector(instance);
+
           // Use replace callback when available to avoid stale state updates
           if (onReplacePhoneme) {
             onReplacePhoneme(instance, manner as string, place as string, isVowel, originalId);
@@ -232,10 +245,10 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
 
           setIsEditOpen(false);
           setEditingPhoneme(null);
-          onClose();
+          onCancel();
         }}
       />
-    </Modal>
+    </ModalBase>
   );
 };
 

@@ -9,7 +9,10 @@
     "confirm": "Potvrdit",
     "copied": "Zkopírováno!",
     "delete": "Smazat",
-    "save": "Uložit"
+    "edit": "Upravit",
+    "listen": "Poslouchat",
+    "save": "Uložit",
+    "validate": "Ověřit"
   },
   "console": {
     "ai_applied": "Použito AI: Změněno {{count}} slov.",
@@ -269,7 +272,7 @@
   },
   "phonology": {
     "add_consonant": "Přidat souhlásku",
-    "add_phoneme": "",
+    "add_phoneme": "Přidat foném",
     "add_vowel": "Přidat samohlásku",
     "ai_disabled_desc": "Chcete-li povolit funkce AI, nakonfigurujte svůj klíč API v nastavení.",
     "ai_disabled_title": "Generování pomocí AI zakázáno",
@@ -310,7 +313,7 @@
       "tap": "Klepne",
       "trill": "Kmita"
     },
-    "no_registered_phoneme": "",
+    "no_registered_phoneme": "Žádné registrované fonémy",
     "place": {
       "alveolar": "Alveolára",
       "bilabial": "Bilabiála",
@@ -324,7 +327,7 @@
       "uvular": "Uvulára",
       "velar": "Velára"
     },
-    "registered_phonemes": "",
+    "registered_phonemes": "Registrované fonémy",
     "replace_confirm": "Nahradit stávající",
     "replace_warning": "Tímto dojde k přepsání aktuální fonologie.",
     "rounded": "Zaokrouhlené",
@@ -489,6 +492,7 @@
     "button": "Rozumím",
     "f1_desc": "Nyní můžete vytvářet vlastní písma pomocí našeho vizuálního editoru.",
     "f1_title": "Editor písem",
+    "subtitle": "Přehled nejnovějších funkcí a vylepšení",
     "title": "Co je nového"
   },
   "wizard": {

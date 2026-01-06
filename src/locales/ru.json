@@ -9,7 +9,10 @@
     "confirm": "Вы уверены, что хотите удалить этот элемент?",
     "copied": "Скопировано!",
     "delete": "Удалить",
-    "save": "Сохранить"
+    "edit": "",
+    "listen": "",
+    "save": "Сохранить",
+    "validate": ""
   },
   "console": {
     "ai_applied": "ИИ применён: {{count}} слов изменено.",
@@ -489,6 +492,7 @@
     "button": "button",
     "f1_desc": "f1_desc",
     "f1_title": "f1_title",
+    "subtitle": "",
     "title": "title"
   },
   "wizard": {

@@ -9,7 +9,10 @@
     "confirm": "Tem certeza de que deseja excluir este item?",
     "copied": "Copiado!",
     "delete": "Excluir",
-    "save": "Salvar"
+    "edit": "Editar",
+    "listen": "Ouvir",
+    "save": "Salvar",
+    "validate": "Validar"
   },
   "console": {
     "ai_applied": "IA aplicada: {{count}} palavras modificadas.",
@@ -268,9 +271,9 @@
     "title": "title"
   },
   "phonology": {
-    "add_consonant": "add_consonant",
-    "add_phoneme": "",
-    "add_vowel": "add_vowel",
+    "add_consonant": "Adicionar consoante",
+    "add_phoneme": "Adicionar fonema",
+    "add_vowel": "Adicionar vogal",
     "ai_disabled_desc": "Configure sua chave de API nas definições para ativar os recursos de IA.",
     "ai_disabled_title": "Geração por IA Desativada",
     "ai_generator": "ai_generator",
@@ -310,7 +313,7 @@
       "tap": "Vibrante simples",
       "trill": "Vibrante"
     },
-    "no_registered_phoneme": "",
+    "no_registered_phoneme": "Nenhum fonema registrado.",
     "place": {
       "alveolar": "Alveolar",
       "bilabial": "Bilabial",
@@ -324,7 +327,7 @@
       "uvular": "Uvular",
       "velar": "Velar"
     },
-    "registered_phonemes": "",
+    "registered_phonemes": "Fonemas Registrados",
     "replace_confirm": "replace_confirm",
     "replace_warning": "replace_warning",
     "rounded": "rounded",
@@ -489,6 +492,7 @@
     "button": "button",
     "f1_desc": "f1_desc",
     "f1_title": "f1_title",
+    "subtitle": "subtitle",
     "title": "title"
   },
   "wizard": {

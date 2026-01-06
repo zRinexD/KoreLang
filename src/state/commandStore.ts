@@ -29,7 +29,9 @@ export type CommandId =
   | "searchLexicon"
   | "addPhoneme"
   | "updatePhoneme"
-  | "deletePhoneme";
+  | "deletePhoneme"
+  | "showFeatures"
+  | "openFeatureDebugger";
 
 export type CommandPayload = {
   modal?: UIModal | string;

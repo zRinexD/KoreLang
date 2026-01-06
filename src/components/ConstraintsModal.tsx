@@ -14,7 +14,7 @@ import { useUI } from "../ui/UIContext";
 import { useProjectContext } from "../state/ProjectContext";
 import { ConScriptText } from "./ConScriptRenderer";
 import { POS_SUGGESTIONS } from "../types";
-import { Modal } from "./ui";
+import { ModalBase } from "./ui";
 
 const ConstraintsModal: React.FC = () => {
   const { t } = useTranslation();
@@ -130,7 +130,7 @@ const ConstraintsModal: React.FC = () => {
   };
 
   return (
-    <Modal
+    <ModalBase
       isOpen={ui.isOpen("constraints")}
       onClose={() => ui.close("constraints")}
       title={t("menu.validation")}
@@ -138,7 +138,7 @@ const ConstraintsModal: React.FC = () => {
       maxWidth="max-w-2xl"
     >
         {/* Tabs */}
-        <div className="flex border-b -mx-6 px-6" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--elevated)' }}>
+        <div className="flex px-6 -mx-6 border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--elevated)' }}>
           {[
             { id: "GENERAL", label: t("tab.general"), icon: Type },
             { id: "PHONOTACTICS", label: t("tab.phonotactics"), icon: Regex },
@@ -607,7 +607,7 @@ const ConstraintsModal: React.FC = () => {
             </div>
           )}
         </div>
-    </Modal>
+    </ModalBase>
   );
 };
 

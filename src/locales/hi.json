@@ -9,7 +9,10 @@
     "confirm": "क्या आप वाकई इस आइटम को हटाना चाहते हैं?",
     "copied": "कॉपी किया गया!",
     "delete": "हटाएं",
-    "save": "सहेजें"
+    "edit": "",
+    "listen": "",
+    "save": "सहेजें",
+    "validate": ""
   },
   "console": {
     "ai_applied": "AI लागू: {{count}} शब्द संशोधित।",
@@ -489,6 +492,7 @@
     "button": "button",
     "f1_desc": "f1_desc",
     "f1_title": "f1_title",
+    "subtitle": "",
     "title": "title"
   },
   "wizard": {

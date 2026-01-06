@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from "react";
-import { Box, User, FileText, Check } from "lucide-react";
+import { Box, User, FileText } from "lucide-react";
 import { useTranslation } from "../i18n";
 import { useUI } from "../ui/UIContext";
 import { useProjectContext } from "../state/ProjectContext";
-import { CompactButton, Modal } from "./ui";
+import { ModalWithDefaultFooter } from "./ui";
 
 const NewProjectModal: React.FC = () => {
   const { t } = useTranslation();
@@ -37,31 +37,14 @@ const NewProjectModal: React.FC = () => {
   };
 
   return (
-    <Modal
+    <ModalWithDefaultFooter
       isOpen={isOpen}
-      onClose={() => ui.close('newProject')}
+      onCancel={() => ui.close('newProject')}
+      onValidate={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
+      disableValidate={!name.trim()}
       title={t('wizard.create_title')}
       icon={<Box size={20} />}
       maxWidth="max-w-lg"
-      hideFooter={false}
-      footer={
-        <>
-          <CompactButton
-            onClick={() => ui.close('newProject')}
-            variant="outline"
-            color="var(--error)"
-            icon={<Check size={12} />}
-            label={t('common.cancel')}
-          />
-          <CompactButton
-            onClick={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
-            variant="solid"
-            color="var(--accent)"
-            icon={<Check size={14} />}
-            label={t('wizard.create_btn')}
-          />
-        </>
-      }
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-1.5">
@@ -104,7 +87,7 @@ const NewProjectModal: React.FC = () => {
           </div>
         </div>
       </form>
-    </Modal>
+    </ModalWithDefaultFooter>
   );
 };
 

@@ -9,7 +9,10 @@
     "confirm": "您确定要删除此项目吗？",
     "copied": "已复制！",
     "delete": "删除",
-    "save": "保存"
+    "edit": "",
+    "listen": "",
+    "save": "保存",
+    "validate": ""
   },
   "console": {
     "ai_applied": "AI 已应用：修改了 {{count}} 个单词。",
@@ -489,6 +492,7 @@
     "button": "button",
     "f1_desc": "f1_desc",
     "f1_title": "f1_title",
+    "subtitle": "",
     "title": "title"
   },
   "wizard": {

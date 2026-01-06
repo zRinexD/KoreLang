@@ -9,7 +9,10 @@
     "confirm": "Sei sicuro di voler eliminare questo elemento?",
     "copied": "Copiato!",
     "delete": "Elimina",
-    "save": "Salva"
+    "edit": "",
+    "listen": "",
+    "save": "Salva",
+    "validate": ""
   },
   "console": {
     "ai_applied": "AI applicata: {{count}} parole modificate.",
@@ -489,6 +492,7 @@
     "button": "button",
     "f1_desc": "f1_desc",
     "f1_title": "f1_title",
+    "subtitle": "",
     "title": "title"
   },
   "wizard": {

@@ -3,7 +3,7 @@ import { Box, User, FileText, Check, ShieldCheck } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { useUI } from '../ui/UIContext';
 import { useProjectContext } from '../state/ProjectContext';
-import { CompactButton, Modal } from './ui';
+import { CompactButton, ModalWithCustomFooter } from './ui';
 
 const ProjectWizard: React.FC = () => {
   const { t } = useTranslation();
@@ -56,9 +56,9 @@ const ProjectWizard: React.FC = () => {
   };
 
   return (
-    <Modal
+    <ModalWithCustomFooter
       isOpen={isOpen}
-      onClose={() => ui.close('wizard')}
+      onCancel={() => ui.close('wizard')}
       title={isCreateMode ? t('wizard.create_title') : t('wizard.edit_title')}
       icon={<Box size={20} />}
       maxWidth="max-w-lg"
@@ -77,6 +77,7 @@ const ProjectWizard: React.FC = () => {
             color="var(--accent)"
             icon={<Check size={14} />}
             label={isCreateMode ? t('wizard.create_btn') : t('wizard.save_btn')}
+            disabled={!localName.trim()}
           />
         </>
       }
@@ -144,7 +145,7 @@ const ProjectWizard: React.FC = () => {
             </div>
           </div>
         </form>
-    </Modal>
+    </ModalWithCustomFooter>
   );
 };
 

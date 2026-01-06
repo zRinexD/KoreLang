@@ -9,7 +9,10 @@
     "confirm": "Are you sure you want to delete this item?",
     "copied": "Copied!",
     "delete": "Delete",
-    "save": "Save"
+    "edit": "Edit",
+    "listen": "",
+    "save": "Save",
+    "validate": "Validate"
   },
   "console": {
     "ai_failed_no_key": "AI Command Failed: No API Key configured.",
@@ -274,7 +277,9 @@
     "backness": {
       "back": "Back",
       "central": "Central",
-      "front": "Front"
+      "front": "Front",
+      "near-back": "Near-back",
+      "near-front": "Near-front"
     },
     "banned_combinations": "Banned Combinations",
     "clear_confirm": "Are you sure you want to clear all phonemes?",
@@ -295,9 +300,13 @@
     "hide_preview": "Hide Preview",
     "inventory": "Total Inventory",
     "manner": {
+      "affricate": "Affricate",
       "approximant": "Approximant",
+      "click": "Click",
       "fricative": "Fricative",
+      "implosive": "Implosive",
       "lateral-approximant": "Lat. Approximant",
+      "lateral-flap": "Lateral Flap",
       "lateral-fricative": "Lateral Fricative",
       "nasal": "Nasal",
       "plosive": "Plosive",
@@ -307,10 +316,15 @@
     "no_registered_phoneme": "No phoneme registered.",
     "place": {
       "alveolar": "Alveolar",
+      "alveolo-palatal": "Alveolo-palatal",
       "bilabial": "Bilabial",
       "dental": "Dental",
+      "epiglottal": "Epiglottal",
       "glottal": "Glottal",
+      "labio-palatal": "Labio-palatal",
+      "labio-velar": "Labio-velar",
       "labiodental": "Labiodental",
+      "other": "Other",
       "palatal": "Palatal",
       "pharyngeal": "Pharyngeal",
       "postalveolar": "Postalveolar",
@@ -483,6 +497,7 @@
     "button": "Got it!",
     "f1_desc": "All 46 languages are now more accurately translated and fully internationalized.",
     "f1_title": "Better Translations",
+    "subtitle": "",
     "title": "What's new in v1.1.1"
   },
   "wizard": {

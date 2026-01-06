@@ -1,4 +1,5 @@
-import { PhonemeType, PhoneticModification } from "../types";
+import { PhonemeType, PhoneticModification, PhonemeInstance } from "../types";
+import { PhoneticFeature, FEATURE_NAMES } from "../types/phoneticFeatures";
 
 export class PhonemeDataService {
   // Métadonnées pour chaque phonème (catégorie, manner, place, height, backness, etc.)
@@ -30,6 +31,7 @@ export class PhonemeDataService {
     [PhonemeType.VoicedVelarPlosive]: { category: 'consonant', manner: 'plosive', place: 'velar' },
     [PhonemeType.VoicelessUvularPlosive]: { category: 'consonant', manner: 'plosive', place: 'uvular' },
     [PhonemeType.VoicedUvularPlosive]: { category: 'consonant', manner: 'plosive', place: 'uvular' },
+    [PhonemeType.EpiglottalPlosive]: { category: 'consonant', manner: 'plosive', place: 'epiglottal' },
     [PhonemeType.VoicelessGlottalPlosive]: { category: 'consonant', manner: 'plosive', place: 'glottal' },
     // Fricatives
     [PhonemeType.VoicelessBilabialFricative]: { category: 'consonant', manner: 'fricative', place: 'bilabial' },
@@ -48,18 +50,41 @@ export class PhonemeDataService {
     [PhonemeType.VoicedPalatalFricative]: { category: 'consonant', manner: 'fricative', place: 'palatal' },
     [PhonemeType.VoicelessVelarFricative]: { category: 'consonant', manner: 'fricative', place: 'velar' },
     [PhonemeType.VoicedVelarFricative]: { category: 'consonant', manner: 'fricative', place: 'velar' },
+    [PhonemeType.VoicelessAlveoloPalatalFricative]: { category: 'consonant', manner: 'fricative', place: 'alveolo-palatal' },
+    [PhonemeType.VoicedAlveoloPalatalFricative]: { category: 'consonant', manner: 'fricative', place: 'alveolo-palatal' },
     [PhonemeType.VoicelessUvularFricative]: { category: 'consonant', manner: 'fricative', place: 'uvular' },
     [PhonemeType.VoicedUvularFricative]: { category: 'consonant', manner: 'fricative', place: 'uvular' },
     [PhonemeType.VoicelessPharyngealFricative]: { category: 'consonant', manner: 'fricative', place: 'pharyngeal' },
     [PhonemeType.VoicedPharyngealFricative]: { category: 'consonant', manner: 'fricative', place: 'pharyngeal' },
+    [PhonemeType.VoicelessEpiglottalFricative]: { category: 'consonant', manner: 'fricative', place: 'epiglottal' },
+      // Clicks
+      [PhonemeType.ClickBilabial]: { category: 'consonant', manner: 'click', place: 'bilabial' },
+      [PhonemeType.ClickDental]: { category: 'consonant', manner: 'click', place: 'dental' },
+      [PhonemeType.ClickPostAlveolar]: { category: 'consonant', manner: 'click', place: 'postalveolar' },
+      [PhonemeType.ClickPalatoAlveolar]: { category: 'consonant', manner: 'click', place: 'alveolo-palatal' },
+      [PhonemeType.ClickAlveolarLateral]: { category: 'consonant', manner: 'click', place: 'alveolar' },
+      // Implosives
+      [PhonemeType.ImplosiveBilabial]: { category: 'consonant', manner: 'implosive', place: 'bilabial' },
+      [PhonemeType.ImplosiveDentalAlveolar]: { category: 'consonant', manner: 'implosive', place: 'alveolar' },
+      [PhonemeType.ImplosivePalatal]: { category: 'consonant', manner: 'implosive', place: 'palatal' },
+      [PhonemeType.ImplosiveVelar]: { category: 'consonant', manner: 'implosive', place: 'velar' },
+      [PhonemeType.ImplosiveUvular]: { category: 'consonant', manner: 'implosive', place: 'uvular' },
+    [PhonemeType.VoicedEpiglottalFricative]: { category: 'consonant', manner: 'fricative', place: 'epiglottal' },
+    [PhonemeType.VoicelessLabialVelarFricative]: { category: 'consonant', manner: 'fricative', place: 'other' },
     [PhonemeType.VoicelessGlottalFricative]: { category: 'consonant', manner: 'fricative', place: 'glottal' },
     [PhonemeType.VoicedGlottalFricative]: { category: 'consonant', manner: 'fricative', place: 'glottal' },
+    // Affricates
+    [PhonemeType.VoicelessAlveolarAffricate]: { category: 'consonant', manner: 'affricate', place: 'alveolar' },
+    [PhonemeType.VoicedAlveolarAffricate]: { category: 'consonant', manner: 'affricate', place: 'alveolar' },
+    [PhonemeType.VoicelessPostalveolarAffricate]: { category: 'consonant', manner: 'affricate', place: 'postalveolar' },
+    [PhonemeType.VoicedPostalveolarAffricate]: { category: 'consonant', manner: 'affricate', place: 'postalveolar' },
     // Approximants
     [PhonemeType.VoicedLabioDentalApproximant]: { category: 'consonant', manner: 'approximant', place: 'labiodental' },
     [PhonemeType.VoicedAlveolarApproximant]: { category: 'consonant', manner: 'approximant', place: 'alveolar' },
     [PhonemeType.VoicedRetroflexApproximant]: { category: 'consonant', manner: 'approximant', place: 'retroflex' },
     [PhonemeType.VoicedPalatalApproximant]: { category: 'consonant', manner: 'approximant', place: 'palatal' },
-    [PhonemeType.VoicedLabioVelarApproximant]: { category: 'consonant', manner: 'approximant', place: 'labio-velar' },
+    [PhonemeType.VoicedLabialPalatalApproximant]: { category: 'consonant', manner: 'approximant', place: 'other' },
+    [PhonemeType.VoicedLabioVelarApproximant]: { category: 'consonant', manner: 'approximant', place: 'other' },
     [PhonemeType.VoicedVelarApproximant]: { category: 'consonant', manner: 'approximant', place: 'velar' },
     // Trills, taps, flaps
     [PhonemeType.VoicedBilabialTrill]: { category: 'consonant', manner: 'trill', place: 'bilabial' },
@@ -68,6 +93,7 @@ export class PhonemeDataService {
     [PhonemeType.Voicedlabiodentalflap]: { category: 'consonant', manner: 'flap', place: 'labiodental' },
     [PhonemeType.VoicedAlveolarTap]: { category: 'consonant', manner: 'tap', place: 'alveolar' },
     [PhonemeType.VoicedRetroflexTap]: { category: 'consonant', manner: 'tap', place: 'retroflex' },
+    [PhonemeType.VoicedAlveolarLateralFlap]: { category: 'consonant', manner: 'lateral-flap', place: 'alveolar' },
     // Lateral fricatives/approximants
     [PhonemeType.VoicelessAlveolarLateralFricative]: { category: 'consonant', manner: 'lateral fricative', place: 'alveolar' },
     [PhonemeType.VoicedAlveolarLateralFricative]: { category: 'consonant', manner: 'lateral fricative', place: 'alveolar' },
@@ -82,77 +108,39 @@ export class PhonemeDataService {
     [PhonemeType.VoicelessLabioDentalFricative]: { category: 'consonant', manner: 'fricative', place: 'labiodental' },
     [PhonemeType.VoicedLabioDentalNasal]: { category: 'consonant', manner: 'nasal', place: 'labiodental' },
     // Vowels (close)
-    [PhonemeType.CloseFrontUnrounded]: { category: 'vowel', height: 'close', backness: 'front' },
-    [PhonemeType.CloseFrontRounded]: { category: 'vowel', height: 'close', backness: 'front' },
-    [PhonemeType.CloseCentralUnrounded]: { category: 'vowel', height: 'close', backness: 'central' },
-    [PhonemeType.CloseCentralRounded]: { category: 'vowel', height: 'close', backness: 'central' },
-    [PhonemeType.CloseBackUnrounded]: { category: 'vowel', height: 'close', backness: 'back' },
-    [PhonemeType.CloseBackRounded]: { category: 'vowel', height: 'close', backness: 'back' },
-    // Vowels (near-close)
-    [PhonemeType.NearCloseFrontUnrounded]: { category: 'vowel', height: 'near-close', backness: 'front' },
-    [PhonemeType.NearCloseFrontRounded]: { category: 'vowel', height: 'near-close', backness: 'front' },
-    [PhonemeType.NearCloseBackRounded]: { category: 'vowel', height: 'near-close', backness: 'back' },
-    // Vowels (close-mid)
-    [PhonemeType.CloseMidFrontUnrounded]: { category: 'vowel', height: 'close-mid', backness: 'front' },
-    [PhonemeType.CloseMidFrontRounded]: { category: 'vowel', height: 'close-mid', backness: 'front' },
-    [PhonemeType.CloseMidCentralUnrounded]: { category: 'vowel', height: 'close-mid', backness: 'central' },
-    [PhonemeType.CloseMidCentralRounded]: { category: 'vowel', height: 'close-mid', backness: 'central' },
-    [PhonemeType.CloseMidBackUnrounded]: { category: 'vowel', height: 'close-mid', backness: 'back' },
-    [PhonemeType.CloseMidBackRounded]: { category: 'vowel', height: 'close-mid', backness: 'back' },
-    // Vowels (mid)
-    [PhonemeType.MidCentral]: { category: 'vowel', height: 'mid', backness: 'central' },
-    // Vowels (open-mid)
-    [PhonemeType.OpenMidFrontUnrounded]: { category: 'vowel', height: 'open-mid', backness: 'front' },
-    [PhonemeType.OpenMidFrontRounded]: { category: 'vowel', height: 'open-mid', backness: 'front' },
-    [PhonemeType.OpenMidCentralUnrounded]: { category: 'vowel', height: 'open-mid', backness: 'central' },
-    [PhonemeType.OpenMidCentralRounded]: { category: 'vowel', height: 'open-mid', backness: 'central' },
-    [PhonemeType.OpenMidBackUnrounded]: { category: 'vowel', height: 'open-mid', backness: 'back' },
-    [PhonemeType.OpenMidBackRounded]: { category: 'vowel', height: 'open-mid', backness: 'back' },
-    // Vowels (near-open)
-    [PhonemeType.NearOpenFrontUnrounded]: { category: 'vowel', height: 'near-open', backness: 'front' },
-    [PhonemeType.NearOpenCentral]: { category: 'vowel', height: 'near-open', backness: 'central' },
-    // Vowels (open)
-    [PhonemeType.OpenFrontUnrounded]: { category: 'vowel', height: 'open', backness: 'front' },
-    [PhonemeType.OpenFrontRounded]: { category: 'vowel', height: 'open', backness: 'front' },
-    [PhonemeType.OpenBackUnrounded]: { category: 'vowel', height: 'open', backness: 'back' },
-    [PhonemeType.OpenBackRounded]: { category: 'vowel', height: 'open', backness: 'back' },
-    // Variant/doublon enum (C#)
-    [PhonemeType.GlottalStop]: { category: 'consonant', manner: 'plosive', place: 'glottal' },
-    [PhonemeType.LabiodentalApproximant]: { category: 'consonant', manner: 'approximant', place: 'labiodental' },
-    [PhonemeType.AlveolarApproximant]: { category: 'consonant', manner: 'approximant', place: 'alveolar' },
-    [PhonemeType.RetroflexApproximant]: { category: 'consonant', manner: 'approximant', place: 'retroflex' },
-    [PhonemeType.PalatalApproximant]: { category: 'consonant', manner: 'approximant', place: 'palatal' },
-    [PhonemeType.VelarApproximant]: { category: 'consonant', manner: 'approximant', place: 'velar' },
-    [PhonemeType.BilabialTrill]: { category: 'consonant', manner: 'trill', place: 'bilabial' },
-    [PhonemeType.AlveolarTrill]: { category: 'consonant', manner: 'trill', place: 'alveolar' },
-    [PhonemeType.UvularTrill]: { category: 'consonant', manner: 'trill', place: 'uvular' },
-    [PhonemeType.AlveolarTap]: { category: 'consonant', manner: 'tap', place: 'alveolar' },
-    [PhonemeType.RetroflexTap]: { category: 'consonant', manner: 'tap', place: 'retroflex' },
-    [PhonemeType.AlveolarLateralApproximant]: { category: 'consonant', manner: 'lateral approximant', place: 'alveolar' },
-    [PhonemeType.RetroflexLateralApproximant]: { category: 'consonant', manner: 'lateral approximant', place: 'retroflex' },
-    [PhonemeType.PalatalLateralApproximant]: { category: 'consonant', manner: 'lateral approximant', place: 'palatal' },
-    [PhonemeType.VelarLateralApproximant]: { category: 'consonant', manner: 'lateral approximant', place: 'velar' },
     [PhonemeType.CloseFrontUnroundedVowel]: { category: 'vowel', height: 'close', backness: 'front' },
     [PhonemeType.CloseFrontRoundedVowel]: { category: 'vowel', height: 'close', backness: 'front' },
     [PhonemeType.CloseCentralUnroundedVowel]: { category: 'vowel', height: 'close', backness: 'central' },
     [PhonemeType.CloseCentralRoundedVowel]: { category: 'vowel', height: 'close', backness: 'central' },
     [PhonemeType.CloseBackUnroundedVowel]: { category: 'vowel', height: 'close', backness: 'back' },
     [PhonemeType.CloseBackRoundedVowel]: { category: 'vowel', height: 'close', backness: 'back' },
-    [PhonemeType.NearCloseNearFrontUnroundedVowel]: { category: 'vowel', height: 'near-close', backness: 'front' },
-    [PhonemeType.NearCloseNearFrontRoundedVowel]: { category: 'vowel', height: 'near-close', backness: 'front' },
-    [PhonemeType.NearCloseNearBackRoundedVowel]: { category: 'vowel', height: 'near-close', backness: 'back' },
+    // Vowels (near-close)
+    [PhonemeType.NearCloseNearFrontUnroundedVowel]: { category: 'vowel', height: 'near-close', backness: 'near-front' },
+    [PhonemeType.NearCloseNearFrontRoundedVowel]: { category: 'vowel', height: 'near-close', backness: 'near-front' },
+    [PhonemeType.NearCloseNearBackRoundedVowel]: { category: 'vowel', height: 'near-close', backness: 'near-back' },
+    // Vowels (close-mid)
     [PhonemeType.CloseMidFrontUnroundedVowel]: { category: 'vowel', height: 'close-mid', backness: 'front' },
     [PhonemeType.CloseMidFrontRoundedVowel]: { category: 'vowel', height: 'close-mid', backness: 'front' },
+    // Vowels (mid)
     [PhonemeType.MidCentralVowel]: { category: 'vowel', height: 'mid', backness: 'central' },
+    // Vowels (open-mid)
     [PhonemeType.OpenMidFrontUnroundedVowel]: { category: 'vowel', height: 'open-mid', backness: 'front' },
     [PhonemeType.OpenMidFrontRoundedVowel]: { category: 'vowel', height: 'open-mid', backness: 'front' },
     [PhonemeType.OpenMidBackUnroundedVowel]: { category: 'vowel', height: 'open-mid', backness: 'back' },
     [PhonemeType.OpenMidBackRoundedVowel]: { category: 'vowel', height: 'open-mid', backness: 'back' },
+    // Vowels (near-open)
     [PhonemeType.NearOpenFrontUnroundedVowel]: { category: 'vowel', height: 'near-open', backness: 'front' },
+    // Vowels (open)
     [PhonemeType.OpenFrontUnroundedVowel]: { category: 'vowel', height: 'open', backness: 'front' },
     [PhonemeType.OpenBackUnroundedVowel]: { category: 'vowel', height: 'open', backness: 'back' },
     [PhonemeType.OpenBackRoundedVowel]: { category: 'vowel', height: 'open', backness: 'back' },
-    // doublons supprimés, déjà définis plus haut
+    // Other (coarticulated/special)
+    [PhonemeType.VoicelessPalatalVelarFricative]: { category: 'consonant', manner: 'fricative', place: 'other' },
+    [PhonemeType.VoicelessAlveolarLateralAffricate]: { category: 'consonant', manner: 'affricate', place: 'other' },
+    [PhonemeType.VoicedAlveolarLateralAffricate]: { category: 'consonant', manner: 'affricate', place: 'other' },
+    [PhonemeType.VoicelessDarkL]: { category: 'consonant', manner: 'lateral-approximant', place: 'other' },
+    [PhonemeType.VoicedDarkL]: { category: 'consonant', manner: 'lateral-approximant', place: 'other' },
+    [PhonemeType.VoicelessLabialPalatalApproximant]: { category: 'consonant', manner: 'approximant', place: 'other' },
   };
 
   static getMeta(phoneme: PhonemeType) {
@@ -211,16 +199,37 @@ export class PhonemeDataService {
     [PhonemeType.VoicedPalatalFricative]: "ʝ",
     [PhonemeType.VoicelessVelarFricative]: "x",
     [PhonemeType.VoicedVelarFricative]: "ɣ",
+    [PhonemeType.VoicelessAlveoloPalatalFricative]: "ɕ",
+    [PhonemeType.VoicedAlveoloPalatalFricative]: "ʑ",
     [PhonemeType.VoicelessUvularFricative]: "χ",
     [PhonemeType.VoicedUvularFricative]: "ʁ",
     [PhonemeType.VoicelessPharyngealFricative]: "ħ",
     [PhonemeType.VoicedPharyngealFricative]: "ʕ",
+    [PhonemeType.VoicelessEpiglottalFricative]: "ʜ",
+    [PhonemeType.VoicedEpiglottalFricative]: "ʢ",
+    [PhonemeType.VoicelessLabialVelarFricative]: "ʍ",
     [PhonemeType.VoicelessGlottalFricative]: "h",
     [PhonemeType.VoicedGlottalFricative]: "ɦ",
+    [PhonemeType.EpiglottalPlosive]: "ʡ",
+    [PhonemeType.ClickBilabial]: "ʘ",
+    [PhonemeType.ClickDental]: "ǀ",
+    [PhonemeType.ClickPostAlveolar]: "ǃ",
+    [PhonemeType.ClickPalatoAlveolar]: "ǂ",
+    [PhonemeType.ClickAlveolarLateral]: "ǁ",
+    [PhonemeType.ImplosiveBilabial]: "ɓ",
+    [PhonemeType.ImplosiveDentalAlveolar]: "ɗ",
+    [PhonemeType.ImplosivePalatal]: "ʄ",
+    [PhonemeType.ImplosiveVelar]: "ɠ",
+    [PhonemeType.ImplosiveUvular]: "ʛ",
+    [PhonemeType.VoicelessAlveolarAffricate]: "t͡s",
+    [PhonemeType.VoicedAlveolarAffricate]: "d͡z",
+    [PhonemeType.VoicelessPostalveolarAffricate]: "t͡ʃ",
+    [PhonemeType.VoicedPostalveolarAffricate]: "d͡ʒ",
     // [PhonemeType.VoicedLabioDentalApproximant]: "ʋ", // Duplicate, removed
     [PhonemeType.VoicedAlveolarApproximant]: "ɹ",
     [PhonemeType.VoicedRetroflexApproximant]: "ɻ",
     [PhonemeType.VoicedPalatalApproximant]: "j",
+    [PhonemeType.VoicedLabialPalatalApproximant]: "ɥ",
     // [PhonemeType.VoicedLabioVelarApproximant]: "w", // Duplicate, removed
     [PhonemeType.VoicedVelarApproximant]: "ɰ",
     [PhonemeType.VoicedBilabialTrill]: "ʙ",
@@ -229,48 +238,20 @@ export class PhonemeDataService {
     [PhonemeType.Voicedlabiodentalflap]: "ⱱ",
     [PhonemeType.VoicedAlveolarTap]: "ɾ",
     [PhonemeType.VoicedRetroflexTap]: "ɽ",
+    [PhonemeType.VoicedAlveolarLateralFlap]: "ɺ",
     [PhonemeType.VoicelessAlveolarLateralFricative]: "ɬ",
     [PhonemeType.VoicedAlveolarLateralFricative]: "ɮ",
     [PhonemeType.VoicedAlveolarLateralApproximant]: "l",
     [PhonemeType.VoicedRetroflexLateralApproximant]: "ɭ",
     // [PhonemeType.VoicedPalatalLateralApproximant]: "ʎ", // Duplicate, removed
     // [PhonemeType.VoicedVelarLateralApproximant]: "ʟ", // Duplicate, removed
-    [PhonemeType.CloseFrontUnrounded]: "i",
-    [PhonemeType.CloseFrontRounded]: "y",
-    [PhonemeType.CloseCentralUnrounded]: "ɨ",
-    [PhonemeType.CloseCentralRounded]: "ʉ",
-    [PhonemeType.CloseBackUnrounded]: "ɯ",
-    [PhonemeType.CloseBackRounded]: "u",
-    [PhonemeType.NearCloseFrontUnrounded]: "ɪ",
-    [PhonemeType.NearCloseFrontRounded]: "ʏ",
-    [PhonemeType.NearCloseBackRounded]: "ʊ",
-    [PhonemeType.CloseMidFrontUnrounded]: "e",
-    [PhonemeType.CloseMidFrontRounded]: "ø",
-    [PhonemeType.MidCentral]: "ə",
-    [PhonemeType.OpenMidFrontUnrounded]: "ɛ",
-    [PhonemeType.OpenMidFrontRounded]: "œ",
-    [PhonemeType.OpenMidBackUnrounded]: "ʌ",
-    [PhonemeType.OpenMidBackRounded]: "ɔ",
-    [PhonemeType.NearOpenFrontUnrounded]: "æ",
-    [PhonemeType.OpenFrontUnrounded]: "a",
-    [PhonemeType.OpenBackUnrounded]: "ɑ",
-    [PhonemeType.OpenBackRounded]: "ɒ",
-    // Ajout des variantes et doublons de l'enum (voir C#)
-    [PhonemeType.GlottalStop]: "ʔ",
-    [PhonemeType.LabiodentalApproximant]: "ʋ",
-    [PhonemeType.AlveolarApproximant]: "ɹ",
-    [PhonemeType.RetroflexApproximant]: "ɻ",
-    [PhonemeType.PalatalApproximant]: "j",
-    [PhonemeType.VelarApproximant]: "ɰ",
-    [PhonemeType.BilabialTrill]: "ʙ",
-    [PhonemeType.AlveolarTrill]: "r",
-    [PhonemeType.UvularTrill]: "ʀ",
-    [PhonemeType.AlveolarTap]: "ɾ",
-    [PhonemeType.RetroflexTap]: "ɽ",
-    [PhonemeType.AlveolarLateralApproximant]: "l",
-    [PhonemeType.RetroflexLateralApproximant]: "ɭ",
-    [PhonemeType.PalatalLateralApproximant]: "ʎ",
-    [PhonemeType.VelarLateralApproximant]: "ʟ",
+    // Other (coarticulated/special)
+    [PhonemeType.VoicelessPalatalVelarFricative]: "ɧ",
+    [PhonemeType.VoicelessAlveolarLateralAffricate]: "t͡ɬ",
+    [PhonemeType.VoicedAlveolarLateralAffricate]: "d͡ɮ",
+    [PhonemeType.VoicelessDarkL]: "ɫ̥",
+    [PhonemeType.VoicedDarkL]: "ɫ",
+    [PhonemeType.VoicelessLabialPalatalApproximant]: "ɥ̊",
     [PhonemeType.CloseFrontUnroundedVowel]: "i",
     [PhonemeType.CloseFrontRoundedVowel]: "y",
     [PhonemeType.CloseCentralUnroundedVowel]: "ɨ",
@@ -291,15 +272,6 @@ export class PhonemeDataService {
     [PhonemeType.OpenFrontUnroundedVowel]: "a",
     [PhonemeType.OpenBackUnroundedVowel]: "ɑ",
     [PhonemeType.OpenBackRoundedVowel]: "ɒ",
-    [PhonemeType.OpenFrontRounded]: "ɶ",
-    [PhonemeType.OpenMidCentralUnrounded]: "ɜ",
-    [PhonemeType.OpenMidCentralRounded]: "ɞ",
-    [PhonemeType.CloseMidCentralUnrounded]: "ɘ",
-    [PhonemeType.CloseMidCentralRounded]: "ɵ",
-    [PhonemeType.CloseMidBackUnrounded]: "ɤ",
-    [PhonemeType.CloseMidBackRounded]: "o",
-    [PhonemeType.NearOpenCentral]: "ɐ",
-    // [PhonemeType.OpenFrontRounded]: "œ̃", // Duplicate, removed to fix TS1117
     [PhonemeType.VoicedLabioDentalApproximant]: "ʋ",
     [PhonemeType.VoicedLabioDentalFricative]: "v",
     [PhonemeType.VoicelessLabioDentalFricative]: "f",
@@ -309,8 +281,6 @@ export class PhonemeDataService {
     [PhonemeType.VoicedVelarLateralApproximant]: "ʟ",
     [PhonemeType.VoicedPostAlveolarSibilantFricative]: "ʒ",
     [PhonemeType.VoicelessPostAlveolarSibilantFricative]: "ʃ",
-    // [PhonemeType.Voicedlabiodentalflap]: "ⱱ", // Duplicate, removed
-    // [PhonemeType.VoicelessGlottalPlosive]: "ʔ" // Duplicate, removed
   };
 
   private static readonly phonemeToRarity: Partial<Record<PhonemeType, number>> = {
@@ -350,17 +320,36 @@ export class PhonemeDataService {
     [PhonemeType.VoicedPalatalFricative]: 4,
     [PhonemeType.VoicelessVelarFricative]: 2,
     [PhonemeType.VoicedVelarFricative]: 2,
+    [PhonemeType.VoicelessAlveoloPalatalFricative]: 4,
+    [PhonemeType.VoicedAlveoloPalatalFricative]: 4,
     [PhonemeType.VoicelessUvularFricative]: 4,
     [PhonemeType.VoicedUvularFricative]: 4,
     [PhonemeType.VoicelessPharyngealFricative]: 5,
     [PhonemeType.VoicedPharyngealFricative]: 5,
+    [PhonemeType.VoicelessEpiglottalFricative]: 5,
+    [PhonemeType.VoicedEpiglottalFricative]: 5,
+    [PhonemeType.VoicelessLabialVelarFricative]: 4,
     [PhonemeType.VoicelessGlottalFricative]: 1,
     [PhonemeType.VoicedGlottalFricative]: 3,
-    // [PhonemeType.VoicedLabioDentalApproximant]: 3, // Duplicate, removed
+    [PhonemeType.EpiglottalPlosive]: 5,
+    [PhonemeType.ClickBilabial]: 5,
+    [PhonemeType.ClickDental]: 5,
+    [PhonemeType.ClickPostAlveolar]: 5,
+    [PhonemeType.ClickPalatoAlveolar]: 5,
+    [PhonemeType.ClickAlveolarLateral]: 5,
+    [PhonemeType.ImplosiveBilabial]: 4,
+    [PhonemeType.ImplosiveDentalAlveolar]: 4,
+    [PhonemeType.ImplosivePalatal]: 5,
+    [PhonemeType.ImplosiveVelar]: 4,
+    [PhonemeType.ImplosiveUvular]: 5,
+    [PhonemeType.VoicelessAlveolarAffricate]: 2,
+    [PhonemeType.VoicedAlveolarAffricate]: 2,
+    [PhonemeType.VoicelessPostalveolarAffricate]: 2,
+    [PhonemeType.VoicedPostalveolarAffricate]: 2,
     [PhonemeType.VoicedAlveolarApproximant]: 2,
     [PhonemeType.VoicedRetroflexApproximant]: 4,
     [PhonemeType.VoicedPalatalApproximant]: 1,
-    // [PhonemeType.VoicedLabioVelarApproximant]: 1, // Duplicate, removed
+    [PhonemeType.VoicedLabialPalatalApproximant]: 3,
     [PhonemeType.VoicedVelarApproximant]: 4,
     [PhonemeType.VoicedBilabialTrill]: 5,
     [PhonemeType.VoicedAlveolarTrill]: 2,
@@ -368,48 +357,19 @@ export class PhonemeDataService {
     [PhonemeType.Voicedlabiodentalflap]: 5,
     [PhonemeType.VoicedAlveolarTap]: 2,
     [PhonemeType.VoicedRetroflexTap]: 5,
+    [PhonemeType.VoicedAlveolarLateralFlap]: 3,
     [PhonemeType.VoicelessAlveolarLateralFricative]: 5,
     [PhonemeType.VoicedAlveolarLateralFricative]: 5,
     [PhonemeType.VoicedAlveolarLateralApproximant]: 1,
     [PhonemeType.VoicedRetroflexLateralApproximant]: 4,
-    // [PhonemeType.VoicedPalatalLateralApproximant]: 5, // Duplicate, removed
-    // [PhonemeType.VoicedVelarLateralApproximant]: 5, // Duplicate, removed
-    [PhonemeType.CloseFrontUnrounded]: 1,
-    [PhonemeType.CloseFrontRounded]: 2,
-    [PhonemeType.CloseCentralUnrounded]: 4,
-    [PhonemeType.CloseCentralRounded]: 5,
-    [PhonemeType.CloseBackUnrounded]: 4,
-    [PhonemeType.CloseBackRounded]: 1,
-    [PhonemeType.NearCloseFrontUnrounded]: 1,
-    [PhonemeType.NearCloseFrontRounded]: 3,
-    [PhonemeType.NearCloseBackRounded]: 2,
-    [PhonemeType.CloseMidFrontUnrounded]: 1,
-    [PhonemeType.CloseMidFrontRounded]: 2,
-    [PhonemeType.MidCentral]: 1,
-    [PhonemeType.OpenMidFrontUnrounded]: 2,
-    [PhonemeType.OpenMidFrontRounded]: 3,
-    [PhonemeType.OpenMidBackUnrounded]: 3,
-    [PhonemeType.OpenMidBackRounded]: 2,
-    [PhonemeType.NearOpenFrontUnrounded]: 2,
-    [PhonemeType.OpenFrontUnrounded]: 1,
-    [PhonemeType.OpenBackUnrounded]: 1,
-    [PhonemeType.OpenBackRounded]: 3,
-    // Ajout des variantes et doublons de l'enum (voir C#)
-    [PhonemeType.GlottalStop]: 3,
-    [PhonemeType.LabiodentalApproximant]: 3,
-    [PhonemeType.AlveolarApproximant]: 2,
-    [PhonemeType.RetroflexApproximant]: 4,
-    [PhonemeType.PalatalApproximant]: 1,
-    [PhonemeType.VelarApproximant]: 4,
-    [PhonemeType.BilabialTrill]: 5,
-    [PhonemeType.AlveolarTrill]: 2,
-    [PhonemeType.UvularTrill]: 4,
-    [PhonemeType.AlveolarTap]: 2,
-    [PhonemeType.RetroflexTap]: 5,
-    [PhonemeType.AlveolarLateralApproximant]: 1,
-    [PhonemeType.RetroflexLateralApproximant]: 4,
-    [PhonemeType.PalatalLateralApproximant]: 5,
-    [PhonemeType.VelarLateralApproximant]: 5,
+    [PhonemeType.VoicedPalatalLateralApproximant]: 5,
+    [PhonemeType.VoicedVelarLateralApproximant]: 5,
+    [PhonemeType.VoicelessPalatalVelarFricative]: 5,
+    [PhonemeType.VoicelessAlveolarLateralAffricate]: 5,
+    [PhonemeType.VoicedAlveolarLateralAffricate]: 5,
+    [PhonemeType.VoicelessDarkL]: 5,
+    [PhonemeType.VoicedDarkL]: 4,
+    [PhonemeType.VoicelessLabialPalatalApproximant]: 5,
     [PhonemeType.CloseFrontUnroundedVowel]: 1,
     [PhonemeType.CloseFrontRoundedVowel]: 2,
     [PhonemeType.CloseCentralUnroundedVowel]: 4,
@@ -430,26 +390,13 @@ export class PhonemeDataService {
     [PhonemeType.OpenFrontUnroundedVowel]: 1,
     [PhonemeType.OpenBackUnroundedVowel]: 1,
     [PhonemeType.OpenBackRoundedVowel]: 3,
-    [PhonemeType.OpenFrontRounded]: 3,
-    [PhonemeType.OpenMidCentralUnrounded]: 4,
-    [PhonemeType.OpenMidCentralRounded]: 5,
-    [PhonemeType.CloseMidCentralUnrounded]: 4,
-    [PhonemeType.CloseMidCentralRounded]: 5,
-    [PhonemeType.CloseMidBackUnrounded]: 4,
-    [PhonemeType.CloseMidBackRounded]: 1,
-    [PhonemeType.NearOpenCentral]: 2,
-    // [PhonemeType.OpenFrontRounded]: 3, // Duplicate, removed to fix TS1117
     [PhonemeType.VoicedLabioDentalApproximant]: 3,
     [PhonemeType.VoicedLabioDentalFricative]: 1,
     [PhonemeType.VoicelessLabioDentalFricative]: 1,
     [PhonemeType.VoicedLabioDentalNasal]: 3,
     [PhonemeType.VoicedLabioVelarApproximant]: 1,
-    [PhonemeType.VoicedPalatalLateralApproximant]: 5,
-    [PhonemeType.VoicedVelarLateralApproximant]: 5,
     [PhonemeType.VoicedPostAlveolarSibilantFricative]: 2,
     [PhonemeType.VoicelessPostAlveolarSibilantFricative]: 2,
-    // [PhonemeType.Voicedlabiodentalflap]: 5, // Duplicate, removed
-    // [PhonemeType.VoicelessGlottalPlosive]: 3 // Duplicate, removed
   };
 
   static getIPA(phoneme: PhonemeType): string | undefined {
@@ -661,5 +608,354 @@ export class PhonemeDataService {
 
     const combined = `${baseSymbol}${diacritics}${suprasegmentals}${toneLevel}${toneContour}`;
     return combined || undefined;
+  }
+
+  // ============================================================================
+  // PHONETIC FEATURE VECTORS
+  // ============================================================================
+
+  /**
+   * Get metadata for a phoneme (category, manner, place, height, backness)
+   */
+  static getPhonemeMetadata(phoneme: PhonemeType): {
+    category: 'consonant' | 'vowel';
+    manner?: string;
+    place?: string;
+    height?: string;
+    backness?: string;
+  } | undefined {
+    return this.phonemeMeta[phoneme];
+  }
+
+  /**
+   * Feature mapping for consonants: manner × place → feature vector
+   * Based on distinctive feature theory (SPE + contemporary features)
+   * 
+   * Only consonants are implemented initially
+   */
+  private static readonly CONSONANT_BASE_FEATURES: Record<string, Record<string, number>> = {
+    // PLOSIVES (stops): [-continuant, -sonorant, +consonantal]
+    'plosive': {
+      'bilabial': PhoneticFeature.Consonantal | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'labiodental': PhoneticFeature.Consonantal | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'dental': PhoneticFeature.Consonantal | PhoneticFeature.Coronal | PhoneticFeature.Anterior | PhoneticFeature.Distributed,
+      'alveolar': PhoneticFeature.Consonantal | PhoneticFeature.Coronal | PhoneticFeature.Anterior,
+      'postalveolar': PhoneticFeature.Consonantal | PhoneticFeature.Coronal,
+      'retroflex': PhoneticFeature.Consonantal | PhoneticFeature.Coronal,
+      'palatal': PhoneticFeature.Consonantal | PhoneticFeature.Dorsal | PhoneticFeature.High,
+      'velar': PhoneticFeature.Consonantal | PhoneticFeature.Dorsal | PhoneticFeature.High | PhoneticFeature.Back,
+      'uvular': PhoneticFeature.Consonantal | PhoneticFeature.Dorsal | PhoneticFeature.Back,
+      'pharyngeal': PhoneticFeature.Consonantal,
+      'glottal': PhoneticFeature.Consonantal | PhoneticFeature.ConstrictedGlottis,
+      'labio-velar': PhoneticFeature.Consonantal | PhoneticFeature.Labial | PhoneticFeature.Dorsal,
+    },
+    
+    // NASALS: [+nasal, +sonorant, +consonantal, +voice]
+    'nasal': {
+      'bilabial': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Nasal | PhoneticFeature.Voice | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'labiodental': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Nasal | PhoneticFeature.Voice | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'dental': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Nasal | PhoneticFeature.Voice | PhoneticFeature.Coronal | PhoneticFeature.Anterior | PhoneticFeature.Distributed,
+      'alveolar': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Nasal | PhoneticFeature.Voice | PhoneticFeature.Coronal | PhoneticFeature.Anterior,
+      'retroflex': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Nasal | PhoneticFeature.Voice | PhoneticFeature.Coronal,
+      'palatal': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Nasal | PhoneticFeature.Voice | PhoneticFeature.Dorsal | PhoneticFeature.High,
+      'velar': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Nasal | PhoneticFeature.Voice | PhoneticFeature.Dorsal | PhoneticFeature.High | PhoneticFeature.Back,
+      'uvular': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Nasal | PhoneticFeature.Voice | PhoneticFeature.Dorsal | PhoneticFeature.Back,
+    },
+    
+    // FRICATIVES: [+continuant, -sonorant, +consonantal]
+    'fricative': {
+      'bilabial': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'labiodental': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'dental': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Coronal | PhoneticFeature.Anterior | PhoneticFeature.Distributed,
+      'alveolar': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Coronal | PhoneticFeature.Anterior | PhoneticFeature.Strident,
+      'postalveolar': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Coronal | PhoneticFeature.Strident,
+      'retroflex': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Coronal,
+      'palatal': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Dorsal | PhoneticFeature.High,
+      'velar': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Dorsal | PhoneticFeature.High | PhoneticFeature.Back,
+      'uvular': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Dorsal | PhoneticFeature.Back,
+      'pharyngeal': PhoneticFeature.Consonantal | PhoneticFeature.Continuant,
+      'glottal': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.SpreadGlottis,
+    },
+    
+    // APPROXIMANTS: [+continuant, +sonorant, +consonantal, +voice]
+    'approximant': {
+      'bilabial': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'labiodental': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'alveolar': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Coronal | PhoneticFeature.Anterior,
+      'retroflex': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Coronal,
+      'palatal': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Dorsal | PhoneticFeature.High,
+      'velar': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Dorsal | PhoneticFeature.High | PhoneticFeature.Back,
+      'labio-velar': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Labial | PhoneticFeature.Dorsal,
+    },
+    
+    // TRILLS: [+consonantal, +sonorant, +trill, +voice]
+    'trill': {
+      'bilabial': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Trill | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'alveolar': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Trill | PhoneticFeature.Coronal | PhoneticFeature.Anterior,
+      'uvular': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Trill | PhoneticFeature.Dorsal | PhoneticFeature.Back,
+    },
+    
+    // TAP/FLAP: [+consonantal, +sonorant, +voice] (brief contact)
+    'tap': {
+      'alveolar': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Coronal | PhoneticFeature.Anterior,
+      'retroflex': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Coronal,
+    },
+    'flap': {
+      'labiodental': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Labial | PhoneticFeature.Anterior,
+      'alveolar': PhoneticFeature.Consonantal | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Coronal | PhoneticFeature.Anterior,
+    },
+    
+    // LATERAL FRICATIVES: [+lateral, +continuant, +consonantal, -sonorant]
+    'lateral fricative': {
+      'alveolar': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Lateral | PhoneticFeature.Coronal | PhoneticFeature.Anterior,
+    },
+    
+    // LATERAL APPROXIMANTS: [+lateral, +continuant, +sonorant, +consonantal, +voice]
+    'lateral approximant': {
+      'alveolar': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Lateral | PhoneticFeature.Coronal | PhoneticFeature.Anterior,
+      'retroflex': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Lateral | PhoneticFeature.Coronal,
+      'palatal': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Lateral | PhoneticFeature.Dorsal | PhoneticFeature.High,
+      'velar': PhoneticFeature.Consonantal | PhoneticFeature.Continuant | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Lateral | PhoneticFeature.Dorsal | PhoneticFeature.High | PhoneticFeature.Back,
+    },
+  };
+
+  /**
+   * Feature mapping for vowels: height × backness → feature vector
+   * Base: [-consonantal, +syllabic, +sonorant, +voice]
+   * Never include place of articulation traits (Labial, Coronal, Dorsal, Anterior)
+   */
+  private static readonly VOWEL_BASE_FEATURES: Record<string, Record<string, number>> = {
+    // CLOSE vowels: [+high, -low]
+    'close': {
+      'front': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.High,
+      'central': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.High,
+      'back': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.High | PhoneticFeature.Back,
+    },
+    
+    // NEAR-CLOSE vowels: [+high, -low] (slightly lower)
+    'near-close': {
+      'front': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.High,
+      'central': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.High,
+      'back': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.High | PhoneticFeature.Back,
+    },
+    
+    // CLOSE-MID vowels: [+high, -low]
+    'close-mid': {
+      'front': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.High,
+      'central': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice,
+      'back': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Back,
+    },
+    
+    // MID vowels: neutral height
+    'mid': {
+      'central': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice,
+    },
+    
+    // OPEN-MID vowels: [-high, -low]
+    'open-mid': {
+      'front': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice,
+      'central': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice,
+      'back': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Back,
+    },
+    
+    // NEAR-OPEN vowels: [+low, -high]
+    'near-open': {
+      'front': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Low,
+      'central': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Low,
+    },
+    
+    // OPEN vowels: [+low, -high]
+    'open': {
+      'front': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Low,
+      'central': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Low,
+      'back': PhoneticFeature.Syllabic | PhoneticFeature.Sonorant | PhoneticFeature.Voice | PhoneticFeature.Low | PhoneticFeature.Back,
+    },
+  };
+
+  /**
+   * Tone feature mappings
+   * Maps tone strings to feature bits
+   */
+  private static readonly TONE_FEATURE_MODIFIERS: Record<string, number> = {
+    'extra-high': PhoneticFeature.ToneHigh,
+    'high': PhoneticFeature.ToneHigh,
+    'mid': 0, // Neutral tone = no tone feature
+    'low': PhoneticFeature.ToneLow,
+    'extra-low': PhoneticFeature.ToneLow,
+    'rising': PhoneticFeature.ToneRising,
+    'falling': PhoneticFeature.ToneFalling,
+    'high-falling': PhoneticFeature.ToneFalling,
+    'low-rising': PhoneticFeature.ToneRising,
+    'rising-falling': PhoneticFeature.ToneContour,
+    'falling-rising': PhoneticFeature.ToneContour,
+  };
+
+  /**
+   * Diacritic modifications to feature vectors
+   * Maps diacritic strings to feature changes
+   */
+  private static readonly DIACRITIC_FEATURE_MODIFIERS: Record<string, { add?: number; remove?: number }> = {
+    // Voicing
+    'Voiceless': { add: PhoneticFeature.SpreadGlottis, remove: PhoneticFeature.Voice },
+    'Voiced': { add: PhoneticFeature.Voice, remove: PhoneticFeature.SpreadGlottis },
+    
+    // Aspiration & Laryngeals
+    'Aspirated': { add: PhoneticFeature.SpreadGlottis },
+    'Glottalized': { add: PhoneticFeature.ConstrictedGlottis },
+    'BreathyVoiced': { add: PhoneticFeature.Voice | PhoneticFeature.SlackVocalCords },
+    'CreakyVoiced': { add: PhoneticFeature.Voice | PhoneticFeature.ConstrictedGlottis },
+    
+    // Nasalization
+    'Nasalized': { add: PhoneticFeature.Nasal },
+    
+    // Secondary Articulations
+    'Labialized': { add: PhoneticFeature.Labial | PhoneticFeature.Round },
+    'Palatalized': { add: PhoneticFeature.Dorsal | PhoneticFeature.High },
+    'Velarized': { add: PhoneticFeature.Dorsal | PhoneticFeature.Back },
+    'Pharyngealized': { add: PhoneticFeature.Tense },
+    
+    // Roundness (vowels)
+    'MoreRounded': { add: PhoneticFeature.Round },
+    'LessRounded': { remove: PhoneticFeature.Round },
+    
+    // Stress
+    'primary-stress': { add: PhoneticFeature.Stress },
+    'secondary-stress': { add: PhoneticFeature.Stress },
+    
+    // Length
+    'long': { add: PhoneticFeature.Long },
+    'half-long': { add: PhoneticFeature.Long },
+    'extra-short': { remove: PhoneticFeature.Long },
+  };
+
+  /**
+   * Compute the phonetic feature vector for a phoneme instance
+   * This should be called when creating or modifying a phoneme
+   * 
+   * @param instance The phoneme instance to compute features for
+   * @returns 32-bit feature vector
+   */
+  static computeFeatureVector(instance: PhonemeInstance): number {
+    let vector = 0;
+
+    // Step 1: Get base features from manner and place (consonants) or height and backness (vowels)
+    if (instance.type === 'consonant' && instance.manner && instance.place) {
+      const mannerKey = instance.manner.toLowerCase();
+      const placeKey = instance.place.toLowerCase();
+      
+      const mannerMap = this.CONSONANT_BASE_FEATURES[mannerKey];
+      if (mannerMap) {
+        vector = mannerMap[placeKey] || 0;
+      }
+    } else if (instance.type === 'vowel' && instance.height && instance.backness) {
+      const heightKey = instance.height.toLowerCase();
+      const backnessKey = instance.backness.toLowerCase();
+      
+      const heightMap = this.VOWEL_BASE_FEATURES[heightKey];
+      if (heightMap) {
+        vector = heightMap[backnessKey] || 0;
+      }
+    }
+
+    // Step 2: Add voicing from phoneme name if present (for consonants)
+    if (instance.type === 'consonant') {
+      const phonemeName = instance.phoneme as string;
+      if (phonemeName.toLowerCase().includes('voiced') && !phonemeName.toLowerCase().includes('voiceless')) {
+        vector |= PhoneticFeature.Voice;
+      } else if (phonemeName.toLowerCase().includes('voiceless')) {
+        vector &= ~PhoneticFeature.Voice;
+        vector |= PhoneticFeature.SpreadGlottis;
+      }
+    }
+
+    // Step 3: Apply diacritic modifications
+    if (instance.diacritics && instance.diacritics.length > 0) {
+      for (const diacritic of instance.diacritics) {
+        const modifier = this.DIACRITIC_FEATURE_MODIFIERS[diacritic];
+        if (modifier) {
+          if (modifier.add) vector |= modifier.add;
+          if (modifier.remove) vector &= ~modifier.remove;
+        }
+      }
+    }
+
+    // Step 4: Add tone features if tone level is present (typically for vowels/syllables)
+    // This would come from phoneme tonal information
+    // For now, tone support is in the diacritics system
+
+    return vector;
+  }
+
+  /**
+   * Check if a phoneme has a specific feature
+   */
+  static hasFeature(vector: number, feature: PhoneticFeature): boolean {
+    return (vector & feature) === feature;
+  }
+
+  /**
+   * Check if a phoneme matches ALL required features
+   */
+  static matchesAllFeatures(vector: number, features: PhoneticFeature[]): boolean {
+    return features.every(f => this.hasFeature(vector, f));
+  }
+
+  /**
+   * Check if a phoneme matches ANY of the given features
+   */
+  static matchesAnyFeature(vector: number, features: PhoneticFeature[]): boolean {
+    return features.some(f => this.hasFeature(vector, f));
+  }
+
+  /**
+   * Get human-readable description of features
+   * Returns array of feature names like ['+voice', '+coronal', '-continuant']
+   */
+  static describeFeatures(vector: number): string[] {
+    const features: string[] = [];
+    
+    // Check each feature bit
+    Object.entries(FEATURE_NAMES).forEach(([bitValue, name]) => {
+      const featureBit = parseInt(bitValue);
+      if (this.hasFeature(vector, featureBit)) {
+        features.push(`+${name}`);
+      }
+    });
+
+    return features;
+  }
+
+  /**
+   * Find all phonemes in inventory matching a set of features (natural class)
+   * 
+   * @param inventory All phonemes to search
+   * @param requiredFeatures Features that must all be present
+   * @returns Matching phonemes
+   */
+  static findPhonemesWithFeatures(
+    inventory: PhonemeInstance[], 
+    requiredFeatures: PhoneticFeature[]
+  ): PhonemeInstance[] {
+    return inventory.filter(p => {
+      const vector = p.features?.featureVector || 0;
+      return this.matchesAllFeatures(vector, requiredFeatures);
+    });
+  }
+
+  /**
+   * Get or compute featureVector for a phoneme.
+   * If the phoneme already has a featureVector, return it.
+   * If not, compute it on-demand (for phonemes loaded from older JSON).
+   * 
+   * @param instance Phoneme to get features for
+   * @returns 32-bit feature vector
+   */
+  static getOrComputeFeatureVector(instance: PhonemeInstance): number {
+    // Return existing vector if available
+    if (instance.features?.featureVector !== undefined) {
+      return instance.features.featureVector;
+    }
+    // Compute on-demand if missing
+    return this.computeFeatureVector(instance);
   }
 }

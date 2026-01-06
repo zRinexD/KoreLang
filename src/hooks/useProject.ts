@@ -87,28 +87,43 @@ export const useProject = () => {
 
   // Load project from localStorage on mount, or load default Sindarin project
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        loadProjectData(JSON.parse(saved));
-        setIsInitialLoadComplete(true);
-      } catch (e) {
-        console.error("Failed to load project from storage", e);
-        setIsInitialLoadComplete(true);
-      }
-    } else {
-      // No saved project, load default Sindarin project
-      fetch("/sindarin_complete.json")
-        .then(res => res.json())
-        .then(data => {
+    const init = async () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const data = JSON.parse(saved) as ProjectData;
+          // If saved project lacks allophony rules, try to merge from default dataset
+          const hasAllophony = !!((data.phonology as any)?.allophonyRules && (data.phonology as any).allophonyRules.length > 0);
+          if (!hasAllophony) {
+            try {
+              const res = await fetch("/sindarin_complete.json");
+              const defaultData = await res.json();
+              const defaultRules = ((defaultData.phonology as any)?.allophonyRules) || [];
+              data.phonology = { ...(data.phonology || { name: "Default Phonology", description: "", consonants: [], vowels: [], syllableStructure: "", bannedCombinations: [] }), allophonyRules: defaultRules } as any;
+            } catch (mergeErr) {
+              console.warn("Could not merge allophony rules from default dataset", mergeErr);
+            }
+          }
           loadProjectData(data);
           setIsInitialLoadComplete(true);
-        })
-        .catch(err => {
+        } catch (e) {
+          console.error("Failed to load project from storage", e);
+          setIsInitialLoadComplete(true);
+        }
+      } else {
+        // No saved project, load default Sindarin project
+        try {
+          const res = await fetch("/sindarin_complete.json");
+          const data = await res.json();
+          loadProjectData(data);
+          setIsInitialLoadComplete(true);
+        } catch (err) {
           console.error("Failed to load default Sindarin project", err);
           setIsInitialLoadComplete(true);
-        });
-    }
+        }
+      }
+    };
+    void init();
   }, []);
 
   // Auto-save project to localStorage (skip on initial load)

@@ -9,7 +9,10 @@
     "confirm": "هل تريد حقاً حذف هذا العنصر؟",
     "copied": "تم النسخ!",
     "delete": "حذف",
-    "save": "حفظ"
+    "edit": "تعديل",
+    "listen": "استمع",
+    "save": "حفظ",
+    "validate": "تحقق"
   },
   "console": {
     "ai_applied": "تم تطبيق AI: تم تعديل {{count}} كلمات.",
@@ -269,7 +272,7 @@
   },
   "phonology": {
     "add_consonant": "إضافة صامت",
-    "add_phoneme": "",
+    "add_phoneme": "إضافة صوت",
     "add_vowel": "إضافة صائت",
     "ai_disabled_desc": "يرجى تكوين مفتاح API في الإعدادات لتفعيل ميزات AI.",
     "ai_disabled_title": "توليد AI معطل",
@@ -310,7 +313,7 @@
       "tap": "مستل",
       "trill": "مكرر"
     },
-    "no_registered_phoneme": "",
+    "no_registered_phoneme": "لا توجد أصوات مسجلة بعد.",
     "place": {
       "alveolar": "لثوي",
       "bilabial": "شفتاني",
@@ -324,7 +327,7 @@
       "uvular": "لهوي",
       "velar": "طبقي"
     },
-    "registered_phonemes": "",
+    "registered_phonemes": "الأصوات المسجلة",
     "replace_confirm": "سيؤدي هذا إلى استبدال علم الأصوات الحالي. هل أنت متأكد؟",
     "replace_warning": "يرجى مراجعة الأصوات أعلاه. إذا طبقت هذا، فسيتم **استبدال** علم الأصوات الحالي.",
     "rounded": "مستدير",
@@ -489,6 +492,7 @@
     "button": "حسناً، فهمت!",
     "f1_desc": "تمت الآن ترجمة جميع اللغات البالغ عددها 46 لغة بشكل أكثر دقة وتم تدويلها بالكامل.",
     "f1_title": "ترجمات أفضل",
+    "subtitle": "اكتشف الميزات والتحسينات الجديدة في Korelang v1.1.1.",
     "title": "ما الجديد في v1.1.1"
   },
   "wizard": {
