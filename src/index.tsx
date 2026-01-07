@@ -1,8 +1,3 @@
-import { PhonemeDataService } from './services/PhonemeDataService';
-// Vérification de la couverture des métadonnées phonémiques (dev only)
-if (process.env.NODE_ENV !== 'production') {
-  PhonemeDataService.checkMetaCoverage();
-}
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';

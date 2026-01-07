@@ -359,28 +359,14 @@ export function getVariantIPAFromRuleOutput(
     // Apply the transformation: clear bits in mask, then set new values
     const transformedVector = (baseFeatureVector & ~outputMask) | outputChanges;
     
-    console.log('[getVariantIPAFromRuleOutput] Debug info:');
-    console.log('  baseSymbol:', baseSymbol);
-    console.log('  baseFeatureVector:', baseFeatureVector.toString(2).padStart(32, '0'));
-    console.log('  outputMask:', outputMask.toString(2).padStart(32, '0'));
-    console.log('  outputChanges:', outputChanges.toString(2).padStart(32, '0'));
-    console.log('  transformedVector:', transformedVector.toString(2).padStart(32, '0'));
-    
     // Find the phoneme that best matches the transformed vector
     let bestMatch: { phoneme: PhonemeType; featureVector: number } | null = null;
     let bestScore = -1;
-    const candidateScores: Array<{phoneme: PhonemeType; score: number; diff: number}> = [];
     
     for (const phoneme of allPhonemes) {
       // Count matching bits (use XOR to find differences, then count zeros)
       const diff = transformedVector ^ phoneme.featureVector;
       const matchingBits = 32 - countSetBits(diff);
-      
-      candidateScores.push({
-        phoneme: phoneme.phoneme,
-        score: matchingBits,
-        diff: countSetBits(diff)
-      });
       
       if (matchingBits > bestScore) {
         bestScore = matchingBits;
@@ -388,37 +374,8 @@ export function getVariantIPAFromRuleOutput(
       }
     }
     
-    // Show top 5 candidates
-    candidateScores.sort((a, b) => b.score - a.score);
-    console.log('  Top candidates:');
-    candidateScores.slice(0, 5).forEach(c => {
-      const ipa = PhonemeDataService.getIPA(c.phoneme);
-      const phonemeObj = allPhonemes.find(p => p.phoneme === c.phoneme);
-      const vectorStr = phonemeObj ? phonemeObj.featureVector.toString(2).padStart(32, '0') : 'N/A';
-      console.log(`    [${ipa}] (${c.phoneme}): ${c.score} bits match, ${c.diff} bits differ`);
-      console.log(`      Vector: ${vectorStr}`);
-    });
-    
-    // Check specifically for [d]
-    const dPhoneme = allPhonemes.find(p => {
-      const ipa = PhonemeDataService.getIPA(p.phoneme);
-      return ipa === 'd';
-    });
-    if (dPhoneme) {
-      const dDiff = transformedVector ^ dPhoneme.featureVector;
-      const dMatchingBits = 32 - countSetBits(dDiff);
-      console.log('  [d] specifically:');
-      console.log(`    Vector: ${dPhoneme.featureVector.toString(2).padStart(32, '0')}`);
-      console.log(`    Matching bits: ${dMatchingBits}, Differing bits: ${countSetBits(dDiff)}`);
-      console.log(`    Phoneme type: ${dPhoneme.phoneme}`);
-    } else {
-      console.log('  [d] NOT FOUND in allPhonemes!');
-    }
-    
     if (bestMatch) {
-      const resultIPA = PhonemeDataService.getIPA(bestMatch.phoneme) || baseSymbol;
-      console.log('  Best match:', resultIPA, '(' + bestMatch.phoneme + ')');
-      return resultIPA;
+      return PhonemeDataService.getIPA(bestMatch.phoneme) || baseSymbol;
     }
   }
 

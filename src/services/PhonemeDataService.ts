@@ -147,21 +147,6 @@ export class PhonemeDataService {
     return this.phonemeMeta[phoneme];
   }
 
-  /**
-   * Vérifie que tous les PhonemeType sont couverts par le mapping phonemeMeta
-   * (à appeler au démarrage en dev)
-   */
-  static checkMetaCoverage() {
-    const all = Object.values(PhonemeType);
-    const missing = all.filter(pt => !this.phonemeMeta[pt]);
-    if (missing.length > 0) {
-      // eslint-disable-next-line no-console
-      console.warn('[PhonemeDataService] PhonemeType(s) manquants dans phonemeMeta:', missing);
-    } else {
-      // eslint-disable-next-line no-console
-      console.info('[PhonemeDataService] Tous les PhonemeType sont couverts dans phonemeMeta.');
-    }
-  }
   private static readonly phonemeToIPA: Partial<Record<PhonemeType, string>> = {
     [PhonemeType.VoicedBilabialNasal]: "m",
     [PhonemeType.VoicedLabiodentalNasal]: "ɱ",
