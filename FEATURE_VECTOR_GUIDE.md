@@ -71,7 +71,7 @@ Open the "Debug Features" button in the Phonology Editor toolbar:
 ### Method 2: Console Command
 
 ```bash
-showFeatures --hash <phoneme_id>
+showFeatures --hash `<phoneme_id>`
 ```
 
 Example output:
